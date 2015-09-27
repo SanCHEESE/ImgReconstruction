@@ -1,0 +1,28 @@
+//
+//  PrefixHeader.pch
+//  ImgReconstruction
+//
+//  Created by Alexander Bochkarev on 27.09.15.
+//  Copyright © 2015 Alexander Bochkarev. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#include <string>
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/core.hpp>
+
+#include "CImage.hpp"
+
+
+#endif /* PrefixHeader_pch */
