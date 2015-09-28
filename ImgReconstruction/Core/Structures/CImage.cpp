@@ -10,14 +10,19 @@
 
 
 #pragma mark - CImage
-CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect)
+CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect) const
 {
     return CPatchIterator(this, size, offset, pointingRect);
 }
 
-CImage CImage::GetPatch(const cv::Rect &rect)
+CImage CImage::GetPatch(const cv::Rect &rect) const
 {
     return CImage(*this, rect);
+}
+
+cv::Rect CImage::GetFrame() const
+{
+    return _frame;
 }
 
 #pragma mark - CPatchIterator
@@ -29,13 +34,15 @@ bool CImage::CPatchIterator::HasNext()
 
 CImage CImage::CPatchIterator::GetNext()
 {
-    int maxRow = MAX(_pointingRect.height + _pointingRect.y, _iterImage->rows);
-    int maxCol = MAX(_pointingRect.width + _pointingRect.x, _iterImage->cols);
+    int maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage->rows);
+    int maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage->cols);
     
     // делаем матрицу размера size с подматрицей
-    cv::Mat patch = (*_iterImage)(cv::Rect(_pointingRect.x, _pointingRect.y, maxCol - _pointingRect.x, maxRow - _pointingRect.y));
+    cv::Rect patchFrame = cv::Rect(_pointingRect.x, _pointingRect.y, maxCol - _pointingRect.x, maxRow - _pointingRect.y);
+    CImage patch = (*_iterImage)(patchFrame);
+    patch._frame = patchFrame;
     // нормализуем патч до нужного размера
-    cv::Mat normPatch = cv::Mat(_size, CV_8U, 255);
+    CImage normPatch = CImage(_size, CV_8U, 255);
     
     // копируем матрицу
     for (int i = 0; i < patch.rows; i++) {
@@ -49,12 +56,13 @@ CImage CImage::CPatchIterator::GetNext()
         _pointingRect.x += _offset.x;
     } else if (_pointingRect.height + _pointingRect.y < _iterImage->rows - 1 ) {
         // не у низа
-        _pointingRect.y += _offset.y;
+        _pointingRect.x = 0;
     }
     
     if (_pointingRect.width + _pointingRect.x >= _iterImage->cols - 1) {
+        // сдвигаемся на след.
         _pointingRect.y += _offset.y;
     }
     
-    return CImage((*_iterImage)(_pointingRect));
+    return normPatch;
 }

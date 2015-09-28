@@ -16,13 +16,15 @@ public:
     CImage(const std::string& path, int flags) : cv::Mat(cv::imread(path, flags)) {};
     CImage(int rows, int cols, int type, const cv::Scalar& scalar) : cv::Mat(rows, cols, type, scalar) {};
     CImage(const CImage& image, const cv::Rect& roi) : cv::Mat(image, roi) {}
+    CImage(const cv::Size size, int type, int value) : cv::Mat(size, type, value) {}
     
-    CImage GetPatch(const cv::Rect& rect);
+    CImage GetPatch(const cv::Rect& rect) const;
+    cv::Rect GetFrame() const;
     
     class CPatchIterator
     {
     public:
-        CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point offset, const cv::Rect& pointingRect = cv::Rect()) :
+        CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point offset, const cv::Rect& pointingRect = cv::Rect()):
         _size(size), _pointingRect(pointingRect), _offset(offset), _iterImage(iterImage)
         {
             if (_pointingRect == cv::Rect()) {
@@ -38,8 +40,8 @@ public:
         cv::Point _offset;
         const CImage* const _iterImage;
     };
-    CPatchIterator GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect = cv::Rect());
+    CPatchIterator GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect = cv::Rect()) const;
    
 private:
-
+    cv::Rect _frame;
 };

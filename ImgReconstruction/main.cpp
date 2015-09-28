@@ -13,23 +13,18 @@
 static const std::string PathToImg = "../../images/img1.jpg";
 static const std::string WindowName = "Press Esc to quit";
 
-const int ThresholdValue = 120;
-
 using namespace cv;
 
 int main(int argc, char** argv)
 {
     CImage image = CImage(PathToImg, IMREAD_GRAYSCALE);
-    CThreshBinarizer binarizer = CThreshBinarizer(ThresholdValue);
+    if (image.empty()) {
+        return 1;
+    }
     
-    CImage colorBinImage;
-    cvtColor(binarizer.Binarize(image), colorBinImage, CV_GRAY2RGBA, 4);
-    
-    CWindow window = CWindow(WindowName, colorBinImage);
-    window.Show();
-
-    window.StartObservingMouse();
-    window.ObserveKeyboard();
+    CWindow window = CWindow(WindowName);
+    CImageProcessor imProc = CImageProcessor(window);
+    imProc.StartProcessingChain(image);
     
     return 0;
 }
