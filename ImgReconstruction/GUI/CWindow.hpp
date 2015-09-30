@@ -13,6 +13,11 @@ typedef enum : int {
     TRectColorGreen,
 } TRectColor;
 
+struct DrawableRect {
+    cv::Rect rect;
+    cv::Scalar color;
+};
+
 class CWindowDelegate
 {
 public:
@@ -45,6 +50,7 @@ public:
 
     void DrawRect(const cv::Rect rect, const cv::Scalar& color);
     void DrawRect(const cv::Rect rect, TRectColor colorType);
+    void DrawRects(const std::vector<DrawableRect>& rects);
     
     CWindowDelegate* delegate;
 private:
@@ -58,4 +64,6 @@ private:
     cv::Rect _drawingBox;
     int _maxBoxSideSize;
     bool _isDrawing;
+    
+    std::vector<DrawableRect> rectsToDraw;
 };

@@ -55,6 +55,14 @@ void CWindow::DrawRect(const cv::Rect rect, TRectColor colorType)
     DrawRect(rect, color);
 }
 
+void CWindow::DrawRects(const std::vector<DrawableRect>& rects)
+{
+    for (int i = 0; i < rects.size(); i++ ) {
+        cv::rectangle(_image, cv::Point(rects[i].rect.x, rects[i].rect.y), cv::Point(rects[i].rect.x + rects[i].rect.width, rects[i].rect.y + rects[i].rect.height), rects[i].color, 1.5);
+    }
+    cv::imshow(_name, _image);
+}
+
 void CWindow::SetOriginalImage(const CImage &originalImage)
 {
     originalImage.copyTo(_originalImage);

@@ -68,7 +68,7 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
     std::vector<CImage> patches;
     CThreshBinarizer binarizer = CThreshBinarizer(ThresholdValue);
     // извлекаем патчи, бинаризуем и считаем метрику размытия
-    CImage::CPatchIterator patchIterator = _image.GetPatchIterator(cv::Size(patchRect.width, patchRect.height), cv::Point(patchRect.width, patchRect.height));
+    CImage::CPatchIterator patchIterator = _image.GetPatchIterator(cv::Size(patchRect.width, patchRect.height), cv::Point(1, 1));
     while (patchIterator.HasNext()) {
         CImage patch = patchIterator.GetNext();
         patch.CalculateBlurMetric();
@@ -84,12 +84,14 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
     CImage binarized_patch = binarizer.Binarize(patch);
     CImageComparatorL1 imgComparator = CImageComparatorL1();
     
+    std::vector<DrawableRect> rectsToDraw;
+    
     for (int i = 0; i < patches.size(); i++) {
         if (imgComparator.Compare(binarized_patch, patches[i]) < ComparisonEps) {
             // чем больше размытия, тем темнее рамка вокруг патча
-            cv::Scalar color = RGB(0, patches[i].GetBlurMetricValue()/(patches[i].cols * patches[i].rows) * 255, 0);
+            cv::Scalar color = RGB(0, (patches[i].GetBlurMetricValue() > 10 ? 36 : patches[i].GetBlurMetricValue())/(patches[i].cols * patches[i].rows) * 255, 0);
             // похожий самый четкий патч выделяем таким же цветом
-            _window.DrawRect(patches[i].GetFrame(), i == 0 ? RGB(0, 255, 0) : color);
+            rectsToDraw.push_back({patches[i].GetFrame(), i == 0 ? RGB(0, 255, 0) : color});
             good++;
         } else {
             bad++;
@@ -100,7 +102,7 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
         }
     }
     
-
+    _window.DrawRects(rectsToDraw);
 }
 
 #pragma mark - Algorithms
