@@ -12,9 +12,9 @@
 
 static const int ProgressCount = 300;
 static const int ThresholdValue = 100;
-static const int ComparisonEps = 6;
+static const int ComparisonEps = 2;
 static const int MaxPatchSideSize = 6;
-static const float BlurMetricRadiusRatio = 0.3f;
+static const float BlurMetricRadiusRatio = 0.5f;
 const std::string FftWindowName = "Fft";
 
 struct Greater
@@ -39,9 +39,12 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
         // бинаризованное изображение
         CThreshBinarizer binarizer = CThreshBinarizer(ThresholdValue);
         _binarizedImage = binarizer.Binarize(_image);
-        
-//        _binarizedImage.copyTo(_displayImage)
     }
+    
+    
+    _fftWindow = CWindow(CWindow(FftWindowName, _binarizedImage));
+    _fftWindow.Show();
+    _fftWindow.Update(_binarizedImage);
     
     _window.Show();
     _window.SetMaxBoxSideSize(MaxPatchSideSize);
@@ -56,11 +59,11 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
     CImage patch = GetPatchImageFromImage(_image, patchRect);
     
     // показываем fft выбранного патча
-    CImage patchFft = FFT(patch);
-    CImage zoomedPatchFft;
-    cv::resize(patchFft, zoomedPatchFft, cv::Size(128, 128), 0, 0, cv::INTER_NEAREST);
-    _fftWindow = CWindow(CWindow(FftWindowName, _binarizedImage));
-    _fftWindow.Show();
+//    CImage patchFft = FFT(patch);
+//    CImage zoomedPatchFft;
+//    cv::resize(patchFft, zoomedPatchFft, cv::Size(128, 128), 0, 0, cv::INTER_NEAREST);
+//    _fftWindow = CWindow(CWindow(FftWindowName, _binarizedImage));
+//    _fftWindow.Show();
     
     std::vector<CImage> patches;
     CThreshBinarizer binarizer = CThreshBinarizer(ThresholdValue);
