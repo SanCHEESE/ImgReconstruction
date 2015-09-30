@@ -7,7 +7,7 @@
 //
 
 #include "CImage.hpp"
-
+#include "CImageProcessor.hpp"
 
 #pragma mark - CImage
 CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect) const
@@ -25,6 +25,23 @@ cv::Rect CImage::GetFrame() const
     return _frame;
 }
 
+double CImage::GetBlurMetricValue() const
+{
+    return _blurMetricValue;
+}
+
+double CImage::CalculateBlurMetric()
+{
+    CImage fft = CImageProcessor::FFT(*this);
+    return _blurMetricValue = CImageProcessor::MeasureBlurWithFFTImage(fft);
+}
+
+void CImage::CopyMetadataTo(CImage &image)
+{
+    image._frame = this->_frame;
+    image._blurMetricValue = this->_blurMetricValue;
+}
+
 #pragma mark - CPatchIterator
 
 bool CImage::CPatchIterator::HasNext()
@@ -40,9 +57,10 @@ CImage CImage::CPatchIterator::GetNext()
     // делаем матрицу размера size с подматрицей
     cv::Rect patchFrame = cv::Rect(_pointingRect.x, _pointingRect.y, maxCol - _pointingRect.x, maxRow - _pointingRect.y);
     CImage patch = (*_iterImage)(patchFrame);
-    patch._frame = patchFrame;
+    
     // нормализуем патч до нужного размера
     CImage normPatch = CImage(_size, CV_8U, 255);
+    normPatch._frame = patchFrame;
     
     // копируем матрицу
     for (int i = 0; i < patch.rows; i++) {
@@ -60,7 +78,7 @@ CImage CImage::CPatchIterator::GetNext()
     }
     
     if (_pointingRect.width + _pointingRect.x >= _iterImage->cols - 1) {
-        // сдвигаемся на след.
+        // сдвигаемся на след. строку
         _pointingRect.y += _offset.y;
     }
     

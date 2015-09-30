@@ -20,6 +20,10 @@ public:
     
     CImage GetPatch(const cv::Rect& rect) const;
     cv::Rect GetFrame() const;
+    double GetBlurMetricValue() const;
+    
+    void CopyMetadataTo(CImage& image);
+    double CalculateBlurMetric();
     
     class CPatchIterator
     {
@@ -44,4 +48,6 @@ public:
    
 private:
     cv::Rect _frame;
+    
+    double _blurMetricValue;
 };

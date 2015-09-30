@@ -7,6 +7,12 @@
 //
 #pragma once
 
+typedef enum : int {
+    TRectColorRed,
+    TRectColorBlue,
+    TRectColorGreen,
+} TRectColor;
+
 class CWindowDelegate
 {
 public:
@@ -32,12 +38,13 @@ public:
     void Update(const CImage& img);
     
     void SetOriginalImage(const CImage& originalImage);
-    void SetMaxBoxSize(const cv::Size& boxSize);
+    void SetMaxBoxSideSize(int boxSideSize);
     
     void ObserveKeyboard();
     void StartObservingMouse();
-    
-    void DrawRect(const cv::Rect rect);
+
+    void DrawRect(const cv::Rect rect, const cv::Scalar& color);
+    void DrawRect(const cv::Rect rect, TRectColor colorType);
     
     CWindowDelegate* delegate;
 private:
@@ -49,6 +56,6 @@ private:
     CImage _originalImage;
     
     cv::Rect _drawingBox;
-    cv::Size _maxBoxSize;
+    int _maxBoxSideSize;
     bool _isDrawing;
 };

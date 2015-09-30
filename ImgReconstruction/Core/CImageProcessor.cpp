@@ -10,49 +10,109 @@
 #include "CThreshBinarizer.hpp"
 #include "CImageComparatorL1.hpp"
 
+static const int ProgressCount = 300;
 static const int ThresholdValue = 120;
-static const int ComparisonEps = 6;
+static const int ComparisonEps = 2;
+static const int MaxPatchSideSize = 6;
+static const float BlurMetricRadiusRatio = 0.3f;
 const std::string FftWindowName = "Fft";
+
+struct Greater
+{
+    inline bool operator() (const CImage& img1, const CImage& img2)
+    {
+        return img1.GetBlurMetricValue() > img2.GetBlurMetricValue();
+    }
+};
 
 void CImageProcessor::StartProcessingChain(const CImage& img)
 {
     {
+        // серое изображение
         _image = img;
+        
+        // изображение для вывода
         img.copyTo(_displayImage);
+        // делаем цветным
+        cv::cvtColor(_displayImage, _displayImage, CV_GRAY2RGBA);
+        
+        // бинаризованное изображение
         CThreshBinarizer binarizer = CThreshBinarizer(ThresholdValue);
         _binarizedImage = binarizer.Binarize(_image);
     }
     
     _window.Show();
+    _window.SetMaxBoxSideSize(MaxPatchSideSize);
     _window.SetOriginalImage(_displayImage);
     _window.Update(_displayImage);
     _window.StartObservingMouse();
     _window.ObserveKeyboard();
 }
 
-
 void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& patchRect)
 {
     CImage patch = GetPatchImageFromImage(_image, patchRect);
-    CImage patchFft = FFT(patch);
     
-    _fftWindow = CWindow(CWindow(FftWindowName, patchFft));
+    // показываем fft выбранного патча
+    CImage patchFft = FFT(patch);
+    CImage zoomedPatchFft;
+    cv::resize(patchFft, zoomedPatchFft, cv::Size(128, 128), 0, 0, cv::INTER_NEAREST);
+    _fftWindow = CWindow(CWindow(FftWindowName, zoomedPatchFft));
     _fftWindow.Show();
     
     std::vector<CImage> patches;
-    CImage::CPatchIterator patchIterator = img.GetPatchIterator(cv::Size(patchRect.width, patchRect.height), cv::Point(patchRect.width, patchRect.height));
+    CThreshBinarizer binarizer = CThreshBinarizer(ThresholdValue);
+    // извлекаем патчи, бинаризуем и считаем метрику размытия
+    CImage::CPatchIterator patchIterator = _image.GetPatchIterator(cv::Size(patchRect.width, patchRect.height), cv::Point(patchRect.width, patchRect.height));
     while (patchIterator.HasNext()) {
-        patches.push_back(patchIterator.GetNext());
+        CImage patch = patchIterator.GetNext();
+        patch.CalculateBlurMetric();
+        CImage binarized_patch = binarizer.Binarize(patch);
+        patch.CopyMetadataTo(binarized_patch);
+        patches.push_back(binarized_patch);
     }
+    // сортируем по убыванию
+    std::sort(patches.begin(), patches.end(), Greater());
     
+    int good = 0, bad = 0;
+    
+    CImage binarized_patch = binarizer.Binarize(patch);
     CImageComparatorL1 imgComparator = CImageComparatorL1();
+    
     for (int i = 0; i < patches.size(); i++) {
-        if (imgComparator.Compare(patch, patches[i]) < ComparisonEps) {
-            _window.DrawRect(patches[i].GetFrame());
+        if (imgComparator.Compare(binarized_patch, patches[i]) < ComparisonEps) {
+            // чем больше размытия, тем темнее рамка вокруг патча
+            cv::Scalar color = RGB(0, patches[i].GetBlurMetricValue()/(patches[i].cols * patches[i].rows) * 255, 0);
+            _window.DrawRect(patches[i].GetFrame(), color);
+            good++;
+        } else {
+            bad++;
+        }
+        
+        if (i % ProgressCount == 0) {
+            std::cout << "Progress: " << (float)i/(float)patches.size() * 100 << "%\n\tGood: " << good << "\n\tBad: " << bad << std::endl;
         }
     }
+    
+    _window.DrawRect(patches[0].GetFrame(), TRectColorGreen);
 }
 
+#pragma mark - Algorithms
+
+double CImageProcessor::MeasureBlurWithFFTImage(const CImage &image)
+{
+    cv::Size submatrixSize = cv::Size(ceil(image.cols * BlurMetricRadiusRatio), ceil(image.rows * BlurMetricRadiusRatio));
+    cv::Point submatrixOrigin = cv::Point((image.cols - submatrixSize.width) / 2, (image.rows - submatrixSize.height) / 2);
+    cv::Rect submatrixRect = cv::Rect(submatrixOrigin, submatrixSize);
+    
+    CImage imageCopy;
+    image.copyTo(imageCopy);
+    
+    CImage roi = imageCopy(submatrixRect);
+    roi.setTo(0);
+    
+    return cv::sum(imageCopy)[0];
+}
 
 CImage CImageProcessor::GetPatchImageFromImage(const CImage &img, const cv::Rect &patchRect)
 {

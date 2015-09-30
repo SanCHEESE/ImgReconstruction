@@ -27,6 +27,7 @@ public:
     static std::vector<CImage> FetchSimilarPatches(const CImage& img, const cv::Rect& patchRect);
     static CImage GetPatchImageFromImage(const CImage& img, const cv::Rect& patchRect);
     static CImage FFT(const CImage& image);
+    static double MeasureBlurWithFFTImage(const CImage& image);
     
     // CWindowDelegate
     virtual void WindowDidSelectPatch(const CImage& img, const cv::Rect& patchRect);
@@ -36,6 +37,6 @@ private:
     CImage _displayImage;
     
     CWindow _window;
-    
     CWindow _fftWindow;
+    float _progress;
 };

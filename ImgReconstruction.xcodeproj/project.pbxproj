@@ -30,6 +30,7 @@
 /* Begin PBXFileReference section */
 		5339CA181BB7CF2A000B3B28 /* ImgReconstruction */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImgReconstruction; sourceTree = BUILT_PRODUCTS_DIR; };
 		5339CA1B1BB7CF2A000B3B28 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		536A27A21BBB954200D3B4F5 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
 		53A6930A1BB7D2F60097DFED /* IBinarizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IBinarizer.hpp; path = Core/IBinarizer.hpp; sourceTree = "<group>"; };
 		53A6930D1BB7D4BC0097DFED /* CWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CWindow.cpp; path = GUI/CWindow.cpp; sourceTree = "<group>"; };
 		53A6930E1BB7D4BC0097DFED /* CWindow.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CWindow.hpp; path = GUI/CWindow.hpp; sourceTree = "<group>"; };
@@ -59,6 +60,7 @@
 		5339CA0F1BB7CF2A000B3B28 = {
 			isa = PBXGroup;
 			children = (
+				536A27A21BBB954200D3B4F5 /* images */,
 				5339CA1A1BB7CF2A000B3B28 /* ImgReconstruction */,
 				5339CA191BB7CF2A000B3B28 /* Products */,
 			);
@@ -151,6 +153,7 @@
 				5339CA141BB7CF2A000B3B28 /* Sources */,
 				5339CA151BB7CF2A000B3B28 /* Frameworks */,
 				5339CA161BB7CF2A000B3B28 /* CopyFiles */,
+				536A27A11BBB7C0400D3B4F5 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -191,6 +194,22 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		536A27A11BBB7C0400D3B4F5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "TAGS=\"TODO:|FIXME:\"\nERRORTAG=\"ERROR:\"\nfind \"${SRCROOT}\" \\( -name \"*.hpp\" -or -name \"*.cpp\" \\) -print0 | xargs -0 egrep --with-filename --line-number --only-matching \"($TAGS).*\\$|($ERRORTAG).*\\$\" | perl -p -e \"s/($TAGS)/ warning: \\$1/\" | perl -p -e \"s/($ERRORTAG)/ error: \\$1/\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5339CA141BB7CF2A000B3B28 /* Sources */ = {
