@@ -11,8 +11,8 @@
 #include "CImageComparatorL1.hpp"
 
 static const int ProgressCount = 300;
-static const int ThresholdValue = 120;
-static const int ComparisonEps = 2;
+static const int ThresholdValue = 100;
+static const int ComparisonEps = 6;
 static const int MaxPatchSideSize = 6;
 static const float BlurMetricRadiusRatio = 0.3f;
 const std::string FftWindowName = "Fft";
@@ -39,6 +39,8 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
         // бинаризованное изображение
         CThreshBinarizer binarizer = CThreshBinarizer(ThresholdValue);
         _binarizedImage = binarizer.Binarize(_image);
+        
+//        _binarizedImage.copyTo(_displayImage)
     }
     
     _window.Show();
@@ -57,7 +59,7 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
     CImage patchFft = FFT(patch);
     CImage zoomedPatchFft;
     cv::resize(patchFft, zoomedPatchFft, cv::Size(128, 128), 0, 0, cv::INTER_NEAREST);
-    _fftWindow = CWindow(CWindow(FftWindowName, zoomedPatchFft));
+    _fftWindow = CWindow(CWindow(FftWindowName, _binarizedImage));
     _fftWindow.Show();
     
     std::vector<CImage> patches;
@@ -71,7 +73,7 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
         patch.CopyMetadataTo(binarized_patch);
         patches.push_back(binarized_patch);
     }
-    // сортируем по убыванию
+    // сортируем по убыванию четкости
     std::sort(patches.begin(), patches.end(), Greater());
     
     int good = 0, bad = 0;
@@ -83,7 +85,8 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
         if (imgComparator.Compare(binarized_patch, patches[i]) < ComparisonEps) {
             // чем больше размытия, тем темнее рамка вокруг патча
             cv::Scalar color = RGB(0, patches[i].GetBlurMetricValue()/(patches[i].cols * patches[i].rows) * 255, 0);
-            _window.DrawRect(patches[i].GetFrame(), color);
+            // похожий самый четкий патч выделяем таким же цветом
+            _window.DrawRect(patches[i].GetFrame(), i == 0 ? RGB(0, 255, 0) : color);
             good++;
         } else {
             bad++;
@@ -94,7 +97,7 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
         }
     }
     
-    _window.DrawRect(patches[0].GetFrame(), TRectColorGreen);
+
 }
 
 #pragma mark - Algorithms

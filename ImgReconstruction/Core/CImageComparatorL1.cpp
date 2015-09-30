@@ -10,7 +10,7 @@
 
 double CImageComparatorL1::Compare(const CImage& img1, const CImage& img2)
 {
-    cv::Scalar result = cv::sum(img1 - img2);
-    std::cout << img1 << std::endl << img2 << std::endl << result << std::endl;
-    return result[0] / 255;
+    CImage result;
+    cv::absdiff(img1, img2, result);
+    return sum(result)[0] / 255;
 }
