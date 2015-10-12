@@ -8,6 +8,12 @@
 #pragma once
 
 typedef enum : int {
+    TDrawModeStamp,
+    TDrawModeDraw,
+    TDrawModeNone
+} TDrawMode;
+
+typedef enum : int {
     TRectColorRed,
     TRectColorBlue,
     TRectColorGreen,
@@ -16,6 +22,7 @@ typedef enum : int {
 struct DrawableRect {
     cv::Rect rect;
     cv::Scalar color;
+    int thickness;
 };
 
 class CWindowDelegate
@@ -31,11 +38,13 @@ class CWindow
 public:
     CWindow(const std::string& name) : _name(name)
     {
+        _drawMode = TDrawModeStamp;
         _isDrawing = false;
     };
     CWindow(const std::string& name, CImage& image) : _image(image), _name(name)
     {
         _image.copyTo(_originalImage);
+        _drawMode = TDrawModeStamp;
         _isDrawing = false;
     };
     
@@ -48,8 +57,8 @@ public:
     void ObserveKeyboard();
     void StartObservingMouse();
 
-    void DrawRect(const cv::Rect rect, const cv::Scalar& color);
-    void DrawRect(const cv::Rect rect, TRectColor colorType);
+    void DrawRect(const cv::Rect rect, const cv::Scalar& color, int thickness = 1);
+    void DrawRect(const cv::Rect rect, TRectColor colorType, int thickness = 1);
     void DrawRects(const std::vector<DrawableRect>& rects);
     
     CWindowDelegate* delegate;
@@ -61,8 +70,11 @@ private:
     
     CImage _originalImage;
     
+    cv::Rect _stampRect;
     cv::Rect _drawingBox;
     int _maxBoxSideSize;
+    TDrawMode _drawMode;
+    
     bool _isDrawing;
     
     std::vector<DrawableRect> rectsToDraw;

@@ -8,7 +8,7 @@
 
 #include "CImageComparatorL1.hpp"
 
-double CImageComparatorL1::Compare(const CImage& img1, const CImage& img2)
+double CImageComparatorL1::Compare(const CImage& img1, const CImage& img2) const
 {
     CImage result;
     cv::absdiff(img1, img2, result);

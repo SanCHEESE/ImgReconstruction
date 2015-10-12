@@ -29,13 +29,13 @@ void CWindow::Update(const CImage& img)
 }
 
 
-void CWindow::DrawRect(const cv::Rect rect, const cv::Scalar &color)
+void CWindow::DrawRect(const cv::Rect rect, const cv::Scalar &color, int thickness)
 {
-    cv::rectangle(_image, cv::Point(rect.x, rect.y), cv::Point(rect.x + rect.width, rect.y + rect.height), color, 1.5);
+    cv::rectangle(_image, cv::Point(rect.x, rect.y), cv::Point(rect.x + rect.width, rect.y + rect.height), color, thickness);
     cv::imshow(_name, _image);
 }
 
-void CWindow::DrawRect(const cv::Rect rect, TRectColor colorType)
+void CWindow::DrawRect(const cv::Rect rect, TRectColor colorType, int thickness)
 {
     cv::Scalar color;
     switch (colorType) {
@@ -52,13 +52,13 @@ void CWindow::DrawRect(const cv::Rect rect, TRectColor colorType)
             assert(false);
             break;
     }
-    DrawRect(rect, color);
+    DrawRect(rect, color, thickness);
 }
 
 void CWindow::DrawRects(const std::vector<DrawableRect>& rects)
 {
     for (int i = 0; i < rects.size(); i++ ) {
-        cv::rectangle(_image, cv::Point(rects[i].rect.x, rects[i].rect.y), cv::Point(rects[i].rect.x + rects[i].rect.width, rects[i].rect.y + rects[i].rect.height), rects[i].color, 1.5);
+        cv::rectangle(_image, cv::Point(rects[i].rect.x, rects[i].rect.y), cv::Point(rects[i].rect.x + rects[i].rect.width, rects[i].rect.y + rects[i].rect.height), rects[i].color, rects[i].thickness);
     }
     cv::imshow(_name, _image);
 }
@@ -96,16 +96,29 @@ void CWindow::MouseCallback(int event, int x, int y, int flags, void *param)
     
     switch (event) {
         case CV_EVENT_MOUSEMOVE:
-            if (window->_isDrawing) {
+            
+            if (window->_drawMode == TDrawModeDraw && window->_isDrawing) {
                 window->Update(window->_originalImage);
-                window->_drawingBox.width = MIN(window->_maxBoxSideSize, MAX(x - window->_drawingBox.x, y - window->_drawingBox.y));
+                window->_drawingBox.width = MIN(window->_maxBoxSideSize, MAX(std::abs(x - window->_drawingBox.x), std::abs(y - window->_drawingBox.y)));
                 window->_drawingBox.height = window->_drawingBox.width;
                 window->DrawRect(window->_drawingBox, TRectColorRed);
+            } else if (window->_drawMode == TDrawModeStamp) {
+                window->Update(window->_originalImage);
+                window->_stampRect = cv::Rect(x - window->_maxBoxSideSize/2,
+                                              y - window->_maxBoxSideSize/2,
+                                              window->_maxBoxSideSize,
+                                              window->_maxBoxSideSize);
+                window->DrawRect(window->_stampRect, TRectColorBlue);
             }
             break;
         case CV_EVENT_LBUTTONDOWN:
             window->_isDrawing = true;
-            window->_drawingBox = cv::Rect(x, y, 0, 0);
+            if (window->_drawMode == TDrawModeStamp) {
+                window->_drawingBox = window->_stampRect;
+            } else if (window->_drawMode == TDrawModeDraw) {
+                window->_drawingBox = cv::Rect(x, y, 0, 0);
+            }
+
             break;
         case CV_EVENT_LBUTTONUP:
             window->_isDrawing = false;
@@ -114,6 +127,11 @@ void CWindow::MouseCallback(int event, int x, int y, int flags, void *param)
             if (window->_drawingBox.height > 0 && window->_drawingBox.width > 0) {
                 window->delegate->WindowDidSelectPatch(window->_originalImage, window->_drawingBox);
             }
+            break;
+        case CV_EVENT_RBUTTONUP:
+            window->Update(window->_originalImage);
+            window->_drawMode = (TDrawMode)((window->_drawMode + 1) % TDrawModeNone);
+            
             break;
         default:
             break;

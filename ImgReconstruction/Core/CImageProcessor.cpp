@@ -7,21 +7,27 @@
 //
 
 #include "CImageProcessor.hpp"
-#include "CThreshBinarizer.hpp"
+#include "CDocumentBinarizer.hpp"
 #include "CImageComparatorL1.hpp"
+#include "CBlurMeasurer.hpp"
 
-static const int ProgressCount = 300;
-static const int ThresholdValue = 100;
-static const int ComparisonEps = 2;
-static const int MaxPatchSideSize = 6;
-static const float BlurMetricRadiusRatio = 0.5f;
+static const int ProgressCount = 1000;
+static const int ComparisonEps = 5;
+static const int MaxPatchSideSize = 10;
+static const float BlurMetricRadiusRatio = 0.2f;
 const std::string FftWindowName = "Fft";
+const std::string BinarizedWindowName = "Binarized";
+
+struct ImagePair {
+    CImage grayImage;
+    CImage binImage;
+};
 
 struct Greater
 {
-    inline bool operator() (const CImage& img1, const CImage& img2)
+    inline bool operator() (const ImagePair& imgPair1, const ImagePair& imgPair2)
     {
-        return img1.GetBlurMetricValue() > img2.GetBlurMetricValue();
+        return imgPair1.grayImage.GetBlurValue() > imgPair2.grayImage.GetBlurValue();
     }
 };
 
@@ -37,14 +43,18 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
         cv::cvtColor(_displayImage, _displayImage, CV_GRAY2RGBA);
         
         // бинаризованное изображение
-        CThreshBinarizer binarizer = CThreshBinarizer(ThresholdValue);
+        CDocumentBinarizer binarizer(cv::Size(25, 25));
         _binarizedImage = binarizer.Binarize(_image);
+        
+        
+        _binarizedWindow = CWindow(BinarizedWindowName, _binarizedImage);
+        _binarizedWindow.Show();
+        _binarizedWindow.Update(_binarizedImage);
     }
     
-    
-    _fftWindow = CWindow(CWindow(FftWindowName, _binarizedImage));
-    _fftWindow.Show();
-    _fftWindow.Update(_binarizedImage);
+//    _fftWindow = CWindow(FftWindowName, _binarizedImage);
+//    _fftWindow.Show();
+//    _fftWindow.Update(_binarizedImage);
     
     _window.Show();
     _window.SetMaxBoxSideSize(MaxPatchSideSize);
@@ -65,33 +75,44 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
 //    _fftWindow = CWindow(CWindow(FftWindowName, _binarizedImage));
 //    _fftWindow.Show();
     
-    std::vector<CImage> patches;
-    CThreshBinarizer binarizer = CThreshBinarizer(ThresholdValue);
-    // извлекаем патчи, бинаризуем и считаем метрику размытия
-    CImage::CPatchIterator patchIterator = _image.GetPatchIterator(cv::Size(patchRect.width, patchRect.height), cv::Point(1, 1));
+    cv::Size patchSize = cv::Size(patchRect.width, patchRect.height);
+    cv::Point offset = cv::Point(1, 1);
+//    cv::Point offset = cv::Point(patchRect.width, patchRect.height);
+    
+    std::vector<ImagePair> patches;
+    CImage::CPatchIterator patchIterator = _image.GetPatchIterator(patchSize, offset);
+    CImage::CPatchIterator binPatchIterator = _binarizedImage.GetPatchIterator(patchSize, offset);
     while (patchIterator.HasNext()) {
-        CImage patch = patchIterator.GetNext();
-        patch.CalculateBlurMetric();
-        CImage binarized_patch = binarizer.Binarize(patch);
-        patch.CopyMetadataTo(binarized_patch);
-        patches.push_back(binarized_patch);
+        ImagePair imgPair;
+        imgPair.grayImage = patchIterator.GetNext();
+        imgPair.binImage = binPatchIterator.GetNext();
+        imgPair.grayImage.CalculateBlurValue(TBlurMeasureMethodCovariance);
+        imgPair.grayImage.CopyMetadataTo(imgPair.binImage);
+        patches.push_back(imgPair);
     }
+    
     // сортируем по убыванию четкости
     std::sort(patches.begin(), patches.end(), Greater());
     
+    // бинаризуем выбранный патч
+    CDocumentBinarizer binarizer = CDocumentBinarizer(patchSize);
+    CImage binarized_patch = GetPatchImageFromImage(_binarizedImage, patchRect);
+
     int good = 0, bad = 0;
-    
-    CImage binarized_patch = binarizer.Binarize(patch);
-    CImageComparatorL1 imgComparator = CImageComparatorL1();
-    
+
+    CImageComparatorL1 imgComparator;
     std::vector<DrawableRect> rectsToDraw;
-    
     for (int i = 0; i < patches.size(); i++) {
-        if (imgComparator.Compare(binarized_patch, patches[i]) < ComparisonEps) {
+
+        // раскомментировать для просмотра тепловой карты блюра
+//        cv::Scalar color = RGB(0, patches[i].grayImage.GetBlurValue() * 255, 0);
+//        rectsToDraw.push_back({patches[i].grayImage.GetFrame(), i == 0 ? RGB(0, 255, 0) : color, CV_FILLED});
+        
+        if (imgComparator.Compare(binarized_patch, patches[i].binImage) < ComparisonEps) {
             // чем больше размытия, тем темнее рамка вокруг патча
-            cv::Scalar color = RGB(0, (patches[i].GetBlurMetricValue() > 10 ? 36 : patches[i].GetBlurMetricValue())/(patches[i].cols * patches[i].rows) * 255, 0);
+            cv::Scalar color = RGB(0, patches[i].grayImage.GetBlurValue() * 255, 0);
             // похожий самый четкий патч выделяем таким же цветом
-            rectsToDraw.push_back({patches[i].GetFrame(), i == 0 ? RGB(0, 255, 0) : color});
+            rectsToDraw.push_back({patches[i].grayImage.GetFrame(), i == 0 ? RGB(0, 255, 0) : color});
             good++;
         } else {
             bad++;
@@ -105,7 +126,16 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
     _window.DrawRects(rectsToDraw);
 }
 
+#pragma mark - Utils
+
+CImage CImageProcessor::GetPatchImageFromImage(const CImage &img, const cv::Rect &patchRect)
+{
+    return CImage(img, patchRect);
+}
+
 #pragma mark - Algorithms
+
+#pragma mark - Not used
 
 double CImageProcessor::MeasureBlurWithFFTImage(const CImage &image)
 {
@@ -119,12 +149,9 @@ double CImageProcessor::MeasureBlurWithFFTImage(const CImage &image)
     CImage roi = imageCopy(submatrixRect);
     roi.setTo(0);
     
-    return cv::sum(imageCopy)[0];
-}
-
-CImage CImageProcessor::GetPatchImageFromImage(const CImage &img, const cv::Rect &patchRect)
-{
-    return CImage(img, patchRect);
+    double normalizedValue = cv::sum(imageCopy)[0]/AREA(image);
+    // value from 0 to 1
+    return normalizedValue;
 }
 
 CImage CImageProcessor::FFT(const CImage &image)

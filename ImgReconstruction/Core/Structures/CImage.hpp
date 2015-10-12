@@ -11,19 +11,23 @@
 class CImage : public cv::Mat
 {
 public:
-    CImage() : cv::Mat() {};
-    CImage(const cv::Mat mat) : cv::Mat(mat) {};
-    CImage(const std::string& path, int flags) : cv::Mat(cv::imread(path, flags)) {};
-    CImage(int rows, int cols, int type, const cv::Scalar& scalar) : cv::Mat(rows, cols, type, scalar) {};
-    CImage(const CImage& image, const cv::Rect& roi) : cv::Mat(image, roi) {}
-    CImage(const cv::Size size, int type, int value) : cv::Mat(size, type, value) {}
+    CImage() : cv::Mat() {Initialize();};
+    CImage(const cv::Mat mat) : cv::Mat(mat) {Initialize();};
+    CImage(const std::string& path, int flags) : cv::Mat(cv::imread(path, flags)) {Initialize();};
+    CImage(int rows, int cols, int type, const cv::Scalar& scalar) : cv::Mat(rows, cols, type, scalar) {Initialize();};
+    CImage(const CImage& image, const cv::Rect& roi) : cv::Mat(image, roi) {Initialize();}
+    CImage(const cv::Size size, int type, int value) : cv::Mat(size, type, value) {Initialize();}
+    
+    void Initialize();
     
     CImage GetPatch(const cv::Rect& rect) const;
+    std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point offset) const;
     cv::Rect GetFrame() const;
-    double GetBlurMetricValue() const;
+    double GetBlurValue() const;
     
     void CopyMetadataTo(CImage& image);
-    double CalculateBlurMetric();
+    double CalculateBlurValue(int blurMeasureMethod);
+    
     
     class CPatchIterator
     {
@@ -49,5 +53,5 @@ public:
 private:
     cv::Rect _frame;
     
-    double _blurMetricValue;
+    double _blurValue;
 };

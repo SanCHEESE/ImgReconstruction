@@ -8,6 +8,14 @@
 
 #include "CImage.hpp"
 #include "CImageProcessor.hpp"
+#include "CBlurMeasurer.hpp"
+
+#pragma mark - Initialization
+
+void CImage::Initialize()
+{
+    _blurValue = -1;
+}
 
 #pragma mark - CImage
 CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect) const
@@ -20,26 +28,37 @@ CImage CImage::GetPatch(const cv::Rect &rect) const
     return CImage(*this, rect);
 }
 
+std::vector<CImage> CImage::GetAllPatches(const cv::Size& size, const cv::Point offset) const
+{
+    std::vector<CImage> patches;
+    CImage::CPatchIterator patchIterator = GetPatchIterator(size, offset);
+    while (patchIterator.HasNext()) {
+        patches.push_back(patchIterator.GetNext());
+    }
+    return patches;
+}
+
 cv::Rect CImage::GetFrame() const
 {
     return _frame;
 }
 
-double CImage::GetBlurMetricValue() const
+double CImage::GetBlurValue() const
 {
-    return _blurMetricValue;
+    return _blurValue;
 }
 
-double CImage::CalculateBlurMetric()
+double CImage::CalculateBlurValue(int blurMeasureMethod)
 {
-    CImage fft = CImageProcessor::FFT(*this);
-    return _blurMetricValue = CImageProcessor::MeasureBlurWithFFTImage(fft);
+    // FIXME: type conversion
+    CBlurMeasurer blureMeasurer((TBlurMeasureMethod)blurMeasureMethod);
+    return _blurValue = blureMeasurer.Measure(*this);
 }
 
 void CImage::CopyMetadataTo(CImage &image)
 {
     image._frame = this->_frame;
-    image._blurMetricValue = this->_blurMetricValue;
+    image._blurValue = this->_blurValue;
 }
 
 #pragma mark - CPatchIterator
@@ -65,7 +84,7 @@ CImage CImage::CPatchIterator::GetNext()
     // копируем матрицу
     for (int i = 0; i < patch.rows; i++) {
         for (int j = 0; j < patch.cols; j++) {
-            normPatch.data[normPatch.channels()*(patch.cols * i + j)] = patch.at<uint8_t>(i, j);
+            normPatch.data[normPatch.channels()*(patch.cols * i + j)] = patch.at<char>(i, j);
         }
     }
     

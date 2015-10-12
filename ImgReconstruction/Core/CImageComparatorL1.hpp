@@ -11,5 +11,5 @@
 class CImageComparatorL1 : public IImageComparator
 {
 public:
-    virtual double Compare(const CImage& img1, const CImage& img2);
+    virtual double Compare(const CImage& img1, const CImage& img2) const;
 };

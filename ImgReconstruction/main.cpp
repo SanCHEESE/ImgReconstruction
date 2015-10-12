@@ -7,7 +7,6 @@
 //
 
 #include "CWindow.hpp"
-#include "CThreshBinarizer.hpp"
 #include "CImageProcessor.hpp"
 
 static const std::string PathToImg = "../../images/img2.jpg";

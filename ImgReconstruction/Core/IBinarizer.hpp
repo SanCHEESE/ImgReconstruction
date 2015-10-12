@@ -11,5 +11,5 @@ class IBinarizer
 {
 public:
     virtual ~IBinarizer() {}
-    virtual CImage Binarize(CImage& img) = 0;
+    virtual CImage Binarize(const CImage& img) const = 0;
 };

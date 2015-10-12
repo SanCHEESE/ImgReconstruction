@@ -9,13 +9,15 @@
 #pragma once
 
 #include "CWindow.hpp"
+#include "IBinarizer.hpp"
 
 extern const std::string FftWindowName;
+extern const std::string BinarizedWindowName;
 
 class CImageProcessor : public CWindowDelegate
 {
 public:
-    CImageProcessor(const CWindow& window) : _window(window), _fftWindow(FftWindowName)
+    CImageProcessor(const CWindow& window) : _window(window), _fftWindow(FftWindowName), _binarizedWindow(BinarizedWindowName)
     {
         _window.delegate = this;
     }
@@ -38,5 +40,6 @@ private:
     
     CWindow _window;
     CWindow _fftWindow;
+    CWindow _binarizedWindow;
     float _progress;
 };

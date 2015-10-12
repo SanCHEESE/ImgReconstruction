@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <iterator>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -27,5 +28,6 @@
 #define RGB(r, g, b) (cv::Scalar((b), (g), (r)))
 #define RGBA(r, g, b, a) (cv::Scalar((b), (g), (r), (a)))
 #define PRINT_LINE(line) (std::cout<<(line)<<std::endl)
+#define AREA(image) (image.cols * image.rows)
 
 #endif /* PrefixHeader_pch */
