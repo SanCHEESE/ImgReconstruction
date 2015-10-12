@@ -122,6 +122,7 @@ void CWindow::MouseCallback(int event, int x, int y, int flags, void *param)
             break;
         case CV_EVENT_LBUTTONUP:
             window->_isDrawing = false;
+            window->_drawMode = TDrawModeNone;
             window->Update(window->_originalImage);
             window->DrawRect(window->_drawingBox, TRectColorRed);
             if (window->_drawingBox.height > 0 && window->_drawingBox.width > 0) {
