@@ -50,9 +50,15 @@ double CImage::GetBlurValue() const
 
 double CImage::CalculateBlurValue(int blurMeasureMethod)
 {
-    // FIXME: type conversion
     CBlurMeasurer blureMeasurer((TBlurMeasureMethod)blurMeasureMethod);
     return _blurValue = blureMeasurer.Measure(*this);
+}
+
+double CImage::StandartDeviation() const
+{
+    cv::Scalar mean, stddev;
+    cv::meanStdDev(*this, mean, stddev);
+    return stddev[0];
 }
 
 void CImage::CopyMetadataTo(CImage &image)

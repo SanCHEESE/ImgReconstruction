@@ -8,7 +8,7 @@
 
 #include "CDocumentBinarizer.hpp"
 
-static double const k = -0.1f;
+static double const k = -0.2f;
 
 CImage CDocumentBinarizer::Binarize(const CImage &img) const
 {
@@ -35,11 +35,8 @@ CImage CDocumentBinarizer::Binarize(const CImage &img) const
                 break;
             }
             case TBinarizationMethodNiBlack:
-            {
-                double pixelsSumOfSquares = cv::sum(covarMat.mul(covarMat))[0];
-                thresholdValue = mean + k * sqrt((pixelsSumOfSquares)/patchAreaInPixels);
+                thresholdValue = mean + k * img.StandartDeviation() - 10;
                 break;
-            }
             default:
                 break;
         }

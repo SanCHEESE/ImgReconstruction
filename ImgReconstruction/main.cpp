@@ -9,7 +9,7 @@
 #include "CWindow.hpp"
 #include "CImageProcessor.hpp"
 
-static const std::string PathToImg = "../../images/img2.jpg";
+static const std::string PathToImg = "../../images/img1.jpg";
 static const std::string WindowName = "Press Esc to quit";
 
 using namespace cv;

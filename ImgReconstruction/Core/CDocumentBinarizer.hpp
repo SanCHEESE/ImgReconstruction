@@ -19,7 +19,7 @@ class CDocumentBinarizer: public IBinarizer
 {
 public:
     CDocumentBinarizer() {_patchSize = cv::Size(30, 30);};
-    CDocumentBinarizer(const cv::Size& patchSize, TBinarizationMethod binMethod = TBinarizationMethodNICK) : _patchSize(patchSize), _binMethod(binMethod) {};
+    CDocumentBinarizer(const cv::Size& patchSize, TBinarizationMethod binMethod = TBinarizationMethodNiBlack) : _patchSize(patchSize), _binMethod(binMethod) {};
     
     virtual CImage Binarize(const CImage& img) const;
 public:

@@ -12,8 +12,8 @@
 double CBlurMeasurer::Measure(const CImage& img) const
 {
     switch (_measureMethod) {
-        case TBlurMeasureMethodCovariance:
-            return MeasureUsingCovariance(img);
+        case TBlurMeasureMethodStandartDeviation:
+            return MeasureUsingStdDeviation(img);
         case TBlurMeasureMethodDynamicRange:
             return MeasureUsingDynamicRange(img);
         case TBlurMeasureMethodFFT:
@@ -25,11 +25,23 @@ double CBlurMeasurer::Measure(const CImage& img) const
     return 0;
 }
 
-double CBlurMeasurer::MeasureUsingCovariance(const CImage &img) const
+double CBlurMeasurer::MeasureUsingStdDeviation(const CImage &img) const
 {
-    CImage covar, mean;
-    cv::calcCovarMatrix(img, covar, mean, CV_COVAR_ROWS | CV_COVAR_NORMAL);
-    return cv::sum(covar)[0]/(255 * AREA(img));
+    CImage image32f;
+    img.convertTo(image32f, CV_32F);
+    
+    CImage mu;
+    cv::blur(image32f, mu, img.GetFrame().size());
+    
+    CImage mu2;
+    cv::blur(image32f.mul(image32f), mu2, img.GetFrame().size());
+    
+    CImage sigma;
+    cv::sqrt(mu2 - mu.mul(mu), sigma);
+    
+    double stddev = cv::sum(sigma)[0];
+    
+    return stddev/255;
 }
 
 double CBlurMeasurer::MeasureUsingDynamicRange(const CImage &img) const

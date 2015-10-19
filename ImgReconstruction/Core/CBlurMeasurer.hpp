@@ -11,7 +11,7 @@
 #include "IMeasurer.hpp"
 
 typedef enum : int {
-    TBlurMeasureMethodCovariance,
+    TBlurMeasureMethodStandartDeviation,
     TBlurMeasureMethodDynamicRange,
     TBlurMeasureMethodFFT,
     
@@ -26,7 +26,7 @@ public:
     
     virtual double Measure(const CImage& img) const;
 private:
-    double MeasureUsingCovariance(const CImage& img) const;
+    double MeasureUsingStdDeviation(const CImage& img) const;
     double MeasureUsingDynamicRange(const CImage& img) const;
     double MeasureUsingFFT(const CImage& img) const;
     

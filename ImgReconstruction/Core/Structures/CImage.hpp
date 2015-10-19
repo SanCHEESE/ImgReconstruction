@@ -15,8 +15,10 @@ public:
     CImage(const cv::Mat mat) : cv::Mat(mat) {Initialize();};
     CImage(const std::string& path, int flags) : cv::Mat(cv::imread(path, flags)) {Initialize();};
     CImage(int rows, int cols, int type, const cv::Scalar& scalar) : cv::Mat(rows, cols, type, scalar) {Initialize();};
-    CImage(const CImage& image, const cv::Rect& roi) : cv::Mat(image, roi) {Initialize();}
+    CImage(const CImage& image, const cv::Rect& roi) : cv::Mat(image, roi) {Initialize(); _frame = roi;}
     CImage(const cv::Size size, int type, int value) : cv::Mat(size, type, value) {Initialize();}
+    
+    
     
     void Initialize();
     
@@ -27,7 +29,7 @@ public:
     
     void CopyMetadataTo(CImage& image);
     double CalculateBlurValue(int blurMeasureMethod);
-    
+    double StandartDeviation() const;
     
     class CPatchIterator
     {
