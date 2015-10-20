@@ -50,6 +50,7 @@ public:
     
     void Show(int flags = CV_WINDOW_AUTOSIZE);
     void Update(const CImage& img);
+    CImage GetImage() const;
     
     void SetOriginalImage(const CImage& originalImage);
     void SetMaxBoxSideSize(int boxSideSize);

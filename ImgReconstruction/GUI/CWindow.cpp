@@ -28,6 +28,12 @@ void CWindow::Update(const CImage& img)
     img.copyTo(_image);
 }
 
+CImage CWindow::GetImage() const
+{
+    CImage result;
+    _image.copyTo(result);
+    return result;
+}
 
 void CWindow::DrawRect(const cv::Rect rect, const cv::Scalar &color, int thickness)
 {

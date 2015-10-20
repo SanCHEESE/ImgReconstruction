@@ -27,21 +27,24 @@ double CBlurMeasurer::Measure(const CImage& img) const
 
 double CBlurMeasurer::MeasureUsingStdDeviation(const CImage &img) const
 {
-    CImage image32f;
-    img.convertTo(image32f, CV_32F);
+//    CImage image32f;
+//    img.convertTo(image32f, CV_32F);
+//    
+//    CImage mu;
+//    cv::blur(image32f, mu, img.GetFrame().size());
+//    
+//    CImage mu2;
+//    cv::blur(image32f.mul(image32f), mu2, img.GetFrame().size());
+//    
+//    CImage sigma;
+//    cv::sqrt(mu2 - mu.mul(mu), sigma);
+//    
+//    double stddev = cv::sum(sigma)[0];
     
-    CImage mu;
-    cv::blur(image32f, mu, img.GetFrame().size());
+    cv::Scalar mean, stddev;
+    cv::meanStdDev(img, mean, stddev);
     
-    CImage mu2;
-    cv::blur(image32f.mul(image32f), mu2, img.GetFrame().size());
-    
-    CImage sigma;
-    cv::sqrt(mu2 - mu.mul(mu), sigma);
-    
-    double stddev = cv::sum(sigma)[0];
-    
-    return stddev/255;
+    return stddev[0]/(double)AREA(img);
 }
 
 double CBlurMeasurer::MeasureUsingDynamicRange(const CImage &img) const

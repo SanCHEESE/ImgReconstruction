@@ -82,7 +82,7 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
     }
     
     // сортируем по убыванию четкости
-    std::sort(patches.begin(), patches.end(), Greater());
+//    std::sort(patches.begin(), patches.end(), Greater());
     
     // бинаризуем выбранный патч
     CDocumentBinarizer binarizer = CDocumentBinarizer(patchSize);
@@ -95,7 +95,8 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
     for (int i = 0; i < patches.size(); i++) {
 
         // раскомментировать для просмотра тепловой карты блюра
-        cv::Scalar color = RGB(0, patches[i].grayImage.GetBlurValue() * 255, 0);
+        double colorComp = patches[i].grayImage.GetBlurValue() * 255;
+        cv::Scalar color = RGB(colorComp, colorComp, colorComp);
         rectsToDraw.push_back({patches[i].grayImage.GetFrame(), i == 0 ? RGB(0, 255, 0) : color, CV_FILLED});
         
 //        if (imgComparator.Compare(binarized_patch, patches[i].binImage) < ComparisonEps) {
@@ -114,6 +115,11 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
     }
     
     _window.DrawRects(rectsToDraw);
+    
+    std::vector<int> compression_params;
+    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(100);
+    cv::imwrite("../../result.jpg", _window.GetImage(), compression_params);
 }
 
 #pragma mark - Utils
