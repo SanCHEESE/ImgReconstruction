@@ -13,9 +13,7 @@
 #include "CTimeLogger.hpp"
 #include "CImageClassifier.hpp"
 
-
-static const int ProgressCount = 1000;
-static const int ComparisonEps = 15;
+static const int ComparisonEps = 35;
 static const int MaxPatchSideSize = 10;
 static const float BlurMetricRadiusRatio = 0.2f;
 
@@ -27,6 +25,7 @@ const cv::Point PatchOffset = cv::Point(1, 1);
 
 const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodStandartDeviation;
 const TBinarizationMethod BinMethod = TBinarizationMethodNiBlack;
+const TImageCompareMetric CompMetric = TImageCompareMetricL2;
 
 
 void CImageProcessor::StartProcessingChain(const CImage& img)
@@ -87,7 +86,10 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
     selectedPatch.SetGrayImage(GetPatchImageFromImage(_mainImage.GrayImage(), patchRect));
     selectedPatch.SetBinImage(GetPatchImageFromImage(_mainImage.BinImage(), patchRect));
     
-    std::cout << "-------\nSelected patch: " << selectedPatch.GetFrame() << "\n-------" << std::endl;
+    selectedPatch.BlurValue(BlurMeasureMethod);
+    selectedPatch.StandartDeviation();
+    selectedPatch.ImgClass();
+    std::cout << "-------\nSelectedPatch:\n" << selectedPatch << "\n-------" <<std::endl;
 
     CTimeLogger::StartLogging();
     // храним пару - gray & бинаризованное изображения
@@ -107,7 +109,8 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
     int good = 0, bad = 0;
 
     CTimeLogger::StartLogging();
-    CImageComparator imgComparator;
+    std::cout << "Similar patches:\n";
+    CImageComparator imgComparator(CompMetric);
     std::vector<DrawableRect> rectsToDraw;
     for (int i = 0; i < patches.size(); i++) {
 
@@ -120,17 +123,22 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
             continue;
         }
         
-        if (imgComparator.Compare(selectedPatch.BinImage(), patches[i].BinImage()) < ComparisonEps) {
+        int distance = imgComparator.Compare(selectedPatch.BinImage(), patches[i].BinImage());
+        if (distance < ComparisonEps) {
             // чем больше размытия, тем темнее рамка вокруг патча
             cv::Scalar color = RGB(0, patches[i].BlurValue(BlurMeasureMethod) * 255, 0);
-            // похожий самый четкий патч выделяем таким же цветом
-            rectsToDraw.push_back({patches[i].GetFrame(), i == 0 ? RGB(0, 255, 0) : color});
+            rectsToDraw.push_back({patches[i].GetFrame(), color});
             good++;
+            
+            std::cout << "\t" << std::setw(4) << good << ". Frame: " << patches[i].GetFrame() << " Distance: " \
+                << std::setw(3) << distance <<  " Class: " << patches[i].ImgClass() << std::endl;
         } else {
             bad++;
         }
     }
-    CTimeLogger::Print("Finding similar patches:");
+    std::cout << "\nGood patches: " << good << std::endl;
+    CTimeLogger::Print("Similar patches search:");
+    CTimeLogger::PrintTotalTime();
     
     _window.DrawRects(rectsToDraw);
     

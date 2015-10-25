@@ -22,7 +22,7 @@ public:
 private:
     double CompareL1(const CImage& img1, const CImage& img2) const;
     double CompareL2(const CImage& img1, const CImage& img2) const;
-    double CompareLDCT(const CImage& img1, const CImage& img2) const;
+    double CompareDCT(const CImage& img1, const CImage& img2) const;
     
     TImageCompareMetric _compMetric;
 };

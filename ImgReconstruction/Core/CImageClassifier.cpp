@@ -22,7 +22,6 @@ int CImageClassifier::Classify(const CImage &image)
     CImage q3(image, qr3);
     CImage q4(image, qr4);
     
-    
     double mean1 = cv::mean(q1)[0];
     double mean2 = cv::mean(q2)[0];
     double mean3 = cv::mean(q3)[0];
@@ -31,10 +30,10 @@ int CImageClassifier::Classify(const CImage &image)
     double totalMean = cv::mean(image)[0];
     
     int result = 0;
-    result = mean1 > totalMean ? result : result | 1;
-    result = mean2 > totalMean ? result : result | 2;
-    result = mean3 > totalMean ? result : result | 4;
-    result = mean4 > totalMean ? result : result | 8;
+    result = mean1 < totalMean ? result : result | 1;
+    result = mean2 < totalMean ? result : result | 2;
+    result = mean3 < totalMean ? result : result | 4;
+    result = mean4 < totalMean ? result : result | 8;
     
     return result;
 }

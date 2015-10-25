@@ -44,6 +44,8 @@ public:
     double GetStandartDeviation() const {return _standartDeviation;};
     cv::Rect GetFrame() const {return _frame;};
     
+    friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
+    
 private:
     void Initialize();
     int CalculateImgClass() const;

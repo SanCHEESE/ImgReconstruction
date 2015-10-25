@@ -18,6 +18,24 @@ void CImage::copyTo(CImage &image) const
     CopyMetadataTo(image);
 }
 
+std::ostream& operator<<(std::ostream& os, const CImage& img)
+{
+    for (int i = 0; i < img.rows; i++) {
+        os << "\t\t\t";
+        for (int j = 0; j < img.cols; j++) {
+            os << std::setw(4);
+            os << (int)img.at<uchar>(i, j) << " ";
+        }
+        if (i == img.rows - 1) {
+            os << "\n";
+        } else {
+            os << "\n\n";
+        }
+
+    }
+    return os;
+}
+
 #pragma mark - CImage
 CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect) const
 {
