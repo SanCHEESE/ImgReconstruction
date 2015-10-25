@@ -10,11 +10,12 @@
 #include "CImageProcessor.hpp"
 #include "CBlurMeasurer.hpp"
 
-#pragma mark - Initialization
+#pragma mark - Overrides
 
-void CImage::Initialize()
+void CImage::copyTo(CImage &image) const
 {
-    _blurValue = -1;
+    ((cv::Mat)*this).copyTo(image);
+    CopyMetadataTo(image);
 }
 
 #pragma mark - CImage
@@ -43,28 +44,9 @@ cv::Rect CImage::GetFrame() const
     return _frame;
 }
 
-double CImage::GetBlurValue() const
-{
-    return _blurValue;
-}
-
-double CImage::CalculateBlurValue(int blurMeasureMethod)
-{
-    CBlurMeasurer blureMeasurer((TBlurMeasureMethod)blurMeasureMethod);
-    return _blurValue = blureMeasurer.Measure(*this);
-}
-
-double CImage::StandartDeviation() const
-{
-    cv::Scalar mean, stddev;
-    cv::meanStdDev(*this, mean, stddev);
-    return stddev[0];
-}
-
-void CImage::CopyMetadataTo(CImage &image)
+void CImage::CopyMetadataTo(CImage &image) const
 {
     image._frame = this->_frame;
-    image._blurValue = this->_blurValue;
 }
 
 #pragma mark - CPatchIterator

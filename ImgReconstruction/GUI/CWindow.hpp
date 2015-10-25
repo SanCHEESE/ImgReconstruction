@@ -29,7 +29,7 @@ class CWindowDelegate
 {
 public:
     virtual ~CWindowDelegate() {};
-    virtual void WindowDidSelectPatch(const CImage& img, const cv::Rect& patchRect) = 0;
+    virtual void WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect) = 0;
 };
 
 

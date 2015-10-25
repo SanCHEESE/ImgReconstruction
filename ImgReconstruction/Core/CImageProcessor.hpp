@@ -9,7 +9,7 @@
 #pragma once
 
 #include "CWindow.hpp"
-#include "IBinarizer.hpp"
+#include "CImagePatch.hpp"
 
 extern const std::string DebugWindowName;
 extern const std::string BinarizedWindowName;
@@ -30,17 +30,16 @@ public:
     static CImage FFT(const CImage& image);
     static double MeasureBlurWithFFTImage(const CImage& image);
     static CImage SDFilter(const CImage& image, const cv::Size& filterSize);
+    static double StandartDeviation(const CImage& image);
     
     // utils
     static CImage GetPatchImageFromImage(const CImage& img, const cv::Rect& patchRect);
     static void SaveImage(const std::string path, const CImage& image);
     
     // CWindowDelegate
-    virtual void WindowDidSelectPatch(const CImage& img, const cv::Rect& patchRect);
+    virtual void WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect);
 private:
-    CImage _image;
-    CImage _binarizedImage;
-    CImage _sdImage;
+    CImagePatch _mainImage;
     CImage _displayImage;
     
     CWindow _window;

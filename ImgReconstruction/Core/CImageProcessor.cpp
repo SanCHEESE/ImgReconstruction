@@ -8,63 +8,66 @@
 
 #include "CImageProcessor.hpp"
 #include "CDocumentBinarizer.hpp"
-#include "CImageComparatorL1.hpp"
+#include "CImageComparator.hpp"
 #include "CBlurMeasurer.hpp"
 #include "CTimeLogger.hpp"
+#include "CImageClassifier.hpp"
+
 
 static const int ProgressCount = 1000;
-static const int ComparisonEps = 10;
+static const int ComparisonEps = 15;
 static const int MaxPatchSideSize = 10;
 static const float BlurMetricRadiusRatio = 0.2f;
 
 const std::string DebugWindowName = "Debug";
 const std::string BinarizedWindowName = "Binarized";
 
-struct ImagePatch {
-    CImage grayImage;
-    CImage binImage;
-    CImage sdImage;
-    int imgClass;
-};
+const cv::Size BinaryWindowSize = cv::Size(25, 25);
+const cv::Point PatchOffset = cv::Point(1, 1);
 
-struct Greater
-{
-    inline bool operator() (const ImagePatch& imgPair1, const ImagePatch& imgPair2)
-    {
-        return imgPair1.grayImage.GetBlurValue() > imgPair2.grayImage.GetBlurValue();
-    }
-};
+const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodStandartDeviation;
+const TBinarizationMethod BinMethod = TBinarizationMethodNiBlack;
+
 
 void CImageProcessor::StartProcessingChain(const CImage& img)
 {
+    _mainImage = CImagePatch();
+    _mainImage.SetGrayImage(img);
+    
     {
-        // серое изображение
-        _image = img;
-        
-        // изображение для вывода
-        img.copyTo(_displayImage);
-        // делаем цветным
-        cv::cvtColor(_displayImage, _displayImage, CV_GRAY2RGBA);
-        
+        // строим бинаризованное изображение
         CTimeLogger::StartLogging();
-        // показываем бинаризованное изображение
-        CDocumentBinarizer binarizer(cv::Size(25, 25));
-        _binarizedImage = binarizer.Binarize(_image);
+        
+        CDocumentBinarizer binarizer(BinaryWindowSize, BinMethod);
+        CImage binarizedImage;
+         binarizedImage = binarizer.Binarize(img);
+        _binarizedWindow = CWindow(BinarizedWindowName, binarizedImage);
+        _binarizedWindow.Show();
+        _binarizedWindow.Update(binarizedImage);
+        
         CTimeLogger::Print("Binarization: ");
         
-        _binarizedWindow = CWindow(BinarizedWindowName, _binarizedImage);
-        _binarizedWindow.Show();
-        _binarizedWindow.Update(_binarizedImage);
+        _mainImage.SetBinImage(binarizedImage);
     }
     
     {
+        // строим sd изображение
         CTimeLogger::StartLogging();
-        _sdImage = SDFilter(_image, cv::Size(MaxPatchSideSize, MaxPatchSideSize));
+        
+        CImage sdImage;
+        sdImage = SDFilter(img, cv::Size(MaxPatchSideSize, MaxPatchSideSize));
         _debugWindow.Show();
-        _debugWindow.Update(_sdImage);
+        _debugWindow.Update(sdImage);
+        
         CTimeLogger::Print("SD filter: ");
-
+        
+        _mainImage.SetSdImage(sdImage);
     }
+    
+    // изображение для вывода
+    img.copyTo(_displayImage);
+    // делаем цветным
+    cv::cvtColor(_displayImage, _displayImage, CV_GRAY2RGBA);
     
     _window.Show();
     _window.SetMaxBoxSideSize(MaxPatchSideSize);
@@ -74,41 +77,37 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
     _window.ObserveKeyboard();
 }
 
-void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& patchRect)
+void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect)
 {
-    CImage patch = GetPatchImageFromImage(_image, patchRect);
-    
-    std::cout << "-------\nSelected patch: " << patch.GetFrame() << "\n-------" << std::endl;
-    
     cv::Size patchSize = cv::Size(patchRect.width, patchRect.height);
     cv::Point offset = cv::Point(1, 1);
     
+    CImagePatch selectedPatch = CImagePatch();
+    CDocumentBinarizer binarizer = CDocumentBinarizer(patchSize);
+    selectedPatch.SetGrayImage(GetPatchImageFromImage(_mainImage.GrayImage(), patchRect));
+    selectedPatch.SetBinImage(GetPatchImageFromImage(_mainImage.BinImage(), patchRect));
+    
+    std::cout << "-------\nSelected patch: " << selectedPatch.GetFrame() << "\n-------" << std::endl;
+
     CTimeLogger::StartLogging();
     // храним пару - gray & бинаризованное изображения
-    std::vector<ImagePatch> patches;
-    CImage::CPatchIterator patchIterator = _image.GetPatchIterator(patchSize, offset);
-    CImage::CPatchIterator binPatchIterator = _binarizedImage.GetPatchIterator(patchSize, offset);
-    CImage::CPatchIterator sdPatchIterator = _sdImage.GetPatchIterator(patchSize, offset);
+    std::vector<CImagePatch> patches;
+    CImage grayImage = _mainImage.GrayImage();
+    CImage binImage = _mainImage.BinImage();
+    CImage::CPatchIterator patchIterator = grayImage.GetPatchIterator(patchSize, offset);
+    CImage::CPatchIterator binPatchIterator = binImage.GetPatchIterator(patchSize, offset);
     while (patchIterator.HasNext()) {
-        ImagePatch imgPatch;
-        imgPatch.grayImage = patchIterator.GetNext();
-        imgPatch.binImage = binPatchIterator.GetNext();
-        imgPatch.sdImage = sdPatchIterator.GetNext();
-        imgPatch.grayImage.CalculateBlurValue(TBlurMeasureMethodStandartDeviation);
-        imgPatch.grayImage.CopyMetadataTo(imgPatch.binImage);
-        imgPatch.grayImage.CopyMetadataTo(imgPatch.sdImage);
+        CImagePatch imgPatch;
+        imgPatch.SetBinImage(binPatchIterator.GetNext());
+        imgPatch.SetGrayImage(patchIterator.GetNext());
         patches.push_back(imgPatch);
     }
-    CTimeLogger::Print("Patch fetching & blur calculation:");
-    
-    // бинаризуем выбранный патч
-    CDocumentBinarizer binarizer = CDocumentBinarizer(patchSize);
-    CImage binarized_patch = GetPatchImageFromImage(_binarizedImage, patchRect);
+    CTimeLogger::Print("Patch fetching");
 
     int good = 0, bad = 0;
 
     CTimeLogger::StartLogging();
-    CImageComparatorL1 imgComparator;
+    CImageComparator imgComparator;
     std::vector<DrawableRect> rectsToDraw;
     for (int i = 0; i < patches.size(); i++) {
 
@@ -117,19 +116,19 @@ void CImageProcessor::WindowDidSelectPatch(const CImage& img, const cv::Rect& pa
 //        cv::Scalar color = RGB(colorComp, colorComp, colorComp);
 //        rectsToDraw.push_back({patches[i].grayImage.GetFrame(), i == 0 ? RGB(0, 255, 0) : color, CV_FILLED});
         
-        if (imgComparator.Compare(binarized_patch, patches[i].binImage) < ComparisonEps) {
+        if (patches[i].ImgClass() != selectedPatch.ImgClass()) {
+            continue;
+        }
+        
+        if (imgComparator.Compare(selectedPatch.BinImage(), patches[i].BinImage()) < ComparisonEps) {
             // чем больше размытия, тем темнее рамка вокруг патча
-            cv::Scalar color = RGB(0, patches[i].grayImage.GetBlurValue() * 255, 0);
+            cv::Scalar color = RGB(0, patches[i].BlurValue(BlurMeasureMethod) * 255, 0);
             // похожий самый четкий патч выделяем таким же цветом
-            rectsToDraw.push_back({patches[i].grayImage.GetFrame(), i == 0 ? RGB(0, 255, 0) : color});
+            rectsToDraw.push_back({patches[i].GetFrame(), i == 0 ? RGB(0, 255, 0) : color});
             good++;
         } else {
             bad++;
         }
-        
-//        if (i % ProgressCount == 0) {
-//            std::cout << "Progress: " << (float)i/(float)patches.size() * 100 << "%\n\tGood: " << good << "\n\tBad: " << bad << std::endl;
-//        }
     }
     CTimeLogger::Print("Finding similar patches:");
     
@@ -154,6 +153,13 @@ void CImageProcessor::SaveImage(const std::string path, const CImage &image)
 }
 
 #pragma mark - Algorithms
+
+double CImageProcessor::StandartDeviation(const CImage& image)
+{
+    cv::Scalar mean, stddev;
+    cv::meanStdDev(image, mean, stddev);
+    return stddev[0];
+}
 
 CImage CImageProcessor::SDFilter(const CImage &image, const cv::Size& filterSize)
 {
@@ -186,7 +192,7 @@ double CImageProcessor::MeasureBlurWithFFTImage(const CImage &image)
     CImage roi = imageCopy(submatrixRect);
     roi.setTo(0);
     
-    double normalizedValue = cv::sum(imageCopy)[0]/AREA(image);
+    double normalizedValue = cv::sum(imageCopy)[0]/image.GetFrame().area();
     // value from 0 to 1
     return normalizedValue;
 }

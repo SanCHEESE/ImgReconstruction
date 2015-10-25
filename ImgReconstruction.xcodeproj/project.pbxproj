@@ -7,15 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5328A5EB1BD8F39300F8594A /* CTimeLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5328A5E91BD8F39300F8594A /* CTimeLogger.cpp */; settings = {ASSET_TAGS = (); }; };
+		532225321BDB647700B8CE01 /* CImagePatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532225301BDB647700B8CE01 /* CImagePatch.cpp */; };
+		5328A5EB1BD8F39300F8594A /* CTimeLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5328A5E91BD8F39300F8594A /* CTimeLogger.cpp */; };
 		5339CA1C1BB7CF2A000B3B28 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5339CA1B1BB7CF2A000B3B28 /* main.cpp */; };
-		53641FE01BC9643A003C10BA /* CDocumentBinarizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53641FDE1BC9643A003C10BA /* CDocumentBinarizer.cpp */; settings = {ASSET_TAGS = (); }; };
-		539319DA1BCA3FA70031292C /* CBlurMeasurer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539319D81BCA3FA70031292C /* CBlurMeasurer.cpp */; settings = {ASSET_TAGS = (); }; };
-		53A6930F1BB7D4BC0097DFED /* CWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A6930D1BB7D4BC0097DFED /* CWindow.cpp */; settings = {ASSET_TAGS = (); }; };
-		53A693181BB7DB260097DFED /* CImageComparatorL1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A693161BB7DB260097DFED /* CImageComparatorL1.cpp */; settings = {ASSET_TAGS = (); }; };
-		53A6931E1BB7F4950097DFED /* CImageProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A6931C1BB7F4950097DFED /* CImageProcessor.cpp */; settings = {ASSET_TAGS = (); }; };
-		53A693241BB7F9150097DFED /* CImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A693221BB7F9150097DFED /* CImage.cpp */; settings = {ASSET_TAGS = (); }; };
-		53C439BB1BD94C7200178FBC /* CImageClassifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53C439B91BD94C7200178FBC /* CImageClassifier.cpp */; settings = {ASSET_TAGS = (); }; };
+		53641FE01BC9643A003C10BA /* CDocumentBinarizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53641FDE1BC9643A003C10BA /* CDocumentBinarizer.cpp */; };
+		539319DA1BCA3FA70031292C /* CBlurMeasurer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539319D81BCA3FA70031292C /* CBlurMeasurer.cpp */; };
+		53A6930F1BB7D4BC0097DFED /* CWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A6930D1BB7D4BC0097DFED /* CWindow.cpp */; };
+		53A693181BB7DB260097DFED /* CImageComparator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A693161BB7DB260097DFED /* CImageComparator.cpp */; };
+		53A6931E1BB7F4950097DFED /* CImageProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A6931C1BB7F4950097DFED /* CImageProcessor.cpp */; };
+		53A693241BB7F9150097DFED /* CImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A693221BB7F9150097DFED /* CImage.cpp */; };
+		53C439BB1BD94C7200178FBC /* CImageClassifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53C439B91BD94C7200178FBC /* CImageClassifier.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +32,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		532225301BDB647700B8CE01 /* CImagePatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImagePatch.cpp; path = Core/Structures/CImagePatch.cpp; sourceTree = "<group>"; };
+		532225311BDB647700B8CE01 /* CImagePatch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImagePatch.hpp; path = Core/Structures/CImagePatch.hpp; sourceTree = "<group>"; };
 		5328A5E91BD8F39300F8594A /* CTimeLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CTimeLogger.cpp; path = Helpers/CTimeLogger.cpp; sourceTree = "<group>"; };
 		5328A5EA1BD8F39300F8594A /* CTimeLogger.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CTimeLogger.hpp; path = Helpers/CTimeLogger.hpp; sourceTree = "<group>"; };
 		5339CA181BB7CF2A000B3B28 /* ImgReconstruction */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImgReconstruction; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,8 +49,8 @@
 		53A6930E1BB7D4BC0097DFED /* CWindow.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CWindow.hpp; path = GUI/CWindow.hpp; sourceTree = "<group>"; };
 		53A693101BB7D6100097DFED /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		53A693141BB7DA700097DFED /* IImageComparator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IImageComparator.hpp; path = Core/IImageComparator.hpp; sourceTree = "<group>"; };
-		53A693161BB7DB260097DFED /* CImageComparatorL1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImageComparatorL1.cpp; path = Core/CImageComparatorL1.cpp; sourceTree = "<group>"; };
-		53A693171BB7DB260097DFED /* CImageComparatorL1.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImageComparatorL1.hpp; path = Core/CImageComparatorL1.hpp; sourceTree = "<group>"; };
+		53A693161BB7DB260097DFED /* CImageComparator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImageComparator.cpp; path = Core/CImageComparator.cpp; sourceTree = "<group>"; };
+		53A693171BB7DB260097DFED /* CImageComparator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImageComparator.hpp; path = Core/CImageComparator.hpp; sourceTree = "<group>"; };
 		53A6931C1BB7F4950097DFED /* CImageProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImageProcessor.cpp; path = Core/CImageProcessor.cpp; sourceTree = "<group>"; };
 		53A6931D1BB7F4950097DFED /* CImageProcessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImageProcessor.hpp; path = Core/CImageProcessor.hpp; sourceTree = "<group>"; };
 		53A693221BB7F9150097DFED /* CImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImage.cpp; path = Core/Structures/CImage.cpp; sourceTree = "<group>"; };
@@ -147,8 +150,8 @@
 			isa = PBXGroup;
 			children = (
 				53A693141BB7DA700097DFED /* IImageComparator.hpp */,
-				53A693161BB7DB260097DFED /* CImageComparatorL1.cpp */,
-				53A693171BB7DB260097DFED /* CImageComparatorL1.hpp */,
+				53A693161BB7DB260097DFED /* CImageComparator.cpp */,
+				53A693171BB7DB260097DFED /* CImageComparator.hpp */,
 			);
 			name = ImgComparison;
 			sourceTree = "<group>";
@@ -158,6 +161,8 @@
 			children = (
 				53A693221BB7F9150097DFED /* CImage.cpp */,
 				53A693231BB7F9150097DFED /* CImage.hpp */,
+				532225301BDB647700B8CE01 /* CImagePatch.cpp */,
+				532225311BDB647700B8CE01 /* CImagePatch.hpp */,
 			);
 			name = Structures;
 			sourceTree = "<group>";
@@ -259,9 +264,10 @@
 			files = (
 				53641FE01BC9643A003C10BA /* CDocumentBinarizer.cpp in Sources */,
 				53A6931E1BB7F4950097DFED /* CImageProcessor.cpp in Sources */,
+				532225321BDB647700B8CE01 /* CImagePatch.cpp in Sources */,
 				5328A5EB1BD8F39300F8594A /* CTimeLogger.cpp in Sources */,
 				53A6930F1BB7D4BC0097DFED /* CWindow.cpp in Sources */,
-				53A693181BB7DB260097DFED /* CImageComparatorL1.cpp in Sources */,
+				53A693181BB7DB260097DFED /* CImageComparator.cpp in Sources */,
 				53A693241BB7F9150097DFED /* CImage.cpp in Sources */,
 				539319DA1BCA3FA70031292C /* CBlurMeasurer.cpp in Sources */,
 				5339CA1C1BB7CF2A000B3B28 /* main.cpp in Sources */,

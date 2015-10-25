@@ -5,9 +5,10 @@
 //  Created by Alexander Bochkarev on 22.10.15.
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
+#pragma once
 
 class CImageClassifier
 {
 public:
-    int Classify(const CImage& image);
+    static int Classify(const CImage& image);
 };

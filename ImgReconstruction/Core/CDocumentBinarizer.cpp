@@ -7,6 +7,7 @@
 //
 
 #include "CDocumentBinarizer.hpp"
+#include "CImageProcessor.hpp"
 
 static double const k = -0.2f;
 
@@ -16,7 +17,6 @@ CImage CDocumentBinarizer::Binarize(const CImage &img) const
     std::vector<CImage> binarizedPatches = std::vector<CImage>(imgPatches.size());
     for (int i = 0; i < imgPatches.size(); i++) {
         CImage patch = imgPatches[i];
-        int patchAreaInPixels = patch.rows * patch.cols;
 
         patch.convertTo(patch, CV_64F);
 
@@ -31,11 +31,11 @@ CImage CDocumentBinarizer::Binarize(const CImage &img) const
             case TBinarizationMethodNICK:
             {
                 double pixelsSumOfSquares = cv::sum(patch.mul(patch))[0];
-                thresholdValue = mean + k * sqrt((pixelsSumOfSquares - mean)/patchAreaInPixels);
+                thresholdValue = mean + k * sqrt((pixelsSumOfSquares - mean)/patch.GetFrame().area());
                 break;
             }
             case TBinarizationMethodNiBlack:
-                thresholdValue = mean + k * img.StandartDeviation() - 10;
+                thresholdValue = mean + k * CImageProcessor::StandartDeviation(img) - 10;
                 break;
             default:
                 break;
