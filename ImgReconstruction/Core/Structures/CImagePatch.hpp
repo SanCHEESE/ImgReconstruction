@@ -6,6 +6,8 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
+#pragma once
+
 #include "CImageClassifier.hpp"
 #include "CBlurMeasurer.hpp"
 
@@ -19,6 +21,8 @@ public:
     int ImgClass();
     double BlurValue(TBlurMeasureMethod method);
     double StandartDeviation();
+    int64_t PHash();
+    int64_t AvgHash();
     
     // accessors
     CImage GrayImage() const {return _grayImage;}
@@ -42,6 +46,8 @@ public:
     int GetImgClass() const {return _imgClass;};
     double GetBlurValue() const {return _blurValue;};
     double GetStandartDeviation() const {return _standartDeviation;};
+    int64_t GetPHash() const {return _pHash;};
+    int64_t GetAvgHash() const {return _avgHash;};
     cv::Rect GetFrame() const {return _frame;};
     
     friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
@@ -56,9 +62,15 @@ private:
     CImage _grayImage;
     CImage _binImage;
     CImage _sdImage;
+    
     int _imgClass;
     double _blurValue;
     double _standartDeviation;
+    
+    int64_t _avgHash;
+    bool _avgHashComputed;
+    int64_t _pHash;
+    bool _pHashComputed;
 };
 
 struct Greater

@@ -18,6 +18,11 @@ void CImage::copyTo(CImage &image) const
     CopyMetadataTo(image);
 }
 
+void CImage::copyTo(cv::Mat &image) const
+{
+    ((cv::Mat)*this).copyTo(image);
+}
+
 std::ostream& operator<<(std::ostream& os, const CImage& img)
 {
     for (int i = 0; i < img.rows; i++) {

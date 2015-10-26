@@ -11,18 +11,21 @@
 typedef enum : int {
     TImageCompareMetricL1,
     TImageCompareMetricL2,
-    TImageCompareMetricDCT,
+    TImageCompareMetricPHash,
+    TImageCompareMetricAvgHash,
 } TImageCompareMetric;
 
 class CImageComparator : public IImageComparator
 {
 public:
     CImageComparator(TImageCompareMetric compMetric = TImageCompareMetricL1) : _compMetric(compMetric) {};
-    virtual double Compare(const CImage& img1, const CImage& img2) const;
+    virtual double Compare(const CImagePatch& patch1, const CImagePatch& patch2) const;
 private:
-    double CompareL1(const CImage& img1, const CImage& img2) const;
-    double CompareL2(const CImage& img1, const CImage& img2) const;
-    double CompareDCT(const CImage& img1, const CImage& img2) const;
+    double CompareL1(const CImagePatch& patch1, const CImagePatch& patch2) const;
+    double CompareL2(const CImagePatch& patch1, const CImagePatch& patch2) const;
+    double ComparePHash(const CImagePatch& patch1, const CImagePatch& patch2) const;
+    double CompareAvgHash(const CImagePatch& patch1, const CImagePatch& patch2) const;
+
     
     TImageCompareMetric _compMetric;
 };

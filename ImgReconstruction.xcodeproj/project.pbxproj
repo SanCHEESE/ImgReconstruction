@@ -32,6 +32,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		531170261BDDF72500A1FFCA /* utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = utils.hpp; path = Core/utils.hpp; sourceTree = "<group>"; };
 		532225301BDB647700B8CE01 /* CImagePatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImagePatch.cpp; path = Core/Structures/CImagePatch.cpp; sourceTree = "<group>"; };
 		532225311BDB647700B8CE01 /* CImagePatch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImagePatch.hpp; path = Core/Structures/CImagePatch.hpp; sourceTree = "<group>"; };
 		5328A5E91BD8F39300F8594A /* CTimeLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CTimeLogger.cpp; path = Helpers/CTimeLogger.cpp; sourceTree = "<group>"; };
@@ -121,6 +122,7 @@
 		53A693081BB7D1C20097DFED /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				531170261BDDF72500A1FFCA /* utils.hpp */,
 				53A693251BB7F91A0097DFED /* Structures */,
 				53A693261BB7F93C0097DFED /* Algorithms */,
 			);

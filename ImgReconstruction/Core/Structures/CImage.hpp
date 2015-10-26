@@ -19,6 +19,7 @@ public:
     CImage(const cv::Size size, int type, int value) : cv::Mat(size, type, value) {_frame = cv::Rect(0, 0, size.width, size.height);}
     
     void copyTo(CImage &image) const;
+    void copyTo(cv::Mat &image) const;
     void CopyMetadataTo(CImage& image) const;
     
     CImage GetPatch(const cv::Rect& rect) const;

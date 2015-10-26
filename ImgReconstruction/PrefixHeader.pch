@@ -26,6 +26,8 @@
 #include <opencv2/core.hpp>
 
 #include "CImage.hpp"
+#include "CImagePatch.hpp"
+#include "utils.hpp"
 
 #define RGB(r, g, b) (cv::Scalar((b), (g), (r)))
 #define RGBA(r, g, b, a) (cv::Scalar((b), (g), (r), (a)))

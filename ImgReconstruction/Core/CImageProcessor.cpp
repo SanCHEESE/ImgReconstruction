@@ -8,12 +8,16 @@
 
 #include "CImageProcessor.hpp"
 #include "CDocumentBinarizer.hpp"
-#include "CImageComparator.hpp"
 #include "CBlurMeasurer.hpp"
 #include "CTimeLogger.hpp"
 #include "CImageClassifier.hpp"
 
-static const int ComparisonEps = 35;
+// сonfigs
+static const int ComparisonEpsL2 = 35;
+static const int ComparisonEpsL1 = 10;
+static const int ComparisonEpsPHash = 5;
+static const int ComparisonEpsAvgHash = 10;
+
 static const int MaxPatchSideSize = 10;
 static const float BlurMetricRadiusRatio = 0.2f;
 
@@ -25,7 +29,7 @@ const cv::Point PatchOffset = cv::Point(1, 1);
 
 const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodStandartDeviation;
 const TBinarizationMethod BinMethod = TBinarizationMethodNiBlack;
-const TImageCompareMetric CompMetric = TImageCompareMetricL2;
+const TImageCompareMetric CompMetric = TImageCompareMetricAvgHash;
 
 
 void CImageProcessor::StartProcessingChain(const CImage& img)
@@ -123,8 +127,17 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
             continue;
         }
         
-        int distance = imgComparator.Compare(selectedPatch.BinImage(), patches[i].BinImage());
-        if (distance < ComparisonEps) {
+        if (CompMetric == TImageCompareMetricPHash) {
+            selectedPatch.PHash();
+            patches[i].PHash();
+        } else if (CompMetric == TImageCompareMetricAvgHash) {
+            selectedPatch.AvgHash();
+            patches[i].AvgHash();
+        }
+        
+        int distance = imgComparator.Compare(selectedPatch, patches[i]);
+        int eps = CompEpsForCompMetric(CompMetric);
+        if (distance < eps) {
             // чем больше размытия, тем темнее рамка вокруг патча
             cv::Scalar color = RGB(0, patches[i].BlurValue(BlurMeasureMethod) * 255, 0);
             rectsToDraw.push_back({patches[i].GetFrame(), color});
@@ -146,6 +159,24 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 }
 
 #pragma mark - Utils
+
+int CImageProcessor::CompEpsForCompMetric(TImageCompareMetric metric)
+{
+    switch (metric) {
+        case TImageCompareMetricL1:
+            return ComparisonEpsL1;
+        case TImageCompareMetricL2:
+            return ComparisonEpsL2;
+        case TImageCompareMetricPHash:
+            return ComparisonEpsPHash;
+        case TImageCompareMetricAvgHash:
+            return ComparisonEpsAvgHash;
+        default:
+            break;
+    }
+    
+    return 0;
+}
 
 CImage CImageProcessor::GetPatchImageFromImage(const CImage &img, const cv::Rect &patchRect)
 {
@@ -184,6 +215,70 @@ CImage CImageProcessor::SDFilter(const CImage &image, const cv::Size& filterSize
     cv::sqrt(mu2 - mu.mul(mu), sigma);
     
     return CImage(sigma / 255.f);
+}
+
+int64_t CImageProcessor::PHash(const CImage &image)
+{
+    cv::Mat temp, dst;
+    
+    image.copyTo(temp);
+    temp.convertTo(temp, CV_64F);
+    
+    cv::resize(temp, temp, cv::Size(32,32));
+    cv::dct(temp, dst);
+
+    double dIdex[64];
+    double mean = 0.0;
+    int k = 0;
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            dIdex[k] = dst.at<double>(i, j);
+            mean += dst.at<double>(i, j) / 64;
+            ++k;
+        }
+    }
+    
+    int64_t result = 0;
+    for (int i = 0; i < 64; ++i) {
+        if (dIdex[i] >= mean) {
+            result = (result << 1) | 1;
+        } else {
+            result = result << 1;
+        }
+    }
+    return result;
+}
+
+int64_t CImageProcessor::AvgHash(const CImage &image)
+{
+    cv::Mat temp = image.clone();
+    
+    resize(temp, temp, cv::Size(8, 8));
+    
+    uchar *pData;
+    for(int i = 0; i < temp.rows; i++) {
+        pData = temp.ptr<uchar>(i);
+        for(int j = 0; j < temp.cols; j++) {
+            pData[j] = pData[j]/4;
+        }
+    }
+    
+    int average = cv::mean(temp)[0];
+    
+    cv::Mat mask = (temp >= (uchar)average);
+    
+    int64_t result = 0;
+    for (int i = 0; i < mask.rows; i++) {
+        pData = mask.ptr<uchar>(i);
+        for(int j = 0; j < mask.cols; j++) {
+            if (pData[j] == 0) {
+                result = result << 1;
+            } else {
+                result = (result << 1) | 1;
+            }
+        }
+    }
+    return result;
 }
 
 #pragma mark - Not used

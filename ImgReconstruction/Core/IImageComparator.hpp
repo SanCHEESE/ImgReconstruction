@@ -11,5 +11,5 @@ class IImageComparator
 {
 public:
     ~IImageComparator() {}
-    virtual double Compare(const CImage& img1, const CImage& img2) const = 0;
+    virtual double Compare(const CImagePatch& patch1, const CImagePatch& patch2) const = 0;
 };

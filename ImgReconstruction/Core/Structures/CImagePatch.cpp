@@ -7,7 +7,7 @@
 //
 
 #include "CImagePatch.hpp"
-
+#include "CImageProcessor.hpp"
 
 #pragma mark - Public
 
@@ -38,6 +38,24 @@ double CImagePatch::StandartDeviation()
     return _standartDeviation;
 }
 
+int64_t CImagePatch::PHash()
+{
+    if (!_pHashComputed) {
+        _pHash = CImageProcessor::PHash(_grayImage);
+        _avgHashComputed = true;
+    }
+    return _pHash;
+}
+
+int64_t CImagePatch::AvgHash()
+{
+    if (!_avgHashComputed) {
+        _avgHashComputed = CImageProcessor::AvgHash(_grayImage);
+        _avgHashComputed = true;
+    }
+    return _avgHash;
+}
+
 std::ostream& operator<<(std::ostream& os, const CImagePatch& patch)
 {
     os << "Patch:\n";
@@ -61,6 +79,8 @@ void CImagePatch::Initialize()
     _imgClass = -1;
     _blurValue = -1;
     _standartDeviation = -1;
+    _pHashComputed = false;
+    _avgHashComputed = false;
 }
 
 double CImagePatch::CalculateBlurValue(TBlurMeasureMethod method) const
