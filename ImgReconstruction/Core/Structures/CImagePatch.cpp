@@ -91,8 +91,7 @@ double CImagePatch::CalculateBlurValue(TBlurMeasureMethod method) const
 
 double CImagePatch::CalculateStandartDeviation() const
 {
-    CBlurMeasurer measurer(TBlurMeasureMethodStandartDeviation);
-    return measurer.Measure(_grayImage) * 255;
+    return utils::StandartDeviation(_grayImage);
 }
 
 int CImagePatch::CalculateImgClass() const

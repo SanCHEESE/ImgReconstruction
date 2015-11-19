@@ -76,7 +76,7 @@ void CImage::CopyMetadataTo(CImage &image) const
 
 bool CImage::CPatchIterator::HasNext()
 {
-    return _pointingRect.width + _pointingRect.x + _offset.x < _iterImage->cols || _pointingRect.height + _pointingRect.y + _offset.y < _iterImage->rows;
+    return _pointingRect.width + _pointingRect.x + _offset.x < _iterImage->cols || _pointingRect.height +_pointingRect.y + _offset.y < _iterImage->rows;
 }
 
 CImage CImage::CPatchIterator::GetNext()
@@ -87,6 +87,7 @@ CImage CImage::CPatchIterator::GetNext()
     // делаем матрицу размера size с подматрицей
     cv::Rect patchFrame = cv::Rect(_pointingRect.x, _pointingRect.y, maxCol - _pointingRect.x, maxRow - _pointingRect.y);
     CImage patch = (*_iterImage)(patchFrame);
+    patch._frame = patchFrame;
     
     // нормализуем патч до нужного размера
     CImage normPatch = CImage(_size, CV_8U, 255);
@@ -112,5 +113,5 @@ CImage CImage::CPatchIterator::GetNext()
         _pointingRect.y += _offset.y;
     }
     
-    return normPatch;
+    return patch;
 }

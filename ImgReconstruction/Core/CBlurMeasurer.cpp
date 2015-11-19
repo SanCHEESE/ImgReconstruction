@@ -27,10 +27,7 @@ double CBlurMeasurer::Measure(const CImage& img) const
 
 double CBlurMeasurer::MeasureUsingStdDeviation(const CImage &img) const
 {
-    cv::Scalar mean, stddev;
-    cv::meanStdDev(img, mean, stddev);
-    
-    return stddev[0]/(double)img.GetFrame().area();
+    return utils::StandartDeviation(img);
 }
 
 double CBlurMeasurer::MeasureUsingDynamicRange(const CImage &img) const
@@ -46,7 +43,7 @@ double CBlurMeasurer::MeasureUsingDynamicRange(const CImage &img) const
     histogram.col(0).copyTo(histArray);
     std::pair<std::vector<unsigned char>::iterator, std::vector<unsigned char>::iterator> minMaxElem = std::minmax_element(histArray.begin(), histArray.end());
     
-    return 1 - (double)(std::abs(*(minMaxElem.first) - *(minMaxElem.second)))/(double)img.GetFrame().area();
+    return std::abs(*(minMaxElem.first) - *(minMaxElem.second));
 }
 
 double CBlurMeasurer::MeasureUsingFFT(const CImage &img) const

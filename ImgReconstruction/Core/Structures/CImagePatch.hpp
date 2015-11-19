@@ -10,6 +10,7 @@
 
 #include "CImageClassifier.hpp"
 #include "CBlurMeasurer.hpp"
+#include "utils.hpp"
 
 class CImagePatch
 {
@@ -40,7 +41,7 @@ public:
     };
     void SetSdImage(const CImage& image) {
         image.copyTo(_sdImage);
-        _frame = _binImage.GetFrame();
+        _frame = _sdImage.GetFrame();
     };
 
     int GetImgClass() const {return _imgClass;};

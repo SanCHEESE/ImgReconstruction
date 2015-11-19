@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		532225321BDB647700B8CE01 /* CImagePatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532225301BDB647700B8CE01 /* CImagePatch.cpp */; };
+		530F95401BF86E970092F3E9 /* utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 530F953F1BF86E970092F3E9 /* utils.cpp */; };
 		5328A5EB1BD8F39300F8594A /* CTimeLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5328A5E91BD8F39300F8594A /* CTimeLogger.cpp */; };
 		5339CA1C1BB7CF2A000B3B28 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5339CA1B1BB7CF2A000B3B28 /* main.cpp */; };
 		53641FE01BC9643A003C10BA /* CDocumentBinarizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53641FDE1BC9643A003C10BA /* CDocumentBinarizer.cpp */; };
 		539319DA1BCA3FA70031292C /* CBlurMeasurer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539319D81BCA3FA70031292C /* CBlurMeasurer.cpp */; };
+		539A444C1BF9B6CF00C92FD9 /* CImagePatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532225301BDB647700B8CE01 /* CImagePatch.cpp */; };
 		53A6930F1BB7D4BC0097DFED /* CWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A6930D1BB7D4BC0097DFED /* CWindow.cpp */; };
 		53A693181BB7DB260097DFED /* CImageComparator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A693161BB7DB260097DFED /* CImageComparator.cpp */; };
 		53A6931E1BB7F4950097DFED /* CImageProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A6931C1BB7F4950097DFED /* CImageProcessor.cpp */; };
@@ -32,6 +33,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		530F953F1BF86E970092F3E9 /* utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utils.cpp; path = Core/utils.cpp; sourceTree = "<group>"; };
 		531170261BDDF72500A1FFCA /* utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = utils.hpp; path = Core/utils.hpp; sourceTree = "<group>"; };
 		532225301BDB647700B8CE01 /* CImagePatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImagePatch.cpp; path = Core/Structures/CImagePatch.cpp; sourceTree = "<group>"; };
 		532225311BDB647700B8CE01 /* CImagePatch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImagePatch.hpp; path = Core/Structures/CImagePatch.hpp; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				531170261BDDF72500A1FFCA /* utils.hpp */,
+				530F953F1BF86E970092F3E9 /* utils.cpp */,
 				53A693251BB7F91A0097DFED /* Structures */,
 				53A693261BB7F93C0097DFED /* Algorithms */,
 			);
@@ -265,11 +268,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				53641FE01BC9643A003C10BA /* CDocumentBinarizer.cpp in Sources */,
+				539A444C1BF9B6CF00C92FD9 /* CImagePatch.cpp in Sources */,
 				53A6931E1BB7F4950097DFED /* CImageProcessor.cpp in Sources */,
-				532225321BDB647700B8CE01 /* CImagePatch.cpp in Sources */,
 				5328A5EB1BD8F39300F8594A /* CTimeLogger.cpp in Sources */,
 				53A6930F1BB7D4BC0097DFED /* CWindow.cpp in Sources */,
 				53A693181BB7DB260097DFED /* CImageComparator.cpp in Sources */,
+				530F95401BF86E970092F3E9 /* utils.cpp in Sources */,
 				53A693241BB7F9150097DFED /* CImage.cpp in Sources */,
 				539319DA1BCA3FA70031292C /* CBlurMeasurer.cpp in Sources */,
 				5339CA1C1BB7CF2A000B3B28 /* main.cpp in Sources */,

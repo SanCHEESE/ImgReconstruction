@@ -42,10 +42,10 @@ double CImageComparator::CompareL2(const CImagePatch& patch1, const CImagePatch&
 
 double CImageComparator::ComparePHash(const CImagePatch& patch1, const CImagePatch& patch2) const
 {
-    return hamming<int64_t>(patch1.GetPHash(), patch2.GetPHash());
+    return utils::hamming<int64_t>(patch1.GetPHash(), patch2.GetPHash());
 }
 
 double CImageComparator::CompareAvgHash(const CImagePatch& patch1, const CImagePatch& patch2) const
 {
-    return hamming<int64_t>(patch1.GetAvgHash(), patch2.GetAvgHash());
+    return utils::hamming<int64_t>(patch1.GetAvgHash(), patch2.GetAvgHash());
 }

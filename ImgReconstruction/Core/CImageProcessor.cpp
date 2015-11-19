@@ -18,19 +18,20 @@ static const int ComparisonEpsL1 = 10;
 static const int ComparisonEpsPHash = 5;
 static const int ComparisonEpsAvgHash = 10;
 
-static const int MaxPatchSideSize = 10;
+static const int MaxPatchSideSize = 8;
 static const float BlurMetricRadiusRatio = 0.2f;
 
 const std::string DebugWindowName = "Debug";
 const std::string BinarizedWindowName = "Binarized";
 
-const cv::Size BinaryWindowSize = cv::Size(25, 25);
-const cv::Point PatchOffset = cv::Point(1, 1);
+static const cv::Point PatchOffset = cv::Point(1, 1);
+static const cv::Size GaussianKernelSize = cv::Size(0, 0);
 
-const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodStandartDeviation;
-const TBinarizationMethod BinMethod = TBinarizationMethodNiBlack;
-const TImageCompareMetric CompMetric = TImageCompareMetricAvgHash;
+static const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodStandartDeviation;
+static const TImageCompareMetric CompMetric = TImageCompareMetricL1;
 
+static const TBinarizationMethod BinMethod = TBinarizationMethodAdaptiveGaussian;
+static const cv::Size BinaryWindowSize = cv::Size(25, 25);
 
 void CImageProcessor::StartProcessingChain(const CImage& img)
 {
@@ -41,9 +42,12 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
         // строим бинаризованное изображение
         CTimeLogger::StartLogging();
         
-        CDocumentBinarizer binarizer(BinaryWindowSize, BinMethod);
+        CDocumentBinarizer binarizer(BinaryWindowSize, BinMethod, 2.f);
+        CImage blurredImage;
+//        cv::GaussianBlur(img, blurredImage, GaussianKernelSize, 0.2, 0.2);
+        cv::bilateralFilter(img, blurredImage, 2, 1, 1);
         CImage binarizedImage;
-         binarizedImage = binarizer.Binarize(img);
+        binarizedImage = binarizer.Binarize(blurredImage);
         _binarizedWindow = CWindow(BinarizedWindowName, binarizedImage);
         _binarizedWindow.Show();
         _binarizedWindow.Update(binarizedImage);
@@ -61,7 +65,7 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
         sdImage = SDFilter(img, cv::Size(MaxPatchSideSize, MaxPatchSideSize));
         _debugWindow.Show();
         _debugWindow.Update(sdImage);
-        
+
         CTimeLogger::Print("SD filter: ");
         
         _mainImage.SetSdImage(sdImage);
@@ -100,12 +104,15 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
     std::vector<CImagePatch> patches;
     CImage grayImage = _mainImage.GrayImage();
     CImage binImage = _mainImage.BinImage();
+    CImage sdImage = _mainImage.SdImage();
     CImage::CPatchIterator patchIterator = grayImage.GetPatchIterator(patchSize, offset);
     CImage::CPatchIterator binPatchIterator = binImage.GetPatchIterator(patchSize, offset);
+    CImage::CPatchIterator sdPatchIterator = sdImage.GetPatchIterator(patchSize, offset);
     while (patchIterator.HasNext()) {
         CImagePatch imgPatch;
         imgPatch.SetBinImage(binPatchIterator.GetNext());
         imgPatch.SetGrayImage(patchIterator.GetNext());
+        imgPatch.SetSdImage(sdPatchIterator.GetNext());
         patches.push_back(imgPatch);
     }
     CTimeLogger::Print("Patch fetching");
@@ -118,10 +125,10 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
     std::vector<DrawableRect> rectsToDraw;
     for (int i = 0; i < patches.size(); i++) {
 
-        // раскомментировать для просмотра тепловой карты блюра
-//        double colorComp = patches[i].grayImage.GetBlurValue() * 255;
+        // раскомментировать для просмотра карты блюра
+//        double colorComp = patches[i].BlurValue(BlurMeasureMethod);
 //        cv::Scalar color = RGB(colorComp, colorComp, colorComp);
-//        rectsToDraw.push_back({patches[i].grayImage.GetFrame(), i == 0 ? RGB(0, 255, 0) : color, CV_FILLED});
+//        rectsToDraw.push_back({patches[i].GetFrame(), color, CV_FILLED});
         
         if (patches[i].ImgClass() != selectedPatch.ImgClass()) {
             continue;
@@ -139,7 +146,7 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
         int eps = CompEpsForCompMetric(CompMetric);
         if (distance < eps) {
             // чем больше размытия, тем темнее рамка вокруг патча
-            cv::Scalar color = RGB(0, patches[i].BlurValue(BlurMeasureMethod) * 255, 0);
+            cv::Scalar color = RGB(0, patches[i].BlurValue(BlurMeasureMethod), 0);
             rectsToDraw.push_back({patches[i].GetFrame(), color});
             good++;
             
@@ -155,7 +162,7 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
     
     _window.DrawRects(rectsToDraw);
     
-    SaveImage("../../output/result.jpg", _window.GetImage());
+    SaveImage("../../out/result.jpg", _window.GetImage());
 }
 
 #pragma mark - Utils
@@ -192,13 +199,6 @@ void CImageProcessor::SaveImage(const std::string path, const CImage &image)
 }
 
 #pragma mark - Algorithms
-
-double CImageProcessor::StandartDeviation(const CImage& image)
-{
-    cv::Scalar mean, stddev;
-    cv::meanStdDev(image, mean, stddev);
-    return stddev[0];
-}
 
 CImage CImageProcessor::SDFilter(const CImage &image, const cv::Size& filterSize)
 {
@@ -295,9 +295,7 @@ double CImageProcessor::MeasureBlurWithFFTImage(const CImage &image)
     CImage roi = imageCopy(submatrixRect);
     roi.setTo(0);
     
-    double normalizedValue = cv::sum(imageCopy)[0]/image.GetFrame().area();
-    // value from 0 to 1
-    return normalizedValue;
+    return cv::sum(imageCopy)[0];
 }
 
 CImage CImageProcessor::FFT(const CImage &image)
