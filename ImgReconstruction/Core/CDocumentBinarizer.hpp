@@ -10,12 +10,6 @@
 
 #include "IBinarizer.hpp"
 
-typedef enum : int {
-    TBinarizationMethodNICK,
-    TBinarizationMethodNiBlack,
-    TBinarizationMethodAdaptiveGaussian,
-} TBinarizationMethod;
-
 class CDocumentBinarizer: public IBinarizer
 {
 public:

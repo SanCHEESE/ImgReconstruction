@@ -35,7 +35,7 @@
 /* Begin PBXFileReference section */
 		530F953F1BF86E970092F3E9 /* utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utils.cpp; path = Core/utils.cpp; sourceTree = "<group>"; };
 		531170261BDDF72500A1FFCA /* utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = utils.hpp; path = Core/utils.hpp; sourceTree = "<group>"; };
-		532225301BDB647700B8CE01 /* CImagePatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImagePatch.cpp; path = Core/Structures/CImagePatch.cpp; sourceTree = "<group>"; };
+		532225301BDB647700B8CE01 /* CImagePatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = CImagePatch.cpp; path = Core/Structures/CImagePatch.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		532225311BDB647700B8CE01 /* CImagePatch.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImagePatch.hpp; path = Core/Structures/CImagePatch.hpp; sourceTree = "<group>"; };
 		5328A5E91BD8F39300F8594A /* CTimeLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CTimeLogger.cpp; path = Helpers/CTimeLogger.cpp; sourceTree = "<group>"; };
 		5328A5EA1BD8F39300F8594A /* CTimeLogger.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CTimeLogger.hpp; path = Helpers/CTimeLogger.hpp; sourceTree = "<group>"; };
@@ -44,8 +44,10 @@
 		53641FDE1BC9643A003C10BA /* CDocumentBinarizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDocumentBinarizer.cpp; path = Core/CDocumentBinarizer.cpp; sourceTree = "<group>"; };
 		53641FDF1BC9643A003C10BA /* CDocumentBinarizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CDocumentBinarizer.hpp; path = Core/CDocumentBinarizer.hpp; sourceTree = "<group>"; };
 		536A27A21BBB954200D3B4F5 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
+		536C43991C008192003E16D8 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = Core/config.h; sourceTree = "<group>"; };
+		536C439A1C00852C003E16D8 /* typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = typedefs.h; path = Core/typedefs.h; sourceTree = "<group>"; };
 		539319D71BCA3F560031292C /* IMeasurer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMeasurer.hpp; path = Core/IMeasurer.hpp; sourceTree = "<group>"; };
-		539319D81BCA3FA70031292C /* CBlurMeasurer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CBlurMeasurer.cpp; path = Core/CBlurMeasurer.cpp; sourceTree = "<group>"; };
+		539319D81BCA3FA70031292C /* CBlurMeasurer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = CBlurMeasurer.cpp; path = Core/CBlurMeasurer.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		539319D91BCA3FA70031292C /* CBlurMeasurer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CBlurMeasurer.hpp; path = Core/CBlurMeasurer.hpp; sourceTree = "<group>"; };
 		53A6930A1BB7D2F60097DFED /* IBinarizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IBinarizer.hpp; path = Core/IBinarizer.hpp; sourceTree = "<group>"; };
 		53A6930D1BB7D4BC0097DFED /* CWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CWindow.cpp; path = GUI/CWindow.cpp; sourceTree = "<group>"; };
@@ -54,7 +56,7 @@
 		53A693141BB7DA700097DFED /* IImageComparator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IImageComparator.hpp; path = Core/IImageComparator.hpp; sourceTree = "<group>"; };
 		53A693161BB7DB260097DFED /* CImageComparator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImageComparator.cpp; path = Core/CImageComparator.cpp; sourceTree = "<group>"; };
 		53A693171BB7DB260097DFED /* CImageComparator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImageComparator.hpp; path = Core/CImageComparator.hpp; sourceTree = "<group>"; };
-		53A6931C1BB7F4950097DFED /* CImageProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImageProcessor.cpp; path = Core/CImageProcessor.cpp; sourceTree = "<group>"; };
+		53A6931C1BB7F4950097DFED /* CImageProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = CImageProcessor.cpp; path = Core/CImageProcessor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		53A6931D1BB7F4950097DFED /* CImageProcessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImageProcessor.hpp; path = Core/CImageProcessor.hpp; sourceTree = "<group>"; };
 		53A693221BB7F9150097DFED /* CImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImage.cpp; path = Core/Structures/CImage.cpp; sourceTree = "<group>"; };
 		53A693231BB7F9150097DFED /* CImage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImage.hpp; path = Core/Structures/CImage.hpp; sourceTree = "<group>"; };
@@ -124,6 +126,8 @@
 		53A693081BB7D1C20097DFED /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				536C439A1C00852C003E16D8 /* typedefs.h */,
+				536C43991C008192003E16D8 /* config.h */,
 				531170261BDDF72500A1FFCA /* utils.hpp */,
 				530F953F1BF86E970092F3E9 /* utils.cpp */,
 				53A693251BB7F91A0097DFED /* Structures */,

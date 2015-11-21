@@ -10,13 +10,7 @@
 
 #include "IMeasurer.hpp"
 
-typedef enum : int {
-    TBlurMeasureMethodStandartDeviation,
-    TBlurMeasureMethodDynamicRange,
-    TBlurMeasureMethodFFT,
-    
-    TBlurMeasureMethodNone
-} TBlurMeasureMethod;
+
 
 class CBlurMeasurer: public IMeasurer
 {

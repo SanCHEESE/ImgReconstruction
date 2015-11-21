@@ -48,6 +48,6 @@ double CBlurMeasurer::MeasureUsingDynamicRange(const CImage &img) const
 
 double CBlurMeasurer::MeasureUsingFFT(const CImage &img) const
 {
-    CImage fft = CImageProcessor::FFT(img);
-    return CImageProcessor::MeasureBlurWithFFTImage(fft);
+    CImage fft = utils::FFT(img);
+    return utils::MeasureBlurWithFFTImage(fft, BlurMetricRadiusRatio);
 }

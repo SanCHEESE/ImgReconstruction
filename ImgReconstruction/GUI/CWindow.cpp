@@ -137,7 +137,8 @@ void CWindow::MouseCallback(int event, int x, int y, int flags, void *param)
             break;
         case CV_EVENT_RBUTTONUP:
             window->Update(window->_originalImage);
-            window->_drawMode = (TDrawMode)((window->_drawMode + 1) % TDrawModeNone);
+            // раскомментировать, если надо выделить патч конкретного размера
+//            window->_drawMode = (TDrawMode)((window->_drawMode + 1) % TDrawModeNone);
             
             break;
         default:

@@ -8,13 +8,6 @@
 
 #include "IImageComparator.hpp"
 
-typedef enum : int {
-    TImageCompareMetricL1,
-    TImageCompareMetricL2,
-    TImageCompareMetricPHash,
-    TImageCompareMetricAvgHash,
-} TImageCompareMetric;
-
 class CImageComparator : public IImageComparator
 {
 public:

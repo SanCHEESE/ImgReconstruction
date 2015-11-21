@@ -16,7 +16,7 @@ CImage CDocumentBinarizer::Binarize(const CImage &img) const
     CImage resultImg;
     
     if (_binMethod == TBinarizationMethodAdaptiveGaussian) {
-        cv::adaptiveThreshold(img, resultImg, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_OTSU, _patchSize.width, _c);
+        cv::adaptiveThreshold(img, resultImg, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, _patchSize.width, _c);
     } else {
         std::vector<CImage> imgPatches = img.GetAllPatches(_patchSize, cv::Point(_patchSize.width, _patchSize.height));
         std::vector<CImage> binarizedPatches = std::vector<CImage>(imgPatches.size());

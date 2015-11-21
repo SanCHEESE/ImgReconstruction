@@ -26,15 +26,6 @@ public:
     // Project specific
     void StartProcessingChain(const CImage& img);
     
-    // Algorithms
-    static std::vector<CImage> FetchSimilarPatches(const CImage& img, const cv::Rect& patchRect);
-    static CImage FFT(const CImage& image);
-    static double MeasureBlurWithFFTImage(const CImage& image);
-    static CImage SDFilter(const CImage& image, const cv::Size& filterSize);
-    static double StandartDeviation(const CImage& image);
-    static int64_t PHash(const CImage& image);
-    static int64_t AvgHash(const CImage& image);
-    
     // utils
     static CImage GetPatchImageFromImage(const CImage& img, const cv::Rect& patchRect);
     static void SaveImage(const std::string path, const CImage& image);
