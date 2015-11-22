@@ -120,14 +120,14 @@ namespace utils
         return CImage(sigma / 255.f);
     }
     
-    int64_t PHash(const CImage &image)
+    int64 PHash(const CImage &image)
     {
         cv::Mat temp, dst;
         
         image.copyTo(temp);
         temp.convertTo(temp, CV_64F);
         
-        cv::resize(temp, temp, cv::Size(32,32));
+        cv::resize(temp, temp, cv::Size(32, 32));
         cv::dct(temp, dst);
         
         double dIdex[64];
@@ -141,7 +141,7 @@ namespace utils
             }
         }
         
-        int64_t result = 0;
+        int64 result = 0;
         for (int i = 0; i < 64; ++i) {
             if (dIdex[i] >= mean) {
                 result = (result << 1) | 1;
@@ -152,8 +152,10 @@ namespace utils
         return result;
     }
     
-    int64_t AvgHash(const CImage &image)
+    int64 AvgHash(const CImage &image)
     {
+        assert(image.cols > 8 || image.rows > 8);
+        
         cv::Mat temp = image.clone();
         
         resize(temp, temp, cv::Size(8, 8));
@@ -170,7 +172,7 @@ namespace utils
         
         cv::Mat mask = (temp >= (uchar)average);
         
-        int64_t result = 0;
+        int64 result = 0;
         for (int i = 0; i < mask.rows; i++) {
             pData = mask.ptr<uchar>(i);
             for(int j = 0; j < mask.cols; j++) {
@@ -182,5 +184,13 @@ namespace utils
             }
         }
         return result;
+    }
+    
+    void SaveImage(const std::string path, const CImage &image)
+    {
+        std::vector<int> compression_params;
+        compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+        compression_params.push_back(100);
+        cv::imwrite(path, image, compression_params);
     }
 }

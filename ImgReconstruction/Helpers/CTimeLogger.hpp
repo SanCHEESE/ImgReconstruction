@@ -11,7 +11,7 @@
 class CTimeLogger
 {
 public:
-    static void StartLogging();
+    static void StartLogging(const std::string& desc = "");
     static void Print(const std::string& decr);
     static void PrintTotalTime();
 private:

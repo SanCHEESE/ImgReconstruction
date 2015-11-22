@@ -11,8 +11,9 @@
 clock_t CTimeLogger::_time = 0;
 clock_t CTimeLogger::_totalTime = 0;
 
-void CTimeLogger::StartLogging()
+void CTimeLogger::StartLogging(const std::string& desc)
 {
+    std::cout << desc << std::endl;
     _time = clock();
 }
 

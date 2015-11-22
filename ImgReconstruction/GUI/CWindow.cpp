@@ -87,7 +87,10 @@ void CWindow::ObserveKeyboard()
         int c = cv::waitKey(20);
         if (c == 27) {
             break;
+        } else if (c == 115) {
+            utils::SaveImage(SaveImgPath + _name + ".jpg", _image);
         }
+        std::cout << c << std::endl;
     }
 }
 
@@ -103,12 +106,7 @@ void CWindow::MouseCallback(int event, int x, int y, int flags, void *param)
     switch (event) {
         case CV_EVENT_MOUSEMOVE:
             
-            if (window->_drawMode == TDrawModeDraw && window->_isDrawing) {
-                window->Update(window->_originalImage);
-                window->_drawingBox.width = MIN(window->_maxBoxSideSize, MAX(std::abs(x - window->_drawingBox.x), std::abs(y - window->_drawingBox.y)));
-                window->_drawingBox.height = window->_drawingBox.width;
-                window->DrawRect(window->_drawingBox, TRectColorRed);
-            } else if (window->_drawMode == TDrawModeStamp) {
+            if (window->_drawMode == TDrawModeStamp) {
                 window->Update(window->_originalImage);
                 window->_stampRect = cv::Rect(x - window->_maxBoxSideSize/2,
                                               y - window->_maxBoxSideSize/2,
@@ -121,8 +119,6 @@ void CWindow::MouseCallback(int event, int x, int y, int flags, void *param)
             window->_isDrawing = true;
             if (window->_drawMode == TDrawModeStamp) {
                 window->_drawingBox = window->_stampRect;
-            } else if (window->_drawMode == TDrawModeDraw) {
-                window->_drawingBox = cv::Rect(x, y, 0, 0);
             }
 
             break;
@@ -138,7 +134,7 @@ void CWindow::MouseCallback(int event, int x, int y, int flags, void *param)
         case CV_EVENT_RBUTTONUP:
             window->Update(window->_originalImage);
             // раскомментировать, если надо выделить патч конкретного размера
-//            window->_drawMode = (TDrawMode)((window->_drawMode + 1) % TDrawModeNone);
+            window->_drawMode = (TDrawMode)((window->_drawMode + 1) % TDrawModeNone);
             
             break;
         default:

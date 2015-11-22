@@ -23,6 +23,7 @@ public:
     void CopyMetadataTo(CImage& image) const;
     
     CImage GetPatch(const cv::Rect& rect) const;
+    CImage GetResizedImage(const cv::Size& size) const;
     std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point offset) const;
     cv::Rect GetFrame() const;
     

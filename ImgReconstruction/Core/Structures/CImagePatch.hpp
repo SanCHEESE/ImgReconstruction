@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "CImageClassifier.hpp"
 #include "CBlurMeasurer.hpp"
 #include "utils.hpp"
 
@@ -18,12 +17,10 @@ public:
     CImagePatch() {Initialize();}
     CImagePatch(const CImage& grayImage, const CImage& binImage, const CImage& sdImage) {Initialize();SetGrayImage(grayImage);SetBinImage(binImage);SetSdImage(sdImage);};
     
-    // lazy accessors
-    int ImgClass();
     double BlurValue(TBlurMeasureMethod method);
     double StandartDeviation();
-    int64_t PHash();
-    int64_t AvgHash();
+    int64 PHash();
+    int64 AvgHash();
     
     // accessors
     CImage GrayImage() const {return _grayImage;}
@@ -44,18 +41,16 @@ public:
         _frame = _sdImage.GetFrame();
     };
 
-    int GetImgClass() const {return _imgClass;};
     double GetBlurValue() const {return _blurValue;};
     double GetStandartDeviation() const {return _standartDeviation;};
-    int64_t GetPHash() const {return _pHash;};
-    int64_t GetAvgHash() const {return _avgHash;};
+    int64 GetPHash() const {return _pHash;};
+    int64 GetAvgHash() const {return _avgHash;};
     cv::Rect GetFrame() const {return _frame;};
     
     friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
     
 private:
     void Initialize();
-    int CalculateImgClass() const;
     double CalculateBlurValue(TBlurMeasureMethod method) const;
     double CalculateStandartDeviation() const;
     
@@ -68,9 +63,9 @@ private:
     double _blurValue;
     double _standartDeviation;
     
-    int64_t _avgHash;
+    int64 _avgHash;
     bool _avgHashComputed;
-    int64_t _pHash;
+    int64 _pHash;
     bool _pHashComputed;
 };
 

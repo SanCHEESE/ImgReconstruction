@@ -47,6 +47,12 @@ CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::
     return CPatchIterator(this, size, offset, pointingRect);
 }
 
+CImage CImage::GetResizedImage(const cv::Size &size) const
+{
+    CImage resizedImage = utils::Resize(*this, size);
+    return resizedImage;
+}
+
 CImage CImage::GetPatch(const cv::Rect &rect) const
 {
     return CImage(*this, rect);

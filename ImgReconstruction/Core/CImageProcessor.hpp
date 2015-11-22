@@ -25,15 +25,25 @@ public:
     
     // Project specific
     void StartProcessingChain(const CImage& img);
-    
-    // utils
-    static CImage GetPatchImageFromImage(const CImage& img, const cv::Rect& patchRect);
-    static void SaveImage(const std::string path, const CImage& image);
-    int CompEpsForCompMetric(TImageCompareMetric metric);
-    
     // CWindowDelegate
     virtual void WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect);
+    
+    // utils
+    inline int CompEpsForCompMetric(TImageCompareMetric metric);
+    
 private:
+    void ProcessShowBlurMap(const cv::Rect& patchRect);
+    void ProcessShowSimilarPatches(const cv::Rect& patchRect);
+    void ProcessShowResized(const cv::Rect& patchRect);
+    
+    void BuildBinImage(const CImage& img);
+    void BuildSdImage(const CImage& img);
+    void ConfigureWindow(const CImage& img);
+    
+    std::vector<CImagePatch> FetchPatches(const cv::Rect& patchRect);
+    CImagePatch FetchPatch(const cv::Rect& patchRect);
+    void AddBlurValueRect(std::vector<DrawableRect>& rects, CImagePatch& imagePatch);
+    
     CImagePatch _mainImage;
     CImage _displayImage;
     

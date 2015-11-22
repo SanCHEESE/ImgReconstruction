@@ -11,15 +11,6 @@
 
 #pragma mark - Public
 
-int CImagePatch::ImgClass()
-{
-    if (_imgClass < 0) {
-        _imgClass = CalculateImgClass();
-    }
-    
-    return _imgClass;
-}
-
 double CImagePatch::BlurValue(TBlurMeasureMethod method)
 {
     if (_blurValue < 0) {
@@ -38,7 +29,7 @@ double CImagePatch::StandartDeviation()
     return _standartDeviation;
 }
 
-int64_t CImagePatch::PHash()
+int64 CImagePatch::PHash()
 {
     if (!_pHashComputed) {
         _pHash = utils::PHash(_grayImage);
@@ -47,7 +38,7 @@ int64_t CImagePatch::PHash()
     return _pHash;
 }
 
-int64_t CImagePatch::AvgHash()
+int64 CImagePatch::AvgHash()
 {
     if (!_avgHashComputed) {
         _avgHashComputed = utils::AvgHash(_grayImage);
@@ -61,13 +52,17 @@ std::ostream& operator<<(std::ostream& os, const CImagePatch& patch)
     os << "Patch:\n";
     os << "\tFrame:\n\t\t" << patch.GetFrame() << std::endl;
     os << "\tBlur value:\n\t\t" << patch.GetBlurValue() << std::endl;
-    std::bitset<sizeof(int)> b(patch.GetImgClass());
-    os << "\tClass:\n\t\t" << b << std::endl;
     os << "\tStandart deviation:\n\t\t" << patch.GetStandartDeviation() << std::endl;
     
     os << "\tGrey image:\n" << patch.GrayImage() << std::endl;
     os << "\tBin image:\n" << patch.BinImage() << std::endl;
     os << "\tSd image:\n" << patch.SdImage() << std::endl;
+    
+    std::bitset<sizeof(int64)> phash(patch.GetPHash());
+    os << "\tPHash:\n\t\t" << phash << std::endl;
+    
+    std::bitset<sizeof(int64)> avgHash(patch.GetAvgHash());
+    os << "\tAvgHash:\n\t\t" << avgHash << std::endl;
     
     return os;
 }
@@ -92,9 +87,4 @@ double CImagePatch::CalculateBlurValue(TBlurMeasureMethod method) const
 double CImagePatch::CalculateStandartDeviation() const
 {
     return utils::StandartDeviation(_grayImage);
-}
-
-int CImagePatch::CalculateImgClass() const
-{
-    return CImageClassifier::Classify(_grayImage);
 }

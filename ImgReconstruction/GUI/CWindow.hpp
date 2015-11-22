@@ -9,7 +9,7 @@
 
 typedef enum : int {
     TDrawModeStamp,
-    TDrawModeDraw,
+//    TDrawModeDraw,
     TDrawModeNone
 } TDrawMode;
 

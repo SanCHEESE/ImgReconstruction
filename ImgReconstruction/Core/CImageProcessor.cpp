@@ -9,44 +9,130 @@
 #include "CTimeLogger.hpp"
 #include "CDocumentBinarizer.hpp"
 
+#ifdef DEBUG
+    #define SHOW_BLUR_MAP 0
+    #define SHOW_SIMILAR_PATCHES 0
+    #define SHOW_RESIZED 1
+#endif
+
 void CImageProcessor::StartProcessingChain(const CImage& img)
 {
     _mainImage = CImagePatch();
     _mainImage.SetGrayImage(img);
     
-    {
-        // строим бинаризованное изображение
-        CTimeLogger::StartLogging();
-        
-        CDocumentBinarizer binarizer(BinaryWindowSize, BinMethod, 2.f);
-        CImage blurredImage;
-//        cv::GaussianBlur(img, blurredImage, GaussianKernelSize, 0.2, 0.2);
-        cv::bilateralFilter(img, blurredImage, 2, 1, 1);
-        CImage binarizedImage;
-        binarizedImage = binarizer.Binarize(blurredImage);
-        _binarizedWindow = CWindow(BinarizedWindowName, binarizedImage);
-        _binarizedWindow.Show();
-        _binarizedWindow.Update(binarizedImage);
-        
-        CTimeLogger::Print("Binarization: ");
-        
-        _mainImage.SetBinImage(binarizedImage);
-    }
+    BuildBinImage(img);
+    BuildSdImage(img);
     
-    {
-        // строим sd изображение
-        CTimeLogger::StartLogging();
-        
-        CImage sdImage;
-        sdImage = utils::SDFilter(img, cv::Size(MaxPatchSideSize, MaxPatchSideSize));
-        _debugWindow.Show();
-        _debugWindow.Update(sdImage);
+    ConfigureWindow(img);
+}
 
-        CTimeLogger::Print("SD filter: ");
-        
-        _mainImage.SetSdImage(sdImage);
+void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect)
+{
+#if SHOW_BLUR_MAP
+    ProcessShowBlurMap(patchRect);
+#elif SHOW_SIMILAR_PATCHES
+    ProcessShowSimilarPatches(patchRect);
+#elif SHOW_RESIZED
+    ProcessShowResized(patchRect);
+#endif
+}
+
+#pragma mark - Private
+
+void CImageProcessor::ProcessShowBlurMap(const cv::Rect &patchRect)
+{
+    CImagePatch selectedPatch = FetchPatch(patchRect);
+    std::vector<CImagePatch> patches = FetchPatches(patchRect);
+    CTimeLogger::StartLogging("Show blur map:\n");
+    
+    std::vector<DrawableRect> rectsToDraw;
+    for (int i = 0; i < patches.size(); i++) {
+        AddBlurValueRect(rectsToDraw, patches[i]);
     }
     
+    _window.DrawRects(rectsToDraw);
+}
+
+void CImageProcessor::ProcessShowSimilarPatches(const cv::Rect &patchRect)
+{
+    CImagePatch selectedPatch = FetchPatch(patchRect);
+    
+    std::vector<CImagePatch> patches = FetchPatches(patchRect);
+    
+    CTimeLogger::StartLogging("Similar patches:\n");
+    CImageComparator imgComparator(CompMetric);
+    
+    std::vector<DrawableRect> rectsToDraw;
+    int good = 0, bad = 0;
+    for (int i = 0; i < patches.size(); i++) {
+        
+        int distance = imgComparator.Compare(selectedPatch, patches[i]);
+        int eps = CompEpsForCompMetric(CompMetric);
+        if (distance < eps) {
+            // чем больше размытия, тем темнее рамка вокруг патча
+            cv::Scalar color = RGB(0, patches[i].BlurValue(BlurMeasureMethod), 0);
+            rectsToDraw.push_back({patches[i].GetFrame(), color});
+            good++;
+            
+            std::cout << "\t" << std::setw(4) << good << ". Frame: " << patches[i].GetFrame() << " Distance: " \
+            << std::setw(3) << distance << std::endl;
+        } else {
+            bad++;
+        }
+    }
+    
+    std::cout << "\nGood patches: " << good << std::endl;
+    CTimeLogger::Print("Similar patches search:");
+    
+    _window.DrawRects(rectsToDraw);
+}
+
+void CImageProcessor::ProcessShowResized(const cv::Rect &patchRect)
+{
+    CImagePatch selectedPatch = FetchPatch(patchRect);
+    CImage resizedImage = selectedPatch.BinImage().GetResizedImage({4, 4});
+    CImage result;
+    _window.Update(resizedImage);
+}
+
+void CImageProcessor::BuildBinImage(const CImage &img)
+{
+    // строим бинаризованное изображение
+    CTimeLogger::StartLogging();
+    
+    CDocumentBinarizer binarizer(BinaryWindowSize, BinMethod, 2.f);
+    CImage blurredImage;
+    //        cv::GaussianBlur(img, blurredImage, GaussianKernelSize, 0.2, 0.2);
+    cv::bilateralFilter(img, blurredImage, 2, 1, 1);
+    CImage binarizedImage;
+    binarizedImage = binarizer.Binarize(blurredImage);
+    
+    _binarizedWindow = CWindow(BinarizedWindowName, binarizedImage);
+    _binarizedWindow.Show();
+    _binarizedWindow.Update(binarizedImage);
+    
+    CTimeLogger::Print("Binarization: ");
+    
+    _mainImage.SetBinImage(binarizedImage);
+}
+
+void CImageProcessor::BuildSdImage(const CImage &img)
+{
+    // строим sd изображение
+    CTimeLogger::StartLogging();
+    
+    CImage sdImage;
+    sdImage = utils::SDFilter(img, cv::Size(MaxPatchSideSize, MaxPatchSideSize));
+    _debugWindow.Show();
+    _debugWindow.Update(sdImage);
+    
+    CTimeLogger::Print("SD filter: ");
+    
+    _mainImage.SetSdImage(sdImage);
+}
+
+void CImageProcessor::ConfigureWindow(const CImage& img)
+{
     // изображение для вывода
     img.copyTo(_displayImage);
     // делаем цветным
@@ -60,30 +146,41 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
     _window.ObserveKeyboard();
 }
 
-void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect)
+CImagePatch CImageProcessor::FetchPatch(const cv::Rect &patchRect)
 {
     cv::Size patchSize = cv::Size(patchRect.width, patchRect.height);
-    cv::Point offset = cv::Point(1, 1);
+    CDocumentBinarizer binarizer = CDocumentBinarizer(patchSize);
     
     CImagePatch selectedPatch = CImagePatch();
-    CDocumentBinarizer binarizer = CDocumentBinarizer(patchSize);
     selectedPatch.SetGrayImage(CImage(_mainImage.GrayImage(), patchRect));
     selectedPatch.SetBinImage(CImage(_mainImage.BinImage(), patchRect));
-    
     selectedPatch.BlurValue(BlurMeasureMethod);
     selectedPatch.StandartDeviation();
-    selectedPatch.ImgClass();
+    if (CompMetric == TImageCompareMetricPHash) {
+        selectedPatch.PHash();
+    } else if (CompMetric == TImageCompareMetricAvgHash) {
+        selectedPatch.AvgHash();
+    }
+    
     std::cout << "-------\nSelectedPatch:\n" << selectedPatch << "\n-------" <<std::endl;
+    
+    return selectedPatch;
+}
 
+std::vector<CImagePatch> CImageProcessor::FetchPatches(const cv::Rect& patchRect)
+{
     CTimeLogger::StartLogging();
-    // храним пару - gray & бинаризованное изображения
+    
     std::vector<CImagePatch> patches;
     CImage grayImage = _mainImage.GrayImage();
     CImage binImage = _mainImage.BinImage();
     CImage sdImage = _mainImage.SdImage();
-    CImage::CPatchIterator patchIterator = grayImage.GetPatchIterator(patchSize, offset);
-    CImage::CPatchIterator binPatchIterator = binImage.GetPatchIterator(patchSize, offset);
-    CImage::CPatchIterator sdPatchIterator = sdImage.GetPatchIterator(patchSize, offset);
+    
+    cv::Size patchSize = cv::Size(patchRect.width, patchRect.height);
+    CImage::CPatchIterator patchIterator = grayImage.GetPatchIterator(patchSize, PatchOffset);
+    CImage::CPatchIterator binPatchIterator = binImage.GetPatchIterator(patchSize, PatchOffset);
+    CImage::CPatchIterator sdPatchIterator = sdImage.GetPatchIterator(patchSize, PatchOffset);
+    
     while (patchIterator.HasNext()) {
         CImagePatch imgPatch;
         imgPatch.SetBinImage(binPatchIterator.GetNext());
@@ -91,55 +188,19 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
         imgPatch.SetSdImage(sdPatchIterator.GetNext());
         patches.push_back(imgPatch);
     }
-    CTimeLogger::Print("Patch fetching");
-
-    int good = 0, bad = 0;
-
-    CTimeLogger::StartLogging();
-    std::cout << "Similar patches:\n";
-    CImageComparator imgComparator(CompMetric);
-    std::vector<DrawableRect> rectsToDraw;
-    for (int i = 0; i < patches.size(); i++) {
-
-        // раскомментировать для просмотра карты блюра
-//        double colorComp = patches[i].BlurValue(BlurMeasureMethod);
-//        cv::Scalar color = RGB(colorComp, colorComp, colorComp);
-//        rectsToDraw.push_back({patches[i].GetFrame(), color, CV_FILLED});
-        
-        if (patches[i].ImgClass() != selectedPatch.ImgClass()) {
-            continue;
-        }
-        
-        if (CompMetric == TImageCompareMetricPHash) {
-            selectedPatch.PHash();
-            patches[i].PHash();
-        } else if (CompMetric == TImageCompareMetricAvgHash) {
-            selectedPatch.AvgHash();
-            patches[i].AvgHash();
-        }
-        
-        int distance = imgComparator.Compare(selectedPatch, patches[i]);
-        int eps = CompEpsForCompMetric(CompMetric);
-        if (distance < eps) {
-            // чем больше размытия, тем темнее рамка вокруг патча
-            cv::Scalar color = RGB(0, patches[i].BlurValue(BlurMeasureMethod), 0);
-            rectsToDraw.push_back({patches[i].GetFrame(), color});
-            good++;
-            
-            std::cout << "\t" << std::setw(4) << good << ". Frame: " << patches[i].GetFrame() << " Distance: " \
-                << std::setw(3) << distance <<  " Class: " << patches[i].ImgClass() << std::endl;
-        } else {
-            bad++;
-        }
-    }
-    std::cout << "\nGood patches: " << good << std::endl;
-    CTimeLogger::Print("Similar patches search:");
-    CTimeLogger::PrintTotalTime();
     
-    _window.DrawRects(rectsToDraw);
+    CTimeLogger::Print("Patch fetching: ");
     
-    SaveImage("../../out/result.jpg", _window.GetImage());
+    return patches;
 }
+
+void CImageProcessor::AddBlurValueRect(std::vector<DrawableRect>& rects, CImagePatch& imagePatch)
+{
+    double colorComp = imagePatch.BlurValue(BlurMeasureMethod);
+    cv::Scalar color = RGB(colorComp, colorComp, colorComp);
+    rects.push_back({imagePatch.GetFrame(), color, CV_FILLED});
+}
+
 
 #pragma mark - Utils
 
@@ -160,13 +221,3 @@ int CImageProcessor::CompEpsForCompMetric(TImageCompareMetric metric)
     
     return 0;
 }
-
-
-void CImageProcessor::SaveImage(const std::string path, const CImage &image)
-{
-    std::vector<int> compression_params;
-    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-    compression_params.push_back(100);
-    cv::imwrite(path, image, compression_params);
-}
-
