@@ -80,12 +80,12 @@ void CImage::CopyMetadataTo(CImage &image) const
 
 #pragma mark - CPatchIterator
 
-bool CImage::CPatchIterator::HasNext()
+inline bool CImage::CPatchIterator::HasNext()
 {
     return _pointingRect.width + _pointingRect.x + _offset.x < _iterImage->cols || _pointingRect.height +_pointingRect.y + _offset.y < _iterImage->rows;
 }
 
-CImage CImage::CPatchIterator::GetNext()
+inline CImage CImage::CPatchIterator::GetNext()
 {
     int maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage->rows);
     int maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage->cols);

@@ -90,9 +90,32 @@ void CImageProcessor::ProcessShowSimilarPatches(const cv::Rect &patchRect)
 void CImageProcessor::ProcessShowResized(const cv::Rect &patchRect)
 {
     CImagePatch selectedPatch = FetchPatch(patchRect);
-    CImage resizedImage = selectedPatch.BinImage().GetResizedImage({4, 4});
+    std::vector<CImagePatch> patches = FetchPatches(patchRect);
+    
+    std::vector<CImagePatch> similarPatches;
+    CImageComparator imgComparator(CompMetric);
+    int eps = CompEpsForCompMetric(CompMetric);
+    for (int i = 0; i < patches.size(); i++) {
+        if (utils::hamming(patches[i].AvgHash(), selectedPatch.AvgHash()) == 0) {
+            int distance = imgComparator.Compare(selectedPatch, patches[i]);
+            if (distance < eps) {
+                similarPatches.push_back(patches[i]);
+            }
+        }
+    }
+    
     CImage result;
-    _window.Update(resizedImage);
+    for (int i = 0; i < similarPatches.size(); i++) {
+        CImage temp;
+        cv::hconcat(similarPatches[i].BinImage(), similarPatches[i].GrayImage(), temp);
+        if (result.cols > 0 && result.rows > 0) {
+            cv::vconcat(result, temp, result);
+        } else {
+            result = temp;
+        }
+    }
+    
+    _window.Update(result);
 }
 
 void CImageProcessor::BuildBinImage(const CImage &img)
@@ -123,6 +146,7 @@ void CImageProcessor::BuildSdImage(const CImage &img)
     
     CImage sdImage;
     sdImage = utils::SDFilter(img, cv::Size(MaxPatchSideSize, MaxPatchSideSize));
+    
     _debugWindow.Show();
     _debugWindow.Update(sdImage);
     
@@ -162,7 +186,7 @@ CImagePatch CImageProcessor::FetchPatch(const cv::Rect &patchRect)
         selectedPatch.AvgHash();
     }
     
-    std::cout << "-------\nSelectedPatch:\n" << selectedPatch << "\n-------" <<std::endl;
+//    std::cout << "-------\nSelectedPatch:\n" << selectedPatch << "\n-------" <<std::endl;
     
     return selectedPatch;
 }

@@ -11,14 +11,23 @@
 namespace utils
 {
     template<typename T>
-    int hamming(T p1, T p2) {
-        T diff = p1 & p2;
+    int hamming(T p1, T p2)
+    {
+        auto printBits = [](T num) -> void {
+            for (int i = sizeof(T) * 8 - 1; i >= 0; i--) {
+                std::cout << ((num >> i) % 2);
+            }
+            std::cout << std::endl;
+        };
         
-        std::bitset<sizeof(T) * 8> d(diff);
+//        printBits(p1);
+//        printBits(p2);
         
         int hammingDistance = 0;
-        for (int i = 0; i < d.size(); i++) {
-            hammingDistance += d[i];
+        for (int i = sizeof(T) * 8 - 1; i >= 0; i--) {
+            if (((p1 >> i) % 2) != ((p2 >> i) % 2)) {
+                hammingDistance++;
+            }
         }
         
         return hammingDistance;
@@ -36,7 +45,7 @@ namespace utils
     
     // classification
     int64 PHash(const CImage &image);
-    int64 AvgHash(const CImage &image);
+    int64 AvgHash(const CImage &image, const cv::Size& size = {4, 4});
 
     void SaveImage(const std::string path, const CImage &image);
 }

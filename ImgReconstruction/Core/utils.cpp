@@ -152,37 +152,28 @@ namespace utils
         return result;
     }
     
-    int64 AvgHash(const CImage &image)
+    int64 AvgHash(const CImage& image, const cv::Size& size)
     {
-        assert(image.cols > 8 || image.rows > 8);
+        assert(image.cols <= 8 && image.rows <= 8);
         
-        cv::Mat temp = image.clone();
+        cv::Mat resized;
+        resize(image, resized, size);
         
-        resize(temp, temp, cv::Size(8, 8));
+        int average = cv::mean(resized)[0];
         
-        uchar *pData;
-        for(int i = 0; i < temp.rows; i++) {
-            pData = temp.ptr<uchar>(i);
-            for(int j = 0; j < temp.cols; j++) {
-                pData[j] = pData[j]/4;
-            }
-        }
-        
-        int average = cv::mean(temp)[0];
-        
-        cv::Mat mask = (temp >= (uchar)average);
+        cv::Mat mask = (resized > average);
         
         int64 result = 0;
         for (int i = 0; i < mask.rows; i++) {
-            pData = mask.ptr<uchar>(i);
             for(int j = 0; j < mask.cols; j++) {
-                if (pData[j] == 0) {
+                if (mask.at<uchar>(i, j) == 0) {
                     result = result << 1;
                 } else {
                     result = (result << 1) | 1;
                 }
             }
         }
+        
         return result;
     }
     

@@ -32,7 +32,7 @@ double CImagePatch::StandartDeviation()
 int64 CImagePatch::PHash()
 {
     if (!_pHashComputed) {
-        _pHash = utils::PHash(_grayImage);
+        _pHash = utils::PHash(_binImage);
         _avgHashComputed = true;
     }
     return _pHash;
@@ -41,7 +41,7 @@ int64 CImagePatch::PHash()
 int64 CImagePatch::AvgHash()
 {
     if (!_avgHashComputed) {
-        _avgHashComputed = utils::AvgHash(_grayImage);
+        _avgHash = utils::AvgHash(_binImage);
         _avgHashComputed = true;
     }
     return _avgHash;

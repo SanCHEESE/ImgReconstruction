@@ -87,10 +87,9 @@ void CWindow::ObserveKeyboard()
         int c = cv::waitKey(20);
         if (c == 27) {
             break;
-        } else if (c == 115) {
+        } else if ((char)c == 's') {
             utils::SaveImage(SaveImgPath + _name + ".jpg", _image);
         }
-        std::cout << c << std::endl;
     }
 }
 
