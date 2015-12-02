@@ -33,17 +33,20 @@ public:
     
 private:
     void ProcessShowBlurMap(const cv::Rect& patchRect);
-    void ProcessShowSimilarPatches(const cv::Rect& patchRect);
-    void ProcessShowResized(const cv::Rect& patchRect);
+    void ProcessHighlightSimilarPatches(const cv::Rect& patchRect);
+    void ProcessShowSortedSimilar(const cv::Rect& patchRect);
+	void ProcessReplaceSimilarPatches(const cv::Rect &patchRect);
+	void ProcessFixImageStupid();
     
-    void BuildBinImage(const CImage& img);
-    void BuildSdImage(const CImage& img);
+    void BuildAndShowBinImage(const CImage& img, bool show);
+    void BuildAndShowSdImage(const CImage& img, bool show);
     void ConfigureWindow(const CImage& img);
     
     std::vector<CImagePatch> FetchPatches(const cv::Rect& patchRect);
     CImagePatch FetchPatch(const cv::Rect& patchRect);
     void AddBlurValueRect(std::vector<DrawableRect>& rects, CImagePatch& imagePatch);
-    
+	std::vector<CImagePatch> FindSimilarPatches(CImagePatch& patch, std::vector<CImagePatch>& patches);
+	
     CImagePatch _mainImage;
     CImage _displayImage;
     

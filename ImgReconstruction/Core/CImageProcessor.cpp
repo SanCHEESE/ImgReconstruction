@@ -11,8 +11,10 @@
 
 #ifdef DEBUG
     #define SHOW_BLUR_MAP 0
-    #define SHOW_SIMILAR_PATCHES 0
-    #define SHOW_RESIZED 1
+    #define HIGHLIGHT_SIMILAR_PATCHES 0
+    #define SHOW_SORTED_SIMILAR 1
+	#define REPLACE_SIMILAR_PATCHES 0
+	#define FIX_IMAGE_STUPID 0
 #endif
 
 void CImageProcessor::StartProcessingChain(const CImage& img)
@@ -20,9 +22,9 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
     _mainImage = CImagePatch();
     _mainImage.SetGrayImage(img);
     
-    BuildBinImage(img);
-    BuildSdImage(img);
-    
+    BuildAndShowBinImage(img, false);
+    BuildAndShowSdImage(img, false);
+	
     ConfigureWindow(img);
 }
 
@@ -30,10 +32,14 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 {
 #if SHOW_BLUR_MAP
     ProcessShowBlurMap(patchRect);
-#elif SHOW_SIMILAR_PATCHES
+#elif HIGHLIGHT_SIMILAR_PATCHES
     ProcessShowSimilarPatches(patchRect);
-#elif SHOW_RESIZED
-    ProcessShowResized(patchRect);
+#elif SHOW_SORTED_SIMILAR
+    ProcessShowSortedSimilar(patchRect);
+#elif REPLACE_SIMILAR_PATCHES
+	ProcessReplaceSimilarPatches(patchRect);
+#elif FIX_IMAGE_STUPID
+	ProcessFixImageStupid();
 #endif
 }
 
@@ -53,72 +59,98 @@ void CImageProcessor::ProcessShowBlurMap(const cv::Rect &patchRect)
     _window.DrawRects(rectsToDraw);
 }
 
-void CImageProcessor::ProcessShowSimilarPatches(const cv::Rect &patchRect)
+void CImageProcessor::ProcessHighlightSimilarPatches(const cv::Rect &patchRect)
 {
     CImagePatch selectedPatch = FetchPatch(patchRect);
     
     std::vector<CImagePatch> patches = FetchPatches(patchRect);
     
-    CTimeLogger::StartLogging("Similar patches:\n");
-    CImageComparator imgComparator(CompMetric);
-    
+    CTimeLogger::StartLogging("Highlight patches:\n");
+	
+	std::vector<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
     std::vector<DrawableRect> rectsToDraw;
-    int good = 0, bad = 0;
-    for (int i = 0; i < patches.size(); i++) {
-        
-        int distance = imgComparator.Compare(selectedPatch, patches[i]);
-        int eps = CompEpsForCompMetric(CompMetric);
-        if (distance < eps) {
-            // чем больше размытия, тем темнее рамка вокруг патча
-            cv::Scalar color = RGB(0, patches[i].BlurValue(BlurMeasureMethod), 0);
-            rectsToDraw.push_back({patches[i].GetFrame(), color});
-            good++;
-            
-            std::cout << "\t" << std::setw(4) << good << ". Frame: " << patches[i].GetFrame() << " Distance: " \
-            << std::setw(3) << distance << std::endl;
-        } else {
-            bad++;
-        }
+    int good = 0;
+    for (int i = 0; i < similarPatches.size(); i++) {
+		// чем больше размытия, тем темнее рамка вокруг патча
+		cv::Scalar color = RGB(0, similarPatches[i].BlurValue(BlurMeasureMethod), 0);
+		rectsToDraw.push_back({similarPatches[i].GetFrame(), color});
+		good++;
+		
+		std::cout << "\t" << std::setw(4) << good << ". Frame: " << patches[i].GetFrame() << std::endl;
     }
-    
+	
     std::cout << "\nGood patches: " << good << std::endl;
-    CTimeLogger::Print("Similar patches search:");
+    CTimeLogger::Print("Patches to highlight search:");
     
     _window.DrawRects(rectsToDraw);
 }
 
-void CImageProcessor::ProcessShowResized(const cv::Rect &patchRect)
+void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 {
     CImagePatch selectedPatch = FetchPatch(patchRect);
     std::vector<CImagePatch> patches = FetchPatches(patchRect);
     
-    std::vector<CImagePatch> similarPatches;
-    CImageComparator imgComparator(CompMetric);
-    int eps = CompEpsForCompMetric(CompMetric);
-    for (int i = 0; i < patches.size(); i++) {
-        if (utils::hamming(patches[i].AvgHash(), selectedPatch.AvgHash()) == 0) {
-            int distance = imgComparator.Compare(selectedPatch, patches[i]);
-            if (distance < eps) {
-                similarPatches.push_back(patches[i]);
-            }
-        }
-    }
+	std::vector<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
     
-    CImage result;
+    std::sort(similarPatches.begin(), similarPatches.end(), LessSimilarity());
+    
+    CImage similarityDecreaseImg;
     for (int i = 0; i < similarPatches.size(); i++) {
         CImage temp;
         cv::hconcat(similarPatches[i].BinImage(), similarPatches[i].GrayImage(), temp);
-        if (result.cols > 0 && result.rows > 0) {
-            cv::vconcat(result, temp, result);
+        if (similarityDecreaseImg.cols > 0 && similarityDecreaseImg.rows > 0) {
+            cv::vconcat(similarityDecreaseImg, temp, similarityDecreaseImg);
         } else {
-            result = temp;
+            similarityDecreaseImg = temp;
         }
     }
     
-    _window.Update(result);
+    std::sort(similarPatches.begin(), similarPatches.end(), LessBlur());
+    CImage blurIncreaseImg;
+    for (int i = 0; i < similarPatches.size(); i++) {
+        CImage temp;
+        cv::hconcat(similarPatches[i].BinImage(), similarPatches[i].GrayImage(), temp);
+        if (blurIncreaseImg.cols > 0 && blurIncreaseImg.rows > 0) {
+            cv::vconcat(blurIncreaseImg, temp, blurIncreaseImg);
+        } else {
+            blurIncreaseImg = temp;
+        }
+    }
+    
+    utils::SaveImage(SaveImgPath + "similarityDecrease.jpg", similarityDecreaseImg);
+    utils::SaveImage(SaveImgPath + "blurIncrease.jpg", blurIncreaseImg);
 }
 
-void CImageProcessor::BuildBinImage(const CImage &img)
+void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
+{
+	CImagePatch selectedPatch = FetchPatch(patchRect);
+	std::vector<CImagePatch> patches = FetchPatches({0, 0, MaxPatchSideSize, MaxPatchSideSize});
+	
+	CTimeLogger::StartLogging();
+	
+	std::vector<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
+	
+	std::sort(similarPatches.begin(), similarPatches.end(), LessBlur());
+	
+	CImagePatch sharpPatch = similarPatches[0];
+	std::vector<DrawableRect> rectsToDraw;
+	CImage grayImage = _mainImage.GrayImage();
+	
+	for (int i = 1; i < similarPatches.size(); i++) {
+		CImage temp = grayImage(similarPatches[i].GetFrame());
+		sharpPatch.GrayImage().copyTo(temp);
+		cv::Scalar color = RGB(0, similarPatches[i].BlurValue(BlurMeasureMethod), 0);
+		rectsToDraw.push_back({similarPatches[i].GetFrame(), color});
+	}
+	_mainImage.SetGrayImage(grayImage);
+	
+	CTimeLogger::Print("Image fix:");
+	
+	_window.Update(_mainImage.GrayImage());
+	_window.DrawRects(rectsToDraw);
+}
+
+void CImageProcessor::BuildAndShowBinImage(const CImage &img, bool show)
 {
     // строим бинаризованное изображение
     CTimeLogger::StartLogging();
@@ -128,28 +160,30 @@ void CImageProcessor::BuildBinImage(const CImage &img)
     //        cv::GaussianBlur(img, blurredImage, GaussianKernelSize, 0.2, 0.2);
     cv::bilateralFilter(img, blurredImage, 2, 1, 1);
     CImage binarizedImage;
-    binarizedImage = binarizer.Binarize(blurredImage);
-    
-    _binarizedWindow = CWindow(BinarizedWindowName, binarizedImage);
-    _binarizedWindow.Show();
-    _binarizedWindow.Update(binarizedImage);
-    
+	CImage extentImage = utils::ExtentImage(img, BinaryWindowSize);
+    binarizedImage = binarizer.Binarize(extentImage);
+	
+	if (show) {
+		_binarizedWindow.ShowAndUpdate(binarizedImage);
+	}
+	
     CTimeLogger::Print("Binarization: ");
     
     _mainImage.SetBinImage(binarizedImage);
 }
 
-void CImageProcessor::BuildSdImage(const CImage &img)
+void CImageProcessor::BuildAndShowSdImage(const CImage &img, bool show)
 {
     // строим sd изображение
     CTimeLogger::StartLogging();
     
     CImage sdImage;
     sdImage = utils::SDFilter(img, cv::Size(MaxPatchSideSize, MaxPatchSideSize));
-    
-    _debugWindow.Show();
-    _debugWindow.Update(sdImage);
-    
+	
+	if (show) {
+		_debugWindow.ShowAndUpdate(sdImage);
+	}
+	
     CTimeLogger::Print("SD filter: ");
     
     _mainImage.SetSdImage(sdImage);
@@ -162,10 +196,9 @@ void CImageProcessor::ConfigureWindow(const CImage& img)
     // делаем цветным
     cv::cvtColor(_displayImage, _displayImage, CV_GRAY2RGBA);
     
-    _window.Show();
     _window.SetMaxBoxSideSize(MaxPatchSideSize);
     _window.SetOriginalImage(_displayImage);
-    _window.Update(_displayImage);
+	_window.ShowAndUpdate(_displayImage);
     _window.StartObservingMouse();
     _window.ObserveKeyboard();
 }
@@ -186,8 +219,8 @@ CImagePatch CImageProcessor::FetchPatch(const cv::Rect &patchRect)
         selectedPatch.AvgHash();
     }
     
-//    std::cout << "-------\nSelectedPatch:\n" << selectedPatch << "\n-------" <<std::endl;
-    
+    std::cout << "-------\nSelectedPatch:\n" << selectedPatch << "\n-------" <<std::endl;
+	
     return selectedPatch;
 }
 
@@ -196,11 +229,14 @@ std::vector<CImagePatch> CImageProcessor::FetchPatches(const cv::Rect& patchRect
     CTimeLogger::StartLogging();
     
     std::vector<CImagePatch> patches;
+	cv::Size patchSize = cv::Size(patchRect.width, patchRect.height);
+	_mainImage.SetGrayImage(utils::ExtentImage(_mainImage.GrayImage(), patchSize));
+	_mainImage.SetBinImage(utils::ExtentImage(_mainImage.BinImage(), patchSize));
+	_mainImage.SetSdImage(utils::ExtentImage(_mainImage.SdImage(), patchSize));
     CImage grayImage = _mainImage.GrayImage();
     CImage binImage = _mainImage.BinImage();
     CImage sdImage = _mainImage.SdImage();
-    
-    cv::Size patchSize = cv::Size(patchRect.width, patchRect.height);
+	
     CImage::CPatchIterator patchIterator = grayImage.GetPatchIterator(patchSize, PatchOffset);
     CImage::CPatchIterator binPatchIterator = binImage.GetPatchIterator(patchSize, PatchOffset);
     CImage::CPatchIterator sdPatchIterator = sdImage.GetPatchIterator(patchSize, PatchOffset);
@@ -216,6 +252,30 @@ std::vector<CImagePatch> CImageProcessor::FetchPatches(const cv::Rect& patchRect
     CTimeLogger::Print("Patch fetching: ");
     
     return patches;
+}
+
+std::vector<CImagePatch> CImageProcessor::FindSimilarPatches(CImagePatch& patch, std::vector<CImagePatch>& patches)
+{
+	CTimeLogger::StartLogging();
+	
+	std::vector<CImagePatch> similarPatches;
+	CImageComparator imgComparator(CompMetric);
+	int eps = CompEpsForCompMetric(CompMetric);
+	for (int i = 0; i < patches.size(); i++) {
+		if (utils::hamming(patches[i].AvgHash(), patch.AvgHash()) == 0) {
+			int distance = imgComparator.Compare(patch, patches[i]);
+			patches[i].distanceToTarget = distance;
+			if (distance < eps) {
+				patches[i].BlurValue(BlurMeasureMethod);
+				similarPatches.push_back(patches[i]);
+			}
+		}
+	}
+	
+	std::cout << "Similar patches found: " << similarPatches.size() << std::endl;
+	CTimeLogger::Print("Patch search: ");
+	
+	return similarPatches;
 }
 
 void CImageProcessor::AddBlurValueRect(std::vector<DrawableRect>& rects, CImagePatch& imagePatch)

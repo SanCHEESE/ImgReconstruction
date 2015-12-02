@@ -28,6 +28,12 @@ void CWindow::Update(const CImage& img)
     img.copyTo(_image);
 }
 
+void CWindow::ShowAndUpdate(const CImage &img, int flags)
+{
+	Show(flags);
+	Update(img);
+}
+
 CImage CWindow::GetImage() const
 {
     CImage result;
@@ -113,6 +119,8 @@ void CWindow::MouseCallback(int event, int x, int y, int flags, void *param)
                                               window->_maxBoxSideSize);
                 window->DrawRect(window->_stampRect, TRectColorBlue);
             }
+//			std::cout << "x, y: " << x << ", " << y << std::endl;
+			
             break;
         case CV_EVENT_LBUTTONDOWN:
             window->_isDrawing = true;

@@ -13,16 +13,6 @@ namespace utils
     template<typename T>
     int hamming(T p1, T p2)
     {
-        auto printBits = [](T num) -> void {
-            for (int i = sizeof(T) * 8 - 1; i >= 0; i--) {
-                std::cout << ((num >> i) % 2);
-            }
-            std::cout << std::endl;
-        };
-        
-//        printBits(p1);
-//        printBits(p2);
-        
         int hammingDistance = 0;
         for (int i = sizeof(T) * 8 - 1; i >= 0; i--) {
             if (((p1 >> i) % 2) != ((p2 >> i) % 2)) {
@@ -48,4 +38,6 @@ namespace utils
     int64 AvgHash(const CImage &image, const cv::Size& size = {4, 4});
 
     void SaveImage(const std::string path, const CImage &image);
+	
+	CImage ExtentImage(const CImage& img, const cv::Size size);
 }

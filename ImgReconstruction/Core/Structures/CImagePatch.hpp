@@ -49,6 +49,7 @@ public:
     
     friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
     
+    double distanceToTarget;
 private:
     void Initialize();
     double CalculateBlurValue(TBlurMeasureMethod method) const;
@@ -69,10 +70,18 @@ private:
     bool _pHashComputed;
 };
 
-struct Greater
+struct LessBlur
 {
     inline bool operator() (const CImagePatch& patch1, const CImagePatch& patch2)
     {
         return patch1.GetBlurValue() > patch2.GetBlurValue();
+    }
+};
+
+struct LessSimilarity
+{
+    inline bool operator() (const CImagePatch& patch1, const CImagePatch& patch2)
+    {
+        return patch1.distanceToTarget < patch2.distanceToTarget;
     }
 };

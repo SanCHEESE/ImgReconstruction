@@ -82,7 +82,13 @@ void CImage::CopyMetadataTo(CImage &image) const
 
 inline bool CImage::CPatchIterator::HasNext()
 {
-    return _pointingRect.width + _pointingRect.x + _offset.x < _iterImage->cols || _pointingRect.height +_pointingRect.y + _offset.y < _iterImage->rows;
+	if (_pointingRect.width + _pointingRect.x == _iterImage->cols &&
+		_pointingRect.height + _pointingRect.y == _iterImage->rows) {
+		return true;
+	}
+	
+	return _pointingRect.width + _pointingRect.x + (_offset.x <= 1 ?: (_offset.x - 1)) < _iterImage->cols ||
+		_pointingRect.height + _pointingRect.y + (_offset.x <= 1 ?: (_offset.x - 1)) < _iterImage->rows;
 }
 
 inline CImage CImage::CPatchIterator::GetNext()
@@ -94,30 +100,15 @@ inline CImage CImage::CPatchIterator::GetNext()
     cv::Rect patchFrame = cv::Rect(_pointingRect.x, _pointingRect.y, maxCol - _pointingRect.x, maxRow - _pointingRect.y);
     CImage patch = (*_iterImage)(patchFrame);
     patch._frame = patchFrame;
-    
-    // нормализуем патч до нужного размера
-    CImage normPatch = CImage(_size, CV_8U, 255);
-    normPatch._frame = patchFrame;
-    
-    // копируем матрицу
-    for (int i = 0; i < patch.rows; i++) {
-        for (int j = 0; j < patch.cols; j++) {
-            normPatch.data[normPatch.channels()*(patch.cols * i + j)] = patch.at<char>(i, j);
-        }
-    }
-    
+	
     if (_pointingRect.width + _pointingRect.x < _iterImage->cols - 1) {
         // не у правого края
         _pointingRect.x += _offset.x;
-    } else if (_pointingRect.height + _pointingRect.y < _iterImage->rows - 1 ) {
-        // не у низа
-        _pointingRect.x = 0;
-    }
-    
-    if (_pointingRect.width + _pointingRect.x >= _iterImage->cols - 1) {
-        // сдвигаемся на след. строку
-        _pointingRect.y += _offset.y;
-    }
+	} else if (_pointingRect.width + _pointingRect.x >= _iterImage->cols - 1) {
+		// сдвигаемся на след. строку
+		_pointingRect.y += _offset.y;
+		_pointingRect.x = 0;
+	}
     
     return patch;
 }

@@ -33,7 +33,7 @@ public:
         CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point offset, const cv::Rect& pointingRect = cv::Rect()):
         _size(size), _pointingRect(pointingRect), _offset(offset), _iterImage(iterImage)
         {
-            if (_pointingRect == cv::Rect(0, 0, 0, 0)) {
+            if (_pointingRect == cv::Rect()) {
                 _pointingRect = cv::Rect(0, 0, _size.width, _size.height);
             }
         }

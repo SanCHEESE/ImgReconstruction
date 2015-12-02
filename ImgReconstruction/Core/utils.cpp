@@ -184,4 +184,27 @@ namespace utils
         compression_params.push_back(100);
         cv::imwrite(path, image, compression_params);
     }
+	
+	CImage ExtentImage(const CImage& img, const cv::Size size)
+	{
+		cv::Size iterImageSize = {0, 0};
+		int colsToExtend = img.cols % size.width;
+		if (colsToExtend > 0) {
+			iterImageSize.width = (img.cols / size.width + 1) * size.width;
+		} else {
+			iterImageSize.width = img.cols;
+		}
+		
+		int rowsToExtend = img.rows % size.height;
+		if (rowsToExtend > 0) {
+			iterImageSize.height = (img.rows / size.height + 1) * size.height;
+		} else {
+			iterImageSize.height = img.rows;
+		}
+		int avgColor = cv::mean(img)[0];
+		CImage result = CImage(iterImageSize, cv::DataType<uchar>::type, avgColor);
+		CImage roi = result(cv::Rect(0, 0, img.cols, img.rows));
+		img.copyTo(roi);
+		return result;
+	}
 }
