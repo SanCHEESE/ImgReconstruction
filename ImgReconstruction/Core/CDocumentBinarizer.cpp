@@ -50,7 +50,6 @@ CImage CDocumentBinarizer::Binarize(const CImage &img) const
             patch.convertTo(patch, CV_8U);
             cv::threshold(patch, binarizedPatch, thresholdValue, 255, cv::THRESH_BINARY);
             
-            
             patch.CopyMetadataTo(binarizedPatch);
             binarizedPatches[i] = binarizedPatch;
         }

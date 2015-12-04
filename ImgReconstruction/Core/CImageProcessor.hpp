@@ -46,6 +46,7 @@ private:
     CImagePatch FetchPatch(const cv::Rect& patchRect);
     void AddBlurValueRect(std::vector<DrawableRect>& rects, CImagePatch& imagePatch);
 	std::vector<CImagePatch> FindSimilarPatches(CImagePatch& patch, std::vector<CImagePatch>& patches);
+	std::map<int64, std::deque<CImagePatch> > FetchClusters(std::vector<CImagePatch>& patches);
 	
     CImagePatch _mainImage;
     CImage _displayImage;
