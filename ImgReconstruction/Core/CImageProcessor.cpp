@@ -127,11 +127,8 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 
 void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
 {
-	cv::Rect normRect = {450, 432, 8, 8};
-//	ProcessShowSortedSimilar(normRect);
-	
-	CImagePatch selectedPatch = FetchPatch(normRect);
-	std::deque<CImagePatch> patches = FetchPatches(normRect);
+	CImagePatch selectedPatch = FetchPatch(patchRect);
+	std::deque<CImagePatch> patches = FetchPatches(patchRect);
 	
 	// извлекаем похожие патчи
 	std::deque<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);

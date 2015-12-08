@@ -39,9 +39,9 @@ double CBlurMeasurer::MeasureUsingDynamicRange(const CImage &img) const
     cv::Mat histogram;
     cv::calcHist( &img, 1, 0, cv::Mat(), histogram, 1, &histSize, &histRange);
     
-    std::deque<unsigned char> histArray;
+    std::vector<unsigned char> histArray;
     histogram.col(0).copyTo(histArray);
-    std::pair<std::deque<unsigned char>::iterator, std::deque<unsigned char>::iterator> minMaxElem = std::minmax_element(histArray.begin(), histArray.end());
+    std::pair<std::vector<unsigned char>::iterator, std::vector<unsigned char>::iterator> minMaxElem = std::minmax_element(histArray.begin(), histArray.end());
     
     return std::abs(*(minMaxElem.first) - *(minMaxElem.second));
 }

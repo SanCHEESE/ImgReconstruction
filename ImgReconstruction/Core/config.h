@@ -18,14 +18,12 @@ static const int ComparisonEpsAvgHash = 10;
 
 static const int MaxPatchSideSize = 8;
 static const float BlurMetricRadiusRatio = 0.2f;
-static const int ClassHammingDistance = 1;
 
 static const std::string DebugWindowName = "Debug";
 static const std::string BinarizedWindowName = "Binarized";
 static const std::string SaveImgPath = "../../out/";
 
 static const cv::Point PatchOffset = cv::Point(1, 1);
-static const cv::Size GaussianKernelSize = cv::Size(0, 0);
 
 static const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodStandartDeviation;
 static const TImageCompareMetric CompMetric = TImageCompareMetricL1;
