@@ -42,11 +42,11 @@ private:
     void BuildAndShowSdImage(const CImage& img, bool show);
     void ConfigureWindow(const CImage& img);
     
-    std::vector<CImagePatch> FetchPatches(const cv::Rect& patchRect);
+    std::deque<CImagePatch> FetchPatches(const cv::Rect& patchRect);
     CImagePatch FetchPatch(const cv::Rect& patchRect);
-    void AddBlurValueRect(std::vector<DrawableRect>& rects, CImagePatch& imagePatch);
-	std::vector<CImagePatch> FindSimilarPatches(CImagePatch& patch, std::vector<CImagePatch>& patches);
-	std::map<int64, std::deque<CImagePatch> > FetchClusters(std::vector<CImagePatch>& patches);
+    void AddBlurValueRect(std::deque<DrawableRect>& rects, CImagePatch& imagePatch);
+	std::deque<CImagePatch> FindSimilarPatches(CImagePatch& patch, std::deque<CImagePatch>& patches);
+	std::map<uint64, std::deque<CImagePatch> > FetchClusters(std::deque<CImagePatch>& patches);
 	
     CImagePatch _mainImage;
     CImage _displayImage;

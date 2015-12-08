@@ -34,8 +34,8 @@ namespace utils
     CImage SDFilter(const CImage &image, const cv::Size& filterSize);
     
     // classification
-    int64 PHash(const CImage &image);
-    int64 AvgHash(const CImage &image, const cv::Size& size = {4, 4});
+    uint64 PHash(const CImage &image);
+    uint64 AvgHash(const CImage &image, const cv::Size& size = {4, 4});
 
     void SaveImage(const std::string path, const CImage &image);
 	

@@ -61,7 +61,7 @@ public:
 
     void DrawRect(const cv::Rect rect, const cv::Scalar& color, int thickness = 1);
     void DrawRect(const cv::Rect rect, TRectColor colorType, int thickness = 1);
-    void DrawRects(const std::vector<DrawableRect>& rects);
+    void DrawRects(const std::deque<DrawableRect>& rects);
     
     CWindowDelegate* delegate;
 private:
@@ -79,5 +79,5 @@ private:
     
     bool _isDrawing;
     
-    std::vector<DrawableRect> rectsToDraw;
+    std::deque<DrawableRect> rectsToDraw;
 };

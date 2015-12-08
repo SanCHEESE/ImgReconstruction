@@ -19,8 +19,8 @@ public:
     
     double BlurValue(TBlurMeasureMethod method);
     double StandartDeviation();
-    int64 PHash();
-    int64 AvgHash();
+    uint64 PHash();
+    uint64 AvgHash();
     
     // accessors
     CImage GrayImage() const {return _grayImage;}
@@ -43,8 +43,9 @@ public:
 
     double GetBlurValue() const {return _blurValue;};
     double GetStandartDeviation() const {return _standartDeviation;};
-    int64 GetPHash() const {return _pHash;};
-    int64 GetAvgHash() const {return _avgHash;};
+    uint64 GetPHash() const {return _pHash;};
+    uint64 GetAvgHash() const {return _avgHash;};
+	void SetFrame(const cv::Rect& frame) {_frame = frame;};
     cv::Rect GetFrame() const {return _frame;};
     
     friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
@@ -64,9 +65,9 @@ private:
     double _blurValue;
     double _standartDeviation;
     
-    int64 _avgHash;
+    uint64 _avgHash;
     bool _avgHashComputed;
-    int64 _pHash;
+    uint64 _pHash;
     bool _pHashComputed;
 };
 

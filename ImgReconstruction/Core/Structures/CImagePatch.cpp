@@ -29,16 +29,16 @@ double CImagePatch::StandartDeviation()
     return _standartDeviation;
 }
 
-int64 CImagePatch::PHash()
+uint64 CImagePatch::PHash()
 {
     if (!_pHashComputed) {
         _pHash = utils::PHash(_binImage);
-        _avgHashComputed = true;
+        _pHashComputed = true;
     }
     return _pHash;
 }
 
-int64 CImagePatch::AvgHash()
+uint64 CImagePatch::AvgHash()
 {
     if (!_avgHashComputed) {
         _avgHash = utils::AvgHash(_binImage);
@@ -57,11 +57,11 @@ std::ostream& operator<<(std::ostream& os, const CImagePatch& patch)
     os << "\tGrey image:\n" << patch.GrayImage() << std::endl;
     os << "\tBin image:\n" << patch.BinImage() << std::endl;
     os << "\tSd image:\n" << patch.SdImage() << std::endl;
-    
-    std::bitset<sizeof(int64)> phash(patch.GetPHash());
-    os << "\tPHash:\n\t\t" << phash << std::endl;
-    
-    std::bitset<sizeof(int64)> avgHash(patch.GetAvgHash());
+	
+//    std::bitset<sizeof(uint64) * 8> phash(patch.GetPHash());
+//    os << "\tPHash:\n\t\t" << phash << std::endl;
+	
+    std::bitset<sizeof(uint64) * 8> avgHash(patch.GetAvgHash());
     os << "\tAvgHash:\n\t\t" << avgHash << std::endl;
     
     return os;

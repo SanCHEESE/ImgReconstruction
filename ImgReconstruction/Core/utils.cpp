@@ -120,7 +120,7 @@ namespace utils
         return CImage(sigma / 255.f);
     }
     
-    int64 PHash(const CImage &image)
+    uint64 PHash(const CImage &image)
     {
         cv::Mat temp, dst;
         
@@ -141,7 +141,7 @@ namespace utils
             }
         }
         
-        int64 result = 0;
+        uint64 result = 0;
         for (int i = 0; i < 64; ++i) {
             if (dIdex[i] >= mean) {
                 result = (result << 1) | 1;
@@ -152,7 +152,7 @@ namespace utils
         return result;
     }
     
-    int64 AvgHash(const CImage& image, const cv::Size& size)
+    uint64 AvgHash(const CImage& image, const cv::Size& size)
     {
         assert(image.cols <= 8 && image.rows <= 8);
         
@@ -163,7 +163,7 @@ namespace utils
         
         cv::Mat mask = (resized > average);
         
-        int64 result = 0;
+        uint64 result = 0;
         for (int i = 0; i < mask.rows; i++) {
             for(int j = 0; j < mask.cols; j++) {
                 if (mask.at<uchar>(i, j) == 0) {
@@ -202,7 +202,7 @@ namespace utils
 		
 		int extentedRows = iterImageSize.height - img.rows;
 		int extentedCols = iterImageSize.width - img.cols;
-		int avgColor = cv::mean(img)[0];
+		int avgColor = cv::mean(img)[0] - 5;
 		CImage result = CImage(iterImageSize, cv::DataType<uchar>::type, avgColor);
 		CImage roi = result(cv::Rect(0, 0, img.cols, img.rows));
 		img.copyTo(roi);

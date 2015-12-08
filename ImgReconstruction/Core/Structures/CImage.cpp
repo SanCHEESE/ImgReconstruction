@@ -58,9 +58,9 @@ CImage CImage::GetPatch(const cv::Rect &rect) const
     return CImage(*this, rect);
 }
 
-std::vector<CImage> CImage::GetAllPatches(const cv::Size& size, const cv::Point offset) const
+std::deque<CImage> CImage::GetAllPatches(const cv::Size& size, const cv::Point offset) const
 {
-    std::vector<CImage> patches;
+    std::deque<CImage> patches;
     CImage::CPatchIterator patchIterator = GetPatchIterator(size, offset);
     while (patchIterator.HasNext()) {
         patches.push_back(patchIterator.GetNext());
