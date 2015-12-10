@@ -9,13 +9,11 @@
 #include "CTimeLogger.hpp"
 #include "CDocumentBinarizer.hpp"
 
-#ifdef DEBUG
 #define SHOW_BLUR_MAP 0
 #define HIGHLIGHT_SIMILAR_PATCHES 0
-#define SHOW_SORTED_SIMILAR 0
+#define SHOW_SORTED_SIMILAR 1
 #define REPLACE_SIMILAR_PATCHES 0
-#define FIX_IMAGE_STUPID 1
-#endif
+#define FIX_IMAGE_STUPID 0
 
 void CImageProcessor::StartProcessingChain(const CImage& img)
 {
@@ -88,8 +86,9 @@ void CImageProcessor::ProcessHighlightSimilarPatches(const cv::Rect &patchRect)
 
 void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 {
-	CImagePatch selectedPatch = FetchPatch(patchRect);
-	std::deque<CImagePatch> patches = FetchPatches(patchRect);
+	cv::Rect normPatch = {450, 432, 8, 8};
+	CImagePatch selectedPatch = FetchPatch(normPatch);
+	std::deque<CImagePatch> patches = FetchPatches(normPatch);
 	
 	std::deque<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
 	if (similarPatches.empty()) {
@@ -121,8 +120,8 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 		}
 	}
 	
-	utils::SaveImage(SaveImgPath + "similarityDecrease.jpg", similarityDecreaseImg);
-	utils::SaveImage(SaveImgPath + "blurIncrease.jpg", blurIncreaseImg);
+	utils::SaveImage(SaveImgPath + "similarityDecrease.bmp", similarityDecreaseImg);
+	utils::SaveImage(SaveImgPath + "blurIncrease.bmp", blurIncreaseImg);
 }
 
 void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
@@ -160,8 +159,8 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
 	BuildAndShowBinImage(_mainImage.GrayImage(), true);
 	_window.Update(_mainImage.GrayImage());
 	
-	utils::SaveImage(SaveImgPath + "gray_fixed.jpg", _mainImage.GrayImage());
-	utils::SaveImage(SaveImgPath + "bin_fixed.jpg", _mainImage.BinImage());
+	utils::SaveImage(SaveImgPath + "gray_fixed.bmp", _mainImage.GrayImage());
+	utils::SaveImage(SaveImgPath + "bin_fixed.bmp", _mainImage.BinImage());
 }
 
 void CImageProcessor::ProcessFixImageStupid()
@@ -175,34 +174,36 @@ void CImageProcessor::ProcessFixImageStupid()
 		keys.push_back(key);
 	}
 	
+	int i = 0;
 	// проходим весь диапазон
 	for (uint64 key: keys) {
 		// находим нужный нам кластер
 		auto cluster = clusters.find(key);
-		if (cluster != clusters.end() && !(*cluster).second.empty()) {
+		if (cluster != clusters.end() && !cluster->second.empty()) {
 			// сортируем по резкости внутри кластера
-			std::deque<CImagePatch> patchCluster = (*cluster).second;
+			std::deque<CImagePatch> patchCluster = cluster->second;
 			std::sort(patchCluster.begin(), patchCluster.end(), LessBlur());
+			CImagePatch sharpPatch = patchCluster[0];
 			
-			for (auto cluster: clusters) {
-				// копируем самый резкий патч
-				CImagePatch sharpPatch = cluster.second[0];
-				for (CImagePatch patch: cluster.second) {
-					CImage temp = _mainImage.GrayImage()(patch.GetFrame());
-					sharpPatch.GrayImage().copyTo(temp);
-					
-					temp = _mainImage.BinImage()(patch.GetFrame());
-					sharpPatch.BinImage().copyTo(temp);
-					
-					temp = _mainImage.SdImage()(patch.GetFrame());
-					sharpPatch.SdImage().copyTo(temp);
-				}
+			// копируем самый резкий патч
+			for (CImagePatch patch: cluster->second) {
+				CImage temp = _mainImage.GrayImage()(patch.GetFrame());
+				sharpPatch.GrayImage().copyTo(temp);
+				
+				temp = _mainImage.BinImage()(patch.GetFrame());
+				sharpPatch.BinImage().copyTo(temp);
+				
+				temp = _mainImage.SdImage()(patch.GetFrame());
+				sharpPatch.SdImage().copyTo(temp);
 			}
+			
+			i++;
+			std::cout << "Left clusters: " << keys.size() - i << std::endl;
+			
+			// извлекаем патчи и перекластеризуем
+			patches = FetchPatches({0, 0, MaxPatchSideSize, MaxPatchSideSize});
+			clusters = FetchClusters(patches);
 		}
-		
-		// извлекаем патчи и кластеризуем
-		patches = FetchPatches({0, 0, MaxPatchSideSize, MaxPatchSideSize});
-		clusters = FetchClusters(patches);
 	}
 	
 	_window.Update(_mainImage.GrayImage());

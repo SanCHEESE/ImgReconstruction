@@ -80,7 +80,7 @@ void CImage::CopyMetadataTo(CImage &image) const
 
 #pragma mark - CPatchIterator
 
-inline bool CImage::CPatchIterator::HasNext()
+bool CImage::CPatchIterator::HasNext()
 {
 	if (_pointingRect.width + _pointingRect.x == _iterImage->cols &&
 		_pointingRect.height + _pointingRect.y == _iterImage->rows) {
