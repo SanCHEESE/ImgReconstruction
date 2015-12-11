@@ -29,7 +29,7 @@ public:
     virtual void WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect);
     
     // utils
-    inline int CompEpsForCompMetric(TImageCompareMetric metric);
+    static inline int CompEpsForCompMetric(TImageCompareMetric metric);
     
 private:
     void ProcessShowBlurMap(const cv::Rect& patchRect);
@@ -45,7 +45,7 @@ private:
     std::deque<CImagePatch> FetchPatches(const cv::Rect& patchRect);
     CImagePatch FetchPatch(const cv::Rect& patchRect);
     void AddBlurValueRect(std::deque<DrawableRect>& rects, CImagePatch& imagePatch);
-	std::deque<CImagePatch> FindSimilarPatches(CImagePatch& patch, std::deque<CImagePatch>& patches);
+	std::deque<CImagePatch> FindSimilarPatches(CImagePatch& targetPatch, std::deque<CImagePatch>& patches);
 	std::map<uint64, std::deque<CImagePatch> > FetchClusters(std::deque<CImagePatch>& patches);
 	
     CImagePatch _mainImage;

@@ -18,8 +18,8 @@ CImage CDocumentBinarizer::Binarize(const CImage &img) const
     if (_binMethod == TBinarizationMethodAdaptiveGaussian) {
         cv::adaptiveThreshold(img, resultImg, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, _patchSize.width, _c);
     } else {
-        std::deque<CImage> imgPatches = img.GetAllPatches(_patchSize, cv::Point(_patchSize.width, _patchSize.height));
-        std::deque<CImage> binarizedPatches = std::deque<CImage>(imgPatches.size());
+        auto imgPatches = img.GetAllPatches(_patchSize, cv::Point(_patchSize.width, _patchSize.height));
+        auto binarizedPatches = std::deque<CImage>(imgPatches.size());
         for (int i = 0; i < imgPatches.size(); i++) {
             CImage patch = imgPatches[i];
             
@@ -55,9 +55,9 @@ CImage CDocumentBinarizer::Binarize(const CImage &img) const
         }
         
         resultImg = CImage(img.rows, img.cols, CV_8U, cv::Scalar(0));
-        for (int i = 0; i < binarizedPatches.size(); i++) {
-            CImage tmp = resultImg(cv::Rect(binarizedPatches[i].GetFrame()));
-            binarizedPatches[i].copyTo(tmp);
+		for (const CImage& binarizedPatch: binarizedPatches) {
+            CImage tmp = resultImg(cv::Rect(binarizedPatch.GetFrame()));
+            binarizedPatch.copyTo(tmp);
         }
     }
     

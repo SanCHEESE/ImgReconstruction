@@ -15,8 +15,26 @@ class CImagePatch
 {
 public:
     CImagePatch() {Initialize();}
-    CImagePatch(const CImage& grayImage, const CImage& binImage, const CImage& sdImage) {Initialize();SetGrayImage(grayImage);SetBinImage(binImage);SetSdImage(sdImage);};
-    
+    CImagePatch(const CImage& grayImage, const CImage& binImage, const CImage& sdImage) {
+		Initialize();
+		SetGrayImage(grayImage);
+		SetBinImage(binImage);
+		SetSdImage(sdImage);
+	};
+	CImagePatch(const CImagePatch& patch) {
+		_frame = patch._frame;
+		distanceToTarget = patch.distanceToTarget;
+		_avgHash = patch._avgHash;
+		_avgHashComputed = patch._avgHashComputed;
+		_pHash = patch._pHash;
+		_pHashComputed = patch._pHashComputed;
+		_blurValue = patch._blurValue;
+		_standartDeviation = patch._standartDeviation;
+		SetGrayImage(patch.GrayImage());
+		SetBinImage(patch.BinImage());
+		SetSdImage(patch.SdImage());
+	}
+	
     double BlurValue(TBlurMeasureMethod method);
     double StandartDeviation();
     uint64 PHash();
@@ -61,7 +79,6 @@ private:
     CImage _binImage;
     CImage _sdImage;
     
-    int _imgClass;
     double _blurValue;
     double _standartDeviation;
     

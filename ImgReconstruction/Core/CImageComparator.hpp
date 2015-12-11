@@ -16,9 +16,6 @@ public:
 private:
     double CompareL1(const CImagePatch& patch1, const CImagePatch& patch2) const;
     double CompareL2(const CImagePatch& patch1, const CImagePatch& patch2) const;
-    double ComparePHash(const CImagePatch& patch1, const CImagePatch& patch2) const;
-    double CompareAvgHash(const CImagePatch& patch1, const CImagePatch& patch2) const;
 
-    
     TImageCompareMetric _compMetric;
 };

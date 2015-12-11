@@ -120,35 +120,41 @@ namespace utils
         return CImage(sigma / 255.f);
     }
     
-    uint64 PHash(const CImage &image)
+	uint64 PHash(const CImage &image, const cv::Size& size)
     {
-        cv::Mat temp, dst;
+		assert(image.cols <= 8 && image.rows <= 8);
+		assert(size.width % 2 == 0 && size.height % 2 == 0);
+		
+		cv::Mat resized;
+		resize(image, resized, size);
+		
+        resized.convertTo(resized, CV_64F);
+		
+		cv::Mat dst;
+        cv::dct(resized, dst);
+		
+		int bitsCount = size.width * size.height;
         
-        image.copyTo(temp);
-        temp.convertTo(temp, CV_64F);
-        
-        cv::resize(temp, temp, cv::Size(32, 32));
-        cv::dct(temp, dst);
-        
-        double dIdex[64];
+        double dIdex[bitsCount];
         double mean = 0.0;
         int k = 0;
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
+        for (int i = 0; i < size.width; ++i) {
+            for (int j = 0; j < size.height; ++j) {
                 dIdex[k] = dst.at<double>(i, j);
-                mean += dst.at<double>(i, j) / 64;
+                mean += dst.at<double>(i, j) / bitsCount;
                 ++k;
             }
         }
         
         uint64 result = 0;
-        for (int i = 0; i < 64; ++i) {
+        for (int i = 0; i < bitsCount; ++i) {
             if (dIdex[i] >= mean) {
                 result = (result << 1) | 1;
             } else {
                 result = result << 1;
             }
         }
+		
         return result;
     }
     
@@ -165,7 +171,7 @@ namespace utils
         
         uint64 result = 0;
         for (int i = 0; i < mask.rows; i++) {
-            for(int j = 0; j < mask.cols; j++) {
+            for (int j = 0; j < mask.cols; j++) {
                 if (mask.at<uchar>(i, j) == 0) {
                     result = result << 1;
                 } else {

@@ -69,9 +69,11 @@ void CWindow::DrawRect(const cv::Rect rect, TRectColor colorType, int thickness)
 
 void CWindow::DrawRects(const std::deque<DrawableRect>& rects)
 {
-    for (int i = 0; i < rects.size(); i++ ) {
-        cv::rectangle(_image, cv::Point(rects[i].rect.x, rects[i].rect.y), cv::Point(rects[i].rect.x + rects[i].rect.width, rects[i].rect.y + rects[i].rect.height), rects[i].color, rects[i].thickness);
-    }
+	for (const DrawableRect& rect: rects) {
+		cv::rectangle(_image, cv::Point(rect.rect.x, rect.rect.y),
+					  cv::Point(rect.rect.x + rect.rect.width, rect.rect.y + rect.rect.height),
+					  rect.color, rect.thickness);
+	}
     cv::imshow(_name, _image);
 }
 

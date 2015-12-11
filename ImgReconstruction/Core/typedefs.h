@@ -11,8 +11,6 @@
 typedef enum : int {
     TImageCompareMetricL1,
     TImageCompareMetricL2,
-    TImageCompareMetricPHash,
-    TImageCompareMetricAvgHash,
 } TImageCompareMetric;
 
 typedef enum : int {
@@ -28,3 +26,8 @@ typedef enum : int {
     TBinarizationMethodNiBlack,
     TBinarizationMethodAdaptiveGaussian,
 } TBinarizationMethod;
+
+typedef enum : int {
+	TPatchClusteringMethodAvgHash,
+	TPatchClusteringMethodPHash,
+} TPatchClusteringMethod;

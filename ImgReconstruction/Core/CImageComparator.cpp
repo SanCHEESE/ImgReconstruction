@@ -15,8 +15,6 @@ double CImageComparator::Compare(const CImagePatch& patch1, const CImagePatch& p
             return CompareL1(patch1, patch2);
         case TImageCompareMetricL2:
             return CompareL2(patch1, patch2);
-        case TImageCompareMetricPHash:
-            return ComparePHash(patch1, patch2);
         default:
             break;
     }
@@ -38,14 +36,4 @@ double CImageComparator::CompareL2(const CImagePatch& patch1, const CImagePatch&
     result = result.mul(result);
     double dist = sqrt(sum(result)[0])/25.5;
     return dist;
-}
-
-double CImageComparator::ComparePHash(const CImagePatch& patch1, const CImagePatch& patch2) const
-{
-    return utils::hamming<uint64>(patch1.GetPHash(), patch2.GetPHash());
-}
-
-double CImageComparator::CompareAvgHash(const CImagePatch& patch1, const CImagePatch& patch2) const
-{
-    return utils::hamming<uint64>(patch1.GetAvgHash(), patch2.GetAvgHash());
 }

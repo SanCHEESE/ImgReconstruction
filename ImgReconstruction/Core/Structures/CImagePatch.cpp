@@ -58,8 +58,8 @@ std::ostream& operator<<(std::ostream& os, const CImagePatch& patch)
     os << "\tBin image:\n" << patch.BinImage() << std::endl;
     os << "\tSd image:\n" << patch.SdImage() << std::endl;
 	
-//    std::bitset<sizeof(uint64) * 8> phash(patch.GetPHash());
-//    os << "\tPHash:\n\t\t" << phash << std::endl;
+    std::bitset<sizeof(uint64) * 8> phash(patch.GetPHash());
+    os << "\tPHash:\n\t\t" << phash << std::endl;
 	
     std::bitset<sizeof(uint64) * 8> avgHash(patch.GetAvgHash());
     os << "\tAvgHash:\n\t\t" << avgHash << std::endl;
@@ -71,7 +71,6 @@ std::ostream& operator<<(std::ostream& os, const CImagePatch& patch)
 
 void CImagePatch::Initialize()
 {
-    _imgClass = -1;
     _blurValue = -1;
     _standartDeviation = -1;
     _pHashComputed = false;
