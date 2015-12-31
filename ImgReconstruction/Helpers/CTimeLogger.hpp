@@ -11,10 +11,10 @@
 class CTimeLogger
 {
 public:
-    static void StartLogging(const std::string& desc = "");
-    static void Print(const std::string& decr);
-    static void PrintTotalTime();
+	static void StartLogging(const std::string& desc = "");
+	static void Print(const std::string& decr);
+	static void PrintTotalTime();
 private:
-    static clock_t _time;
-    static clock_t _totalTime;
+	static clock_t _time;
+	static clock_t _totalTime;
 };

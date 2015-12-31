@@ -10,6 +10,6 @@
 class IBinarizer
 {
 public:
-    virtual ~IBinarizer() {}
-    virtual CImage Binarize(const CImage& img) const = 0;
+	virtual ~IBinarizer() {}
+	virtual CImage Binarize(const CImage& img) const = 0;
 };

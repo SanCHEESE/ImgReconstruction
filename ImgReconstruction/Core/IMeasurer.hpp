@@ -11,6 +11,6 @@
 class IMeasurer
 {
 public:
-    virtual ~IMeasurer() {}
-    virtual double Measure(const CImage& img) const = 0;
+	virtual ~IMeasurer() {}
+	virtual double Measure(const CImage& img) const = 0;
 };

@@ -11,9 +11,10 @@
 
 #define SHOW_BLUR_MAP 0
 #define HIGHLIGHT_SIMILAR_PATCHES 0
-#define SHOW_SORTED_SIMILAR 0
+#define SHOW_SORTED_SIMILAR 1
 #define REPLACE_SIMILAR_PATCHES 1
 #define FIX_IMAGE_STUPID 0
+#define DRAW_HISTOGRAM 0
 
 void CImageProcessor::StartProcessingChain(const CImage& img)
 {
@@ -21,7 +22,7 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
 	
 	_mainImage = CImagePatch();
 	_mainImage.SetGrayImage(extentImage);
-	BuildAndShowBinImage(extentImage, false);
+	BuildAndShowBinImage(extentImage, true);
 	BuildAndShowSdImage(extentImage, false);
 	
 	ConfigureWindow(extentImage);
@@ -39,10 +40,25 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 	ProcessReplaceSimilarPatches(patchRect);
 #elif FIX_IMAGE_STUPID
 	ProcessFixImageStupid();
+#elif DRAW_HISTOGRAM
+	ProcessDrawHistogram();
 #endif
 }
 
 #pragma mark - Private
+
+void CImageProcessor::ProcessDrawHistogram(const cv::Rect &patchRect)
+{
+	std::deque<CImagePatch> patches = FetchPatches(patchRect);
+	auto clusters = FetchClusters(patches);
+	
+	int clusterCount = clusters.size();
+	
+	std::vector<int> hist;
+	for (auto& cluster: clusters) {
+		
+	}
+}
 
 void CImageProcessor::ProcessShowBlurMap(const cv::Rect &patchRect)
 {
@@ -90,8 +106,13 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 	CImagePatch selectedPatch = FetchPatch(normPatch);
 	std::deque<CImagePatch> patches = FetchPatches(normPatch);
 	
-//	CImagePatch selectedPatch = FetchPatch(patchRect);
-//	std::deque<CImagePatch> patches = FetchPatches(patchRect);
+	auto clusters = FetchClusters(patches);
+	
+	std::cout << patches.size() << std::endl;
+	std::cout << clusters[0].size() << std::endl;
+	
+	//	CImagePatch selectedPatch = FetchPatch(patchRect);
+	//	std::deque<CImagePatch> patches = FetchPatches(patchRect);
 	
 	std::deque<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
 	if (similarPatches.empty()) {
@@ -153,7 +174,7 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
 	cv::TermCriteria criteria(termCriteriaType,  10, 1);
 	int k = 5;
 	std::vector<float> centers;
-	cv::kmeans(dataMat, k, labelsMat, criteria, 10, cv::KMEANS_RANDOM_CENTERS, centers);
+	cv::kmeans(dataMat, k, labels, criteria, 10, cv::KMEANS_RANDOM_CENTERS, centers);
 	
 	if (labelsMat.isContinuous()) {
 		labels.assign(labelsMat.datastart, labelsMat.dataend);
@@ -244,6 +265,8 @@ void CImageProcessor::BuildAndShowBinImage(const CImage &img, bool show)
 	}
 	
 	CTimeLogger::Print("Binarization: ");
+	
+	utils::SaveImage(SaveImgPath + "bin.bmp", binarizedImage);
 	
 	_mainImage.SetBinImage(binarizedImage);
 }
@@ -339,30 +362,30 @@ std::deque<CImagePatch> CImageProcessor::FindSimilarPatches(CImagePatch& targetP
 		}
 	};
 	
-//	static auto search = [&](CImagePatch* begin, CImagePatch* end) {
-//		std::deque<CImagePatch> similarPatches;
-//		CImageComparator imgComparator(CompMetric);
-//		int eps = CompEpsForCompMetric(CompMetric);
-//		for (auto it = begin; it != end; ++it) {
-//			CImagePatch patch(*it);
-//			if (comparePatches(patch, targetPatch) == 0) {
-//				int distance = imgComparator.Compare(targetPatch, patch);
-//				patch.distanceToTarget = distance;
-//				if (distance < eps) {
-//					patch.BlurValue(BlurMeasureMethod);
-//					similarPatches.push_back(patch);
-//				}
-//			}
-//		}
-//		return similarPatches;
-//	};
-//	
-//	auto firstHalfSearch = std::async(search, &patches[0], &patches[patches.size()/2]);
-//	auto secondHalfSearch = std::async(search, &patches[patches.size()/2], &patches[patches.size()]);
-//	
-//	auto similarPatches = firstHalfSearch.get();
-//	similarPatches.insert(firstHalfSearch.get().end(), secondHalfSearch.get().begin(), secondHalfSearch.get().end());
-
+	//	static auto search = [&](CImagePatch* begin, CImagePatch* end) {
+	//		std::deque<CImagePatch> similarPatches;
+	//		CImageComparator imgComparator(CompMetric);
+	//		int eps = CompEpsForCompMetric(CompMetric);
+	//		for (auto it = begin; it != end; ++it) {
+	//			CImagePatch patch(*it);
+	//			if (comparePatches(patch, targetPatch) == 0) {
+	//				int distance = imgComparator.Compare(targetPatch, patch);
+	//				patch.distanceToTarget = distance;
+	//				if (distance < eps) {
+	//					patch.BlurValue(BlurMeasureMethod);
+	//					similarPatches.push_back(patch);
+	//				}
+	//			}
+	//		}
+	//		return similarPatches;
+	//	};
+	//
+	//	auto firstHalfSearch = std::async(search, &patches[0], &patches[patches.size()/2]);
+	//	auto secondHalfSearch = std::async(search, &patches[patches.size()/2], &patches[patches.size()]);
+	//
+	//	auto similarPatches = firstHalfSearch.get();
+	//	similarPatches.insert(firstHalfSearch.get().end(), secondHalfSearch.get().begin(), secondHalfSearch.get().end());
+	
 	std::deque<CImagePatch> similarPatches;
 	CImageComparator imgComparator(CompMetric);
 	int eps = CompEpsForCompMetric(CompMetric);

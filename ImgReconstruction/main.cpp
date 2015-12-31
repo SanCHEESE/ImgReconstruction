@@ -16,14 +16,14 @@ using namespace cv;
 
 int main(int argc, char** argv)
 {
-    CImage image = CImage(PathToImg, IMREAD_GRAYSCALE);
-    if (image.empty()) {
-        return 1;
-    }
-    
-    CWindow window = CWindow(WindowName);
-    CImageProcessor imProc = CImageProcessor(window);
-    imProc.StartProcessingChain(image);
-    
-    return 0;
+	CImage image = CImage(PathToImg, IMREAD_GRAYSCALE);
+	if (image.empty()) {
+		return 1;
+	}
+	
+	CWindow window = CWindow(WindowName);
+	CImageProcessor imProc = CImageProcessor(window);
+	imProc.StartProcessingChain(image);
+	
+	return 0;
 }

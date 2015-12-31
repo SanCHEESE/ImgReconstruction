@@ -16,16 +16,16 @@ static const cv::Scalar BlueColor = cv::Scalar(255, 0, 0);
 
 void CWindow::Show(int flags)
 {
-    cv::namedWindow(_name, flags);
-    if (_image.rows != 0 && _image.cols != 0) {
-        cv::imshow(_name, _image);
-    }
+	cv::namedWindow(_name, flags);
+	if (_image.rows != 0 && _image.cols != 0) {
+		cv::imshow(_name, _image);
+	}
 }
 
 void CWindow::Update(const CImage& img)
 {
-    cv::imshow(_name, img);
-    img.copyTo(_image);
+	cv::imshow(_name, img);
+	img.copyTo(_image);
 }
 
 void CWindow::ShowAndUpdate(const CImage &img, int flags)
@@ -36,35 +36,35 @@ void CWindow::ShowAndUpdate(const CImage &img, int flags)
 
 CImage CWindow::GetImage() const
 {
-    CImage result;
-    _image.copyTo(result);
-    return result;
+	CImage result;
+	_image.copyTo(result);
+	return result;
 }
 
 void CWindow::DrawRect(const cv::Rect rect, const cv::Scalar &color, int thickness)
 {
-    cv::rectangle(_image, cv::Point(rect.x, rect.y), cv::Point(rect.x + rect.width, rect.y + rect.height), color, thickness);
-    cv::imshow(_name, _image);
+	cv::rectangle(_image, cv::Point(rect.x, rect.y), cv::Point(rect.x + rect.width, rect.y + rect.height), color, thickness);
+	cv::imshow(_name, _image);
 }
 
 void CWindow::DrawRect(const cv::Rect rect, TRectColor colorType, int thickness)
 {
-    cv::Scalar color;
-    switch (colorType) {
-        case TRectColorRed:
-            color = RGB(255, 0, 0);
-            break;
-        case TRectColorBlue:
-            color = RGB(0, 0, 255);
-            break;
-        case TRectColorGreen:
-            color = RGB(0, 255, 0);
-            break;
-        default:
-            assert(false);
-            break;
-    }
-    DrawRect(rect, color, thickness);
+	cv::Scalar color;
+	switch (colorType) {
+		case TRectColorRed:
+			color = RGB(255, 0, 0);
+			break;
+		case TRectColorBlue:
+			color = RGB(0, 0, 255);
+			break;
+		case TRectColorGreen:
+			color = RGB(0, 255, 0);
+			break;
+		default:
+			assert(false);
+			break;
+	}
+	DrawRect(rect, color, thickness);
 }
 
 void CWindow::DrawRects(const std::deque<DrawableRect>& rects)
@@ -74,79 +74,79 @@ void CWindow::DrawRects(const std::deque<DrawableRect>& rects)
 					  cv::Point(rect.rect.x + rect.rect.width, rect.rect.y + rect.rect.height),
 					  rect.color, rect.thickness);
 	}
-    cv::imshow(_name, _image);
+	cv::imshow(_name, _image);
 }
 
 void CWindow::SetOriginalImage(const CImage &originalImage)
 {
-    originalImage.copyTo(_originalImage);
+	originalImage.copyTo(_originalImage);
 }
 
 void CWindow::SetMaxBoxSideSize(int boxSideSize)
 {
-    _maxBoxSideSize = boxSideSize;
+	_maxBoxSideSize = boxSideSize;
 }
 
 #pragma mark - Events observing
 
 void CWindow::ObserveKeyboard()
 {
-    while (true) {
-        int c = cv::waitKey(20);
-        if (c == 27) {
-            break;
-        } else if ((char)c == 's') {
-            utils::SaveImage(SaveImgPath + _name + ".jpg", _image);
-        }
-    }
+	while (true) {
+		int c = cv::waitKey(20);
+		if (c == 27) {
+			break;
+		} else if ((char)c == 's') {
+			utils::SaveImage(SaveImgPath + _name + ".jpg", _image);
+		}
+	}
 }
 
 void CWindow::StartObservingMouse()
 {
-    cv::setMouseCallback(_name, &CWindow::MouseCallback, this);
+	cv::setMouseCallback(_name, &CWindow::MouseCallback, this);
 }
 
 void CWindow::MouseCallback(int event, int x, int y, int flags, void *param)
 {
-    CWindow *window = (CWindow *)param;
-    
-    switch (event) {
-        case CV_EVENT_MOUSEMOVE:
-            
-            if (window->_drawMode == TDrawModeStamp) {
-                window->Update(window->_originalImage);
-                window->_stampRect = cv::Rect(x - window->_maxBoxSideSize/2,
-                                              y - window->_maxBoxSideSize/2,
-                                              window->_maxBoxSideSize,
-                                              window->_maxBoxSideSize);
-                window->DrawRect(window->_stampRect, TRectColorBlue);
-            }
-//			std::cout << "x, y: " << x << ", " << y << std::endl;
+	CWindow *window = (CWindow *)param;
+	
+	switch (event) {
+		case CV_EVENT_MOUSEMOVE:
 			
-            break;
-        case CV_EVENT_LBUTTONDOWN:
-            window->_isDrawing = true;
-            if (window->_drawMode == TDrawModeStamp) {
-                window->_drawingBox = window->_stampRect;
-            }
-
-            break;
-        case CV_EVENT_LBUTTONUP:
-            window->_isDrawing = false;
-            window->_drawMode = TDrawModeNone;
-            window->Update(window->_originalImage);
-            window->DrawRect(window->_drawingBox, TRectColorRed);
-            if (window->_drawingBox.height > 0 && window->_drawingBox.width > 0) {
-                window->delegate->WindowDidSelectPatch(window->_name, window->_drawingBox);
-            }
-            break;
-        case CV_EVENT_RBUTTONUP:
-            window->Update(window->_originalImage);
-            // раскомментировать, если надо выделить патч конкретного размера
-            window->_drawMode = (TDrawMode)((window->_drawMode + 1) % TDrawModeNone);
-            
-            break;
-        default:
-            break;
-    }
+			if (window->_drawMode == TDrawModeStamp) {
+				window->Update(window->_originalImage);
+				window->_stampRect = cv::Rect(x - window->_maxBoxSideSize/2,
+											  y - window->_maxBoxSideSize/2,
+											  window->_maxBoxSideSize,
+											  window->_maxBoxSideSize);
+				window->DrawRect(window->_stampRect, TRectColorBlue);
+			}
+			//			std::cout << "x, y: " << x << ", " << y << std::endl;
+			
+			break;
+		case CV_EVENT_LBUTTONDOWN:
+			window->_isDrawing = true;
+			if (window->_drawMode == TDrawModeStamp) {
+				window->_drawingBox = window->_stampRect;
+			}
+			
+			break;
+		case CV_EVENT_LBUTTONUP:
+			window->_isDrawing = false;
+			window->_drawMode = TDrawModeNone;
+			window->Update(window->_originalImage);
+			window->DrawRect(window->_drawingBox, TRectColorRed);
+			if (window->_drawingBox.height > 0 && window->_drawingBox.width > 0) {
+				window->delegate->WindowDidSelectPatch(window->_name, window->_drawingBox);
+			}
+			break;
+		case CV_EVENT_RBUTTONUP:
+			window->Update(window->_originalImage);
+			// раскомментировать, если надо выделить патч конкретного размера
+			window->_drawMode = (TDrawMode)((window->_drawMode + 1) % TDrawModeNone);
+			
+			break;
+		default:
+			break;
+	}
 }

@@ -9,22 +9,22 @@
 #pragma once
 
 typedef enum : int {
-    TImageCompareMetricL1,
-    TImageCompareMetricL2,
+	TImageCompareMetricL1,
+	TImageCompareMetricL2,
 } TImageCompareMetric;
 
 typedef enum : int {
-    TBlurMeasureMethodStandartDeviation,
-    TBlurMeasureMethodDynamicRange,
-    TBlurMeasureMethodFFT,
-    
-    TBlurMeasureMethodNone
+	TBlurMeasureMethodStandartDeviation,
+	TBlurMeasureMethodDynamicRange,
+	TBlurMeasureMethodFFT,
+	
+	TBlurMeasureMethodNone
 } TBlurMeasureMethod;
 
 typedef enum : int {
-    TBinarizationMethodNICK,
-    TBinarizationMethodNiBlack,
-    TBinarizationMethodAdaptiveGaussian,
+	TBinarizationMethodNICK,
+	TBinarizationMethodNiBlack,
+	TBinarizationMethodAdaptiveGaussian,
 } TBinarizationMethod;
 
 typedef enum : int {
