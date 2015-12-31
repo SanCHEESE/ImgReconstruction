@@ -19,21 +19,6 @@ namespace utils
 		return stddev[0];
 	}
 	
-	double MeasureBlurWithFFTImage(const CImage &image, float blurMetricRadiusRatio)
-	{		
-		cv::Size submatrixSize = cv::Size(ceil(image.cols * blurMetricRadiusRatio), ceil(image.rows * blurMetricRadiusRatio));
-		cv::Point submatrixOrigin = cv::Point((image.cols - submatrixSize.width) / 2, (image.rows - submatrixSize.height) / 2);
-		cv::Rect submatrixRect = cv::Rect(submatrixOrigin, submatrixSize);
-		
-		CImage imageCopy;
-		image.copyTo(imageCopy);
-		
-		CImage roi = imageCopy(submatrixRect);
-		roi.setTo(0);
-		
-		return cv::sum(imageCopy)[0];
-	}
-	
 	uint64 PHash(const CImage &image, const cv::Size& size)
 	{
 		assert(image.cols <= 8 && image.rows <= 8);

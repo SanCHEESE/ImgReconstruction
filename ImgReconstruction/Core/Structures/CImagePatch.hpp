@@ -88,7 +88,7 @@ private:
 	bool _pHashComputed;
 };
 
-struct LessBlur
+struct MoreBlur
 {
 	inline bool operator() (const CImagePatch& patch1, const CImagePatch& patch2)
 	{

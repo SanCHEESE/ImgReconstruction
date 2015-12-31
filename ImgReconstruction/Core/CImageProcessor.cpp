@@ -19,9 +19,9 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
 	BuildAndShowSdImage(extentImage, false);
 	
 #if DRAW_HISTOGRAM || TEST_BLUR_METRICS || FIX_IMAGE_STUPID
-	WindowDidSelectPatch(_window.GetName(), {0,0,0,0});
+	WindowDidSelectPatch(_window.GetName(), {0, 0, 0, 0});
 	exit(0);
-#else 
+#else
 	ConfigureWindow(extentImage);
 #endif
 }
@@ -31,7 +31,7 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 #if SHOW_BLUR_MAP
 	ProcessShowBlurMap(patchRect);
 #elif HIGHLIGHT_SIMILAR_PATCHES
-	ProcessShowSimilarPatches(patchRect);
+	ProcessHighlightSimilarPatches(patchRect);
 #elif SHOW_SORTED_SIMILAR
 	ProcessShowSortedSimilar(patchRect);
 #elif REPLACE_SIMILAR_PATCHES
@@ -66,7 +66,7 @@ void CImageProcessor::ProcessTestBlurMetrics()
 		origin.y += patchSideSize;
 	}
 	
-	std::sort(sortedPatches.begin(), sortedPatches.end(), LessBlur());
+	std::sort(sortedPatches.begin(), sortedPatches.end(), MoreBlur());
 	
 	std::cout << std::endl;
 	
@@ -86,7 +86,7 @@ void CImageProcessor::ProcessTestBlurMetrics()
 			result = temp;
 		}
 	}
-
+	
 	result.Save("blurTest");
 }
 
@@ -130,7 +130,7 @@ void CImageProcessor::ProcessHighlightSimilarPatches(const cv::Rect &patchRect)
 	int good = 0;
 	for (auto& similarPatch: similarPatches) {
 		// чем больше размытия, тем темнее рамка вокруг патча
-		cv::Scalar color = RGB(0, similarPatch.BlurValue(BlurMeasureMethod), 0);
+		cv::Scalar color(RGB(0, similarPatch.BlurValue(BlurMeasureMethod), 0));
 		rectsToDraw.push_back({similarPatch.GetFrame(), color});
 		good++;
 		
@@ -145,7 +145,7 @@ void CImageProcessor::ProcessHighlightSimilarPatches(const cv::Rect &patchRect)
 
 void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 {
-	cv::Rect normPatch = {450, 432, 8, 8};
+	cv::Rect normPatch(450, 432, 8, 8);
 	CImagePatch selectedPatch = FetchPatch(normPatch);
 	std::deque<CImagePatch> patches = FetchPatches(normPatch);
 	
@@ -179,7 +179,7 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 	};
 	
 	CImage similarityDecreaseImg = buildImage(similarPatches);
-	std::sort(similarPatches.begin(), similarPatches.end(), LessBlur());
+	std::sort(similarPatches.begin(), similarPatches.end(), MoreBlur());
 	CImage blurIncreaseImg =  buildImage(similarPatches);
 	
 	similarityDecreaseImg.Save("similarityDecrease");
@@ -201,7 +201,7 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
 	CTimeLogger::StartLogging();
 	
 	// сортируем по резкости
-	std::sort(similarPatches.begin(), similarPatches.end(), LessBlur());
+	std::sort(similarPatches.begin(), similarPatches.end(), MoreBlur());
 	
 	std::vector<int> labels;
 	std::vector<float> data;
@@ -264,7 +264,7 @@ void CImageProcessor::ProcessFixImageStupid()
 		if (cluster != clusters.end() && !cluster->second.empty()) {
 			// сортируем по резкости внутри кластера
 			std::deque<CImagePatch> patchCluster = cluster->second;
-			std::sort(patchCluster.begin(), patchCluster.end(), LessBlur());
+			std::sort(patchCluster.begin(), patchCluster.end(), MoreBlur());
 			CImagePatch sharpPatch = patchCluster[0];
 			
 			// копируем самый резкий патч
