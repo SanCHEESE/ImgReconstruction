@@ -51,7 +51,11 @@ public:
 	void Show(int flags = CV_WINDOW_AUTOSIZE);
 	void Update(const CImage& img);
 	void ShowAndUpdate(const CImage& img, int flags = CV_WINDOW_AUTOSIZE);
+	
 	CImage GetImage() const;
+	std::string GetName() const {
+		return _name;
+	}
 	
 	void SetOriginalImage(const CImage& originalImage);
 	void SetMaxBoxSideSize(int boxSideSize);

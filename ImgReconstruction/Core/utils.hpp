@@ -23,21 +23,11 @@ namespace utils
 		return hammingDistance;
 	}
 	
-	// wrappers
-	CImage Resize(const CImage& img, const cv::Size& size);
 	double StandartDeviation(const CImage& img);
 	
-	// FFT
-	CImage FFT(const CImage &image);
 	double MeasureBlurWithFFTImage(const CImage &image, float blurMetricRadiusRatio);
-	
-	CImage SDFilter(const CImage &image, const cv::Size& filterSize);
 	
 	// classification
 	uint64 PHash(const CImage &image, const cv::Size& size = {4, 4});
 	uint64 AvgHash(const CImage &image, const cv::Size& size = {4, 4});
-	
-	void SaveImage(const std::string path, const CImage &image);
-	
-	CImage ExtentImage(const CImage& img, const cv::Size size);
 }

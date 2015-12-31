@@ -41,13 +41,15 @@ double CBlurMeasurer::MeasureUsingDynamicRange(const CImage &img) const
 	
 	std::vector<unsigned char> histArray;
 	histogram.col(0).copyTo(histArray);
-	std::pair<std::vector<unsigned char>::iterator, std::vector<unsigned char>::iterator> minMaxElem = std::minmax_element(histArray.begin(), histArray.end());
+	auto minMaxElem = std::minmax_element(histArray.begin(), histArray.end());
 	
 	return std::abs(*(minMaxElem.first) - *(minMaxElem.second));
 }
 
 double CBlurMeasurer::MeasureUsingFFT(const CImage &img) const
 {
-	CImage fft = utils::FFT(img);
+	CImage fft = img.GetFFTImage();
+	img.CopyMetadataTo(fft);
+	fft.Save();
 	return utils::MeasureBlurWithFFTImage(fft, BlurMetricRadiusRatio);
 }

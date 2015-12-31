@@ -12,6 +12,14 @@
 #include "CImagePatch.hpp"
 #include "CImageComparator.hpp"
 
+#define SHOW_BLUR_MAP 0
+#define HIGHLIGHT_SIMILAR_PATCHES 0
+#define SHOW_SORTED_SIMILAR 0
+#define REPLACE_SIMILAR_PATCHES 0
+#define FIX_IMAGE_STUPID 0
+#define DRAW_HISTOGRAM 0
+#define TEST_BLUR_METRICS 1
+
 extern const std::string DebugWindowName;
 extern const std::string BinarizedWindowName;
 
@@ -38,6 +46,7 @@ private:
 	void ProcessReplaceSimilarPatches(const cv::Rect &patchRect);
 	void ProcessFixImageStupid();
 	void ProcessDrawHistogram(const cv::Rect &patchRect);
+	void ProcessTestBlurMetrics();
 	
 	void BuildAndShowBinImage(const CImage& img, bool show);
 	void BuildAndShowSdImage(const CImage& img, bool show);

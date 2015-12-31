@@ -9,23 +9,21 @@
 #include "CTimeLogger.hpp"
 #include "CDocumentBinarizer.hpp"
 
-#define SHOW_BLUR_MAP 0
-#define HIGHLIGHT_SIMILAR_PATCHES 0
-#define SHOW_SORTED_SIMILAR 1
-#define REPLACE_SIMILAR_PATCHES 1
-#define FIX_IMAGE_STUPID 0
-#define DRAW_HISTOGRAM 0
-
 void CImageProcessor::StartProcessingChain(const CImage& img)
 {
-	CImage extentImage = utils::ExtentImage(img, BinaryWindowSize);
+	CImage extentImage = img.GetExtentImage(BinaryWindowSize);
 	
 	_mainImage = CImagePatch();
 	_mainImage.SetGrayImage(extentImage);
-	BuildAndShowBinImage(extentImage, true);
+	BuildAndShowBinImage(extentImage, false);
 	BuildAndShowSdImage(extentImage, false);
 	
+#if DRAW_HISTOGRAM || TEST_BLUR_METRICS || FIX_IMAGE_STUPID
+	WindowDidSelectPatch(_window.GetName(), {0,0,0,0});
+	exit(0);
+#else 
 	ConfigureWindow(extentImage);
+#endif
 }
 
 void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect)
@@ -42,10 +40,55 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 	ProcessFixImageStupid();
 #elif DRAW_HISTOGRAM
 	ProcessDrawHistogram();
+#elif TEST_BLUR_METRICS
+	ProcessTestBlurMetrics();
 #endif
 }
 
 #pragma mark - Private
+
+void CImageProcessor::ProcessTestBlurMetrics()
+{
+	int patchSideSize = 25;
+	cv::Point origin(20, 25);
+	
+	auto sortedPatches = std::deque<CImagePatch>();
+	auto patches = std::deque<CImagePatch>();
+	for (int i = 0; i < 12; i++) {
+		CImagePatch patch;
+		cv::Rect rect(origin.x, origin.y, patchSideSize, patchSideSize);
+		patch.SetBinImage(_mainImage.BinImage()(rect));
+		patch.SetSdImage(_mainImage.SdImage()(rect));
+		patch.SetGrayImage(_mainImage.GrayImage()(rect));
+		std::cout << "Blur value " << patch.BlurValue(TBlurMeasureMethodFFT) << std::endl;
+		patches.push_back(patch);
+		sortedPatches.push_back(patch);
+		origin.y += patchSideSize;
+	}
+	
+	std::sort(sortedPatches.begin(), sortedPatches.end(), LessBlur());
+	
+	std::cout << std::endl;
+	
+	CImage result;
+	for (int i = 0; i < patches.size(); i++) {
+		CImage temp;
+		cv::Mat verticalSeparator(patches[i].GetFrame().height, 1, CV_8UC1, cv::Scalar(255));
+		cv::hconcat(patches[i].GrayImage(), verticalSeparator, temp);
+		cv::hconcat(temp, sortedPatches[i].GrayImage(), temp);
+		
+		std::cout << "Blur value " << sortedPatches[i].BlurValue(TBlurMeasureMethodFFT) << std::endl;
+		if (result.cols > 0 && result.rows > 0) {
+			cv::Mat horisontalSeparator(1, patches[i].GetFrame().width * 2 + 1, CV_8UC1, cv::Scalar(255));
+			cv::vconcat(result, horisontalSeparator, result);
+			cv::vconcat(result, temp, result);
+		} else {
+			result = temp;
+		}
+	}
+
+	result.Save("blurTest");
+}
 
 void CImageProcessor::ProcessDrawHistogram(const cv::Rect &patchRect)
 {
@@ -139,8 +182,8 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 	std::sort(similarPatches.begin(), similarPatches.end(), LessBlur());
 	CImage blurIncreaseImg =  buildImage(similarPatches);
 	
-	utils::SaveImage(SaveImgPath + "similarityDecrease.bmp", similarityDecreaseImg);
-	utils::SaveImage(SaveImgPath + "blurIncrease.bmp", blurIncreaseImg);
+	similarityDecreaseImg.Save("similarityDecrease");
+	blurIncreaseImg.Save("similarityDecrease");
 }
 
 void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
@@ -198,8 +241,8 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
 	BuildAndShowBinImage(_mainImage.GrayImage(), true);
 	_window.Update(_mainImage.GrayImage());
 	
-	utils::SaveImage(SaveImgPath + "gray_fixed.bmp", _mainImage.GrayImage());
-	utils::SaveImage(SaveImgPath + "bin_fixed.bmp", _mainImage.BinImage());
+	_mainImage.GrayImage().Save("gray_fixed");
+	_mainImage.BinImage().Save("bin_fixed");
 }
 
 void CImageProcessor::ProcessFixImageStupid()
@@ -258,15 +301,14 @@ void CImageProcessor::BuildAndShowBinImage(const CImage &img, bool show)
 	CImage blurredImage;
 	cv::bilateralFilter(img, blurredImage, 2, 1, 1);
 	CImage binarizedImage;
-	binarizedImage = binarizer.Binarize(utils::ExtentImage(img, BinaryWindowSize));
-	
+	binarizedImage = binarizer.Binarize(img.GetExtentImage(BinaryWindowSize));
 	if (show) {
 		_binarizedWindow.ShowAndUpdate(binarizedImage);
 	}
 	
 	CTimeLogger::Print("Binarization: ");
 	
-	utils::SaveImage(SaveImgPath + "bin.bmp", binarizedImage);
+	binarizedImage.Save("bin");
 	
 	_mainImage.SetBinImage(binarizedImage);
 }
@@ -276,8 +318,7 @@ void CImageProcessor::BuildAndShowSdImage(const CImage &img, bool show)
 	// строим sd изображение
 	CTimeLogger::StartLogging();
 	
-	CImage sdImage;
-	sdImage = utils::SDFilter(img, cv::Size(MaxPatchSideSize, MaxPatchSideSize));
+	CImage sdImage = img.GetSDImage({MaxPatchSideSize, MaxPatchSideSize});
 	
 	if (show) {
 		_debugWindow.ShowAndUpdate(sdImage);
@@ -326,9 +367,9 @@ std::deque<CImagePatch> CImageProcessor::FetchPatches(const cv::Rect& patchRect)
 	
 	std::deque<CImagePatch> patches;
 	cv::Size patchSize = cv::Size(patchRect.width, patchRect.height);
-	_mainImage.SetGrayImage(utils::ExtentImage(_mainImage.GrayImage(), patchSize));
-	_mainImage.SetBinImage(utils::ExtentImage(_mainImage.BinImage(), patchSize));
-	_mainImage.SetSdImage(utils::ExtentImage(_mainImage.SdImage(), patchSize));
+	_mainImage.SetGrayImage(_mainImage.GrayImage().GetExtentImage(patchSize));
+	_mainImage.SetBinImage(_mainImage.BinImage().GetExtentImage(patchSize));
+	_mainImage.SetSdImage(_mainImage.SdImage().GetExtentImage(patchSize));
 	CImage grayImage = _mainImage.GrayImage();
 	CImage binImage = _mainImage.BinImage();
 	CImage sdImage = _mainImage.SdImage();

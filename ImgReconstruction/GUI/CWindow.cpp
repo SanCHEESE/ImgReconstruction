@@ -96,7 +96,7 @@ void CWindow::ObserveKeyboard()
 		if (c == 27) {
 			break;
 		} else if ((char)c == 's') {
-			utils::SaveImage(SaveImgPath + _name + ".jpg", _image);
+			_image.Save(_name);
 		}
 	}
 }

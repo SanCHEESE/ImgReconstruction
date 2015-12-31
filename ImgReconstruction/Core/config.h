@@ -15,7 +15,7 @@ static const int ComparisonEpsL2 = 35;
 static const int ComparisonEpsL1 = 3;
 
 static const int MaxPatchSideSize = 8;
-static const float BlurMetricRadiusRatio = 0.2f;
+static const float BlurMetricRadiusRatio = 0.4f;
 
 static const std::string DebugWindowName = "Debug";
 static const std::string BinarizedWindowName = "Binarized";

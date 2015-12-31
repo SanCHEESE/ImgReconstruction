@@ -9,7 +9,12 @@
 #include "CWindow.hpp"
 #include "CImageProcessor.hpp"
 
+#if TEST_BLUR_METRICS
+static const std::string PathToImg = "../../images/img2blur.jpg";
+#else 
 static const std::string PathToImg = "../../images/img1.jpg";
+#endif
+
 static const std::string WindowName = "Press Esc to quit";
 
 using namespace cv;

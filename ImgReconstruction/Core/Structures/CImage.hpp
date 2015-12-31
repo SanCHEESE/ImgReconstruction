@@ -11,6 +11,7 @@
 class CImage : public cv::Mat
 {
 public:
+	// constructors
 	CImage() : cv::Mat() {_frame = cv::Rect(0, 0, 0, 0);};
 	CImage(const cv::Mat mat) : cv::Mat(mat) {_frame = cv::Rect(0, 0, mat.cols, mat.rows);};
 	CImage(const std::string& path, int flags) : cv::Mat(cv::imread(path, flags)) {_frame = cv::Rect(0, 0, cv::Mat::cols, cv::Mat::rows);};
@@ -18,12 +19,25 @@ public:
 	CImage(const CImage& image, const cv::Rect& roi) : cv::Mat(image, roi) {_frame = roi;}
 	CImage(const cv::Size size, int type, int value) : cv::Mat(size, type, value) {_frame = cv::Rect(0, 0, size.width, size.height);}
 	
+	// overrides
 	void copyTo(CImage &image) const;
 	void copyTo(cv::Mat &image) const;
+	
+	// copy
 	void CopyMetadataTo(CImage& image) const;
 	
-	CImage GetPatch(const cv::Rect& rect) const;
+	// save
+	void Save(const std::string& name) const;
+	void Save() const;
+	
+	// get calculated images
+	CImage GetFFTImage() const;
 	CImage GetResizedImage(const cv::Size& size) const;
+	CImage GetExtentImage(const cv::Size size) const;
+	CImage GetSDImage(const cv::Size& filterSize) const;
+	
+	CImage GetPatch(const cv::Rect& rect) const;
+
 	std::deque<CImage> GetAllPatches(const cv::Size& size, const cv::Point offset) const;
 	cv::Rect GetFrame() const;
 	

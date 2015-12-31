@@ -25,6 +25,7 @@ void CImage::copyTo(cv::Mat &image) const
 
 std::ostream& operator<<(std::ostream& os, const CImage& img)
 {
+	os << "\n";
 	for (int i = 0; i < img.rows; i++) {
 		os << "\t\t\t";
 		for (int j = 0; j < img.cols; j++) {
@@ -41,17 +42,149 @@ std::ostream& operator<<(std::ostream& os, const CImage& img)
 	return os;
 }
 
+#pragma mark - Save
+
+void CImage::Save(const std::string &name) const
+{
+	std::vector<int> compression_params;
+	compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+	compression_params.push_back(100);
+	cv::imwrite(SaveImgPath + name + ".bmp", *this, compression_params);
+}
+
+void CImage::Save() const
+{
+	auto start = std::chrono::high_resolution_clock::now();
+	std::stringstream buffer;
+	auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch());
+	buffer << SaveImgPath + "tmp-" << nsec.count() << ".bmp";
+	
+	std::vector<int> compression_params;
+	compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+	compression_params.push_back(100);
+	cv::imwrite(buffer.str(), *this, compression_params);
+}
+
+#pragma mark - Get calculated images
+
+CImage CImage::GetSDImage(const cv::Size& filterSize) const
+{
+	CImage image32f;
+	this->convertTo(image32f, CV_32F);
+	
+	CImage mu;
+	blur(image32f, mu, filterSize);
+	
+	CImage mu2;
+	blur(image32f.mul(image32f), mu2, filterSize);
+	
+	CImage sigma;
+	cv::sqrt(mu2 - mu.mul(mu), sigma);
+	
+	return CImage(sigma / 255.f);
+}
+
+CImage CImage::GetExtentImage(const cv::Size size) const
+{
+	cv::Size iterImageSize = {0, 0};
+	if (this->cols % size.width > 0) {
+		iterImageSize.width = (this->cols / size.width + 1) * size.width;
+	} else {
+		iterImageSize.width = this->cols;
+	}
+	
+	if (this->rows % size.height > 0) {
+		iterImageSize.height = (this->rows / size.height + 1) * size.height;
+	} else {
+		iterImageSize.height = this->rows;
+	}
+	
+	//		int extentedRows = iterImageSize.height - img.rows;
+	//		int extentedCols = iterImageSize.width - img.cols;
+	int avgColor = cv::mean(*this)[0] - 5;
+	CImage result = CImage(iterImageSize, cv::DataType<uchar>::type, avgColor);
+	CImage roi = result(cv::Rect(0, 0, this->cols, this->rows));
+	this->copyTo(roi);
+	return result;
+}
+
+CImage CImage::GetFFTImage() const
+{
+	//expand input image to optimal size
+	cv::Mat padded;
+	int m = cv::getOptimalDFTSize( this->rows );
+	// on the border add zero values
+	int n = cv::getOptimalDFTSize( this->cols );
+	cv::copyMakeBorder(*this, padded, 0, m - this->rows, 0, n - this->cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
+	
+	cv::Mat planes[] = {cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F)};
+	cv::Mat complexI;
+	// Add to the expanded another plane with zeros
+	merge(planes, 2, complexI);
+	
+	// this way the result may fit in the source matrix
+	dft(complexI, complexI);
+	
+	// compute the magnitude and switch to logarithmic scale
+	// => log(1 + sqrt(Re(DFT(I))^2 + Im(DFT(I))^2))
+	// planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
+	split(complexI, planes);
+	// planes[0] = magnitude
+	magnitude(planes[0], planes[1], planes[0]);
+	cv::Mat magI = planes[0];
+	
+	// switch to logarithmic scale
+	magI += cv::Scalar::all(1);
+	log(magI, magI);
+	
+	// crop the spectrum, if it has an odd number of rows or columns
+	magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
+	
+	// rearrange the quadrants of Fourier image  so that the origin is at the image center
+	int cx = magI.cols/2;
+	int cy = magI.rows/2;
+	
+	// Top-Left - Create a ROI per quadrant
+	cv::Mat q0(magI, cv::Rect(0, 0, cx, cy));
+	// Top-Right
+	cv::Mat q1(magI, cv::Rect(cx, 0, cx, cy));
+	// Bottom-Left
+	cv::Mat q2(magI, cv::Rect(0, cy, cx, cy));
+	// Bottom-Right
+	cv::Mat q3(magI, cv::Rect(cx, cy, cx, cy));
+	
+	// swap quadrants (Top-Left with Bottom-Right)
+	cv::Mat tmp;
+	q0.copyTo(tmp);
+	q3.copyTo(q0);
+	tmp.copyTo(q3);
+	
+	// swap quadrant (Top-Right with Bottom-Left)
+	q1.copyTo(tmp);
+	q2.copyTo(q1);
+	tmp.copyTo(q2);
+	
+	// Transform the matrix with float values into a
+	// viewable image form (float between values 0 and 1).
+	normalize(magI, magI, 0, 1, CV_MINMAX);
+	
+	return magI;
+}
+
+CImage CImage::GetResizedImage(const cv::Size &size) const
+{
+	CImage result;
+	cv::resize(*this, result, size, cv::INTER_NEAREST);
+	return result;
+}
+
 #pragma mark - CImage
 CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect) const
 {
 	return CPatchIterator(this, size, offset, pointingRect);
 }
 
-CImage CImage::GetResizedImage(const cv::Size &size) const
-{
-	CImage resizedImage = utils::Resize(*this, size);
-	return resizedImage;
-}
+
 
 CImage CImage::GetPatch(const cv::Rect &rect) const
 {
