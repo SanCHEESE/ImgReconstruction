@@ -12,7 +12,7 @@
 
 // сonfigs
 static const int ComparisonEpsL2 = 35;
-static const int ComparisonEpsL1 = 3;
+static const int ComparisonEpsL1 = 500;
 
 static const int MaxPatchSideSize = 8;
 static const float BlurMetricRadiusRatio = 0.4f;
@@ -23,7 +23,7 @@ static const std::string SaveImgPath = "../../out/";
 
 static const cv::Point PatchOffset = cv::Point(1, 1);
 
-static const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodStandartDeviation;
+static const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodFD;
 static const TImageCompareMetric CompMetric = TImageCompareMetricL1;
 static const TPatchClusteringMethod ClusteringMethod = TPatchClusteringMethodAvgHash;
 static const TBinarizationMethod BinMethod = TBinarizationMethodNICK;

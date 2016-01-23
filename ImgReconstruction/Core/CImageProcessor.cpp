@@ -36,10 +36,6 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 	ProcessShowSortedSimilar(patchRect);
 #elif REPLACE_SIMILAR_PATCHES
 	ProcessReplaceSimilarPatches(patchRect);
-#elif FIX_IMAGE_STUPID
-	ProcessFixImageStupid();
-#elif DRAW_HISTOGRAM
-	ProcessDrawHistogram();
 #elif TEST_BLUR_METRICS
 	ProcessTestBlurMetrics();
 #endif
@@ -51,6 +47,7 @@ void CImageProcessor::ProcessTestBlurMetrics()
 {
 	int patchSideSize = 25;
 	cv::Point origin(20, 25);
+    TBlurMeasureMethod blurMeasureMethod = TBlurMeasureMethodFD;
 	
 	auto sortedPatches = std::deque<CImagePatch>();
 	auto patches = std::deque<CImagePatch>();
@@ -60,7 +57,7 @@ void CImageProcessor::ProcessTestBlurMetrics()
 		patch.SetBinImage(_mainImage.BinImage()(rect));
 		patch.SetSdImage(_mainImage.SdImage()(rect));
 		patch.SetGrayImage(_mainImage.GrayImage()(rect));
-		std::cout << "Blur value " << patch.BlurValue(TBlurMeasureMethodFFT) << std::endl;
+		std::cout << "Blur value " << patch.BlurValue(blurMeasureMethod) << std::endl;
 		patches.push_back(patch);
 		sortedPatches.push_back(patch);
 		origin.y += patchSideSize;
@@ -77,7 +74,7 @@ void CImageProcessor::ProcessTestBlurMetrics()
 		cv::hconcat(patches[i].GrayImage(), verticalSeparator, temp);
 		cv::hconcat(temp, sortedPatches[i].GrayImage(), temp);
 		
-		std::cout << "Blur value " << sortedPatches[i].BlurValue(TBlurMeasureMethodFFT) << std::endl;
+		std::cout << "Blur value " << sortedPatches[i].BlurValue(blurMeasureMethod) << std::endl;
 		if (result.cols > 0 && result.rows > 0) {
 			cv::Mat horisontalSeparator(1, patches[i].GetFrame().width * 2 + 1, CV_8UC1, cv::Scalar(255));
 			cv::vconcat(result, horisontalSeparator, result);
@@ -88,19 +85,6 @@ void CImageProcessor::ProcessTestBlurMetrics()
 	}
 	
 	result.Save("blurTest");
-}
-
-void CImageProcessor::ProcessDrawHistogram(const cv::Rect &patchRect)
-{
-	std::deque<CImagePatch> patches = FetchPatches(patchRect);
-	auto clusters = FetchClusters(patches);
-	
-	int clusterCount = clusters.size();
-	
-	std::vector<int> hist;
-	for (auto& cluster: clusters) {
-		
-	}
 }
 
 void CImageProcessor::ProcessShowBlurMap(const cv::Rect &patchRect)
@@ -151,9 +135,6 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 	
 	auto clusters = FetchClusters(patches);
 	
-	std::cout << patches.size() << std::endl;
-	std::cout << clusters[0].size() << std::endl;
-	
 	//	CImagePatch selectedPatch = FetchPatch(patchRect);
 	//	std::deque<CImagePatch> patches = FetchPatches(patchRect);
 	
@@ -161,8 +142,6 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 	if (similarPatches.empty()) {
 		return;
 	}
-	
-	std::sort(similarPatches.begin(), similarPatches.end(), LessSimilarity());
 	
 	auto buildImage = [](const std::deque<CImagePatch>& similarPatches) {
 		CImage result;
@@ -178,12 +157,14 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 		return result;
 	};
 	
+	std::sort(similarPatches.begin(), similarPatches.end(), LessSimilarity());
 	CImage similarityDecreaseImg = buildImage(similarPatches);
+	
 	std::sort(similarPatches.begin(), similarPatches.end(), MoreBlur());
 	CImage blurIncreaseImg =  buildImage(similarPatches);
 	
 	similarityDecreaseImg.Save("similarityDecrease");
-	blurIncreaseImg.Save("similarityDecrease");
+	blurIncreaseImg.Save("blurIncrease");
 }
 
 void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
@@ -245,52 +226,7 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
 	_mainImage.BinImage().Save("bin_fixed");
 }
 
-void CImageProcessor::ProcessFixImageStupid()
-{
-	std::deque<CImagePatch> patches = FetchPatches({0, 0, MaxPatchSideSize, MaxPatchSideSize});
-	std::map<uint64, std::deque<CImagePatch>> clusters = FetchClusters(patches);
-	std::deque<uint64> keys = std::deque<uint64>();
-	
-	for (const auto& it: clusters) {
-		uint64 key = it.first;
-		keys.push_back(key);
-	}
-	
-	int i = 0;
-	// проходим весь диапазон
-	for (const uint64& key: keys) {
-		// находим нужный нам кластер
-		auto cluster = clusters.find(key);
-		if (cluster != clusters.end() && !cluster->second.empty()) {
-			// сортируем по резкости внутри кластера
-			std::deque<CImagePatch> patchCluster = cluster->second;
-			std::sort(patchCluster.begin(), patchCluster.end(), MoreBlur());
-			CImagePatch sharpPatch = patchCluster[0];
-			
-			// копируем самый резкий патч
-			for (const CImagePatch& patch: cluster->second) {
-				CImage temp = _mainImage.GrayImage()(patch.GetFrame());
-				sharpPatch.GrayImage().copyTo(temp);
-				
-				temp = _mainImage.BinImage()(patch.GetFrame());
-				sharpPatch.BinImage().copyTo(temp);
-				
-				temp = _mainImage.SdImage()(patch.GetFrame());
-				sharpPatch.SdImage().copyTo(temp);
-			}
-			
-			i++;
-			std::cout << "Left clusters: " << keys.size() - i << std::endl;
-			
-			// извлекаем патчи и перекластеризуем
-			patches = FetchPatches({0, 0, MaxPatchSideSize, MaxPatchSideSize});
-			clusters = FetchClusters(patches);
-		}
-	}
-	
-	_window.Update(_mainImage.GrayImage());
-	BuildAndShowBinImage(_mainImage.GrayImage(), true);
-}
+#pragma mark - Utils
 
 void CImageProcessor::BuildAndShowBinImage(const CImage &img, bool show)
 {
@@ -481,9 +417,6 @@ void CImageProcessor::AddBlurValueRect(std::deque<DrawableRect>& rects, CImagePa
 	cv::Scalar color = RGB(colorComp, colorComp, colorComp);
 	rects.push_back({imagePatch.GetFrame(), color, CV_FILLED});
 }
-
-
-#pragma mark - Utils
 
 int CImageProcessor::CompEpsForCompMetric(TImageCompareMetric metric)
 {

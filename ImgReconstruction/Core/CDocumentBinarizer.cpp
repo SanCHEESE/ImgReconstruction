@@ -21,15 +21,11 @@ CImage CDocumentBinarizer::Binarize(const CImage &img) const
 		auto imgPatches = img.GetAllPatches(_patchSize, cv::Point(_patchSize.width, _patchSize.height));
 		auto binarizedPatches = std::deque<CImage>(imgPatches.size());
 		for (int i = 0; i < imgPatches.size(); i++) {
+            
 			CImage patch = imgPatches[i];
-			
 			patch.convertTo(patch, CV_64F);
 			
 			double mean = cv::mean(patch)[0];
-			CImage meanMat = CImage(patch.rows, patch.cols, CV_64F, ceil(mean));
-			
-			CImage covarMat;
-			cv::absdiff(meanMat, patch, covarMat);
 			
 			double thresholdValue;
 			switch (_binMethod) {

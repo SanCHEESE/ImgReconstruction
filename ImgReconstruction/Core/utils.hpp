@@ -28,4 +28,6 @@ namespace utils
 	// classification
 	uint64 PHash(const CImage &image, const cv::Size& size = {4, 4});
 	uint64 AvgHash(const CImage &image, const cv::Size& size = {4, 4});
+	
+	std::ostream& operator<<(std::ostream& os, const cv::Mat& mat);
 }

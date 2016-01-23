@@ -122,8 +122,12 @@ CImage CImage::GetFFTImage() const
 	// Add to the expanded another plane with zeros
 	merge(planes, 2, complexI);
 	
+//	std::cout << padded << std::endl << std::endl;
+	
 	// this way the result may fit in the source matrix
 	dft(complexI, complexI);
+	
+//	std::cout << complexI << std::endl << std::endl;
 	
 	// compute the magnitude and switch to logarithmic scale
 	// => log(1 + sqrt(Re(DFT(I))^2 + Im(DFT(I))^2))
@@ -133,12 +137,18 @@ CImage CImage::GetFFTImage() const
 	magnitude(planes[0], planes[1], planes[0]);
 	cv::Mat magI = planes[0];
 	
+//	std::cout << magI << std::endl << std::endl;
+	
 	// switch to logarithmic scale
 	magI += cv::Scalar::all(1);
 	log(magI, magI);
 	
+//	std::cout << magI << std::endl << std::endl;
+	
 	// crop the spectrum, if it has an odd number of rows or columns
 	magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
+	
+//	std::cout << magI << std::endl << std::endl;
 	
 	// rearrange the quadrants of Fourier image  so that the origin is at the image center
 	int cx = magI.cols/2;
@@ -166,7 +176,9 @@ CImage CImage::GetFFTImage() const
 	
 	// Transform the matrix with float values into a
 	// viewable image form (float between values 0 and 1).
-	normalize(magI, magI, 0, 1, CV_MINMAX);
+	// normalize(magI, magI, 0, 1, CV_MINMAX);
+	
+//	std::cout << magI << std::endl << std::endl;
 	
 	return magI;
 }

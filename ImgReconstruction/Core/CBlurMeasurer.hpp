@@ -23,6 +23,7 @@ private:
 	double MeasureUsingStdDeviation(const CImage& img) const;
 	double MeasureUsingDynamicRange(const CImage& img) const;
 	double MeasureUsingFFT(const CImage& img) const;
+	double MeasureUsingFD(const CImage& img) const;
 	
 	TBlurMeasureMethod _measureMethod;
 };

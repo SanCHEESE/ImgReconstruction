@@ -81,4 +81,23 @@ namespace utils
 		
 		return result;
 	}
+	
+	std::ostream& operator<<(std::ostream& os, const cv::Mat& mat)
+	{
+		os << "\n";
+		for (int i = 0; i < mat.rows; i++) {
+			os << "\t\t\t";
+			for (int j = 0; j < mat.cols; j++) {
+				os << std::setw(4);
+				os << (int)mat.at<uchar>(i, j) << " ";
+			}
+			if (i == mat.rows - 1) {
+				os << "\n";
+			} else {
+				os << "\n\n";
+			}
+			
+		}
+		return os;
+	}
 }
