@@ -16,6 +16,8 @@ public:
 private:
 	double CompareL1(const CImagePatch& patch1, const CImagePatch& patch2) const;
 	double CompareL2(const CImagePatch& patch1, const CImagePatch& patch2) const;
+    
+    void EqualizeBrightness(CImage &img1, CImage &img2) const;
 	
 	TImageCompareMetric _compMetric;
 };

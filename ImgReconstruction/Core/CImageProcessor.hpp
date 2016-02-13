@@ -16,7 +16,8 @@
 #define HIGHLIGHT_SIMILAR_PATCHES 0
 #define SHOW_SORTED_SIMILAR 0
 #define REPLACE_SIMILAR_PATCHES 0
-#define TEST_BLUR_METRICS 1
+#define TEST_BLUR_METRICS 0
+#define PROCESS_IMAGE 1
 
 extern const std::string DebugWindowName;
 extern const std::string BinarizedWindowName;
@@ -38,13 +39,15 @@ public:
 	static inline int CompEpsForCompMetric(TImageCompareMetric metric);
 	
 private:
+    // test methods
 	void ProcessShowBlurMap(const cv::Rect& patchRect);
 	void ProcessHighlightSimilarPatches(const cv::Rect& patchRect);
 	void ProcessShowSortedSimilar(const cv::Rect& patchRect);
 	void ProcessReplaceSimilarPatches(const cv::Rect &patchRect);
-	void ProcessFixImageStupid();
-	void ProcessDrawHistogram(const cv::Rect &patchRect);
-	void ProcessTestBlurMetrics();
+    void ProcessTestBlurMetrics();
+    
+    // main method
+    void ProcessFixImage();
 	
 	void BuildAndShowBinImage(const CImage& img, bool show);
 	void BuildAndShowSdImage(const CImage& img, bool show);

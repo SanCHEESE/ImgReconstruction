@@ -17,8 +17,8 @@ void CImageProcessor::StartProcessingChain(const CImage& img)
 	_mainImage.SetGrayImage(extentImage);
 	BuildAndShowBinImage(extentImage, false);
 	BuildAndShowSdImage(extentImage, false);
-	
-#if DRAW_HISTOGRAM || TEST_BLUR_METRICS || FIX_IMAGE_STUPID
+    
+#if TEST_BLUR_METRICS || PROCESS_IMAGE
 	WindowDidSelectPatch(_window.GetName(), {0, 0, 0, 0});
 	exit(0);
 #else
@@ -43,187 +43,14 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 
 #pragma mark - Private
 
-void CImageProcessor::ProcessTestBlurMetrics()
+void CImageProcessor::ProcessFixImage()
 {
-	int patchSideSize = 25;
-	cv::Point origin(20, 25);
-    TBlurMeasureMethod blurMeasureMethod = TBlurMeasureMethodFD;
-	
-	auto sortedPatches = std::deque<CImagePatch>();
-	auto patches = std::deque<CImagePatch>();
-	for (int i = 0; i < 12; i++) {
-		CImagePatch patch;
-		cv::Rect rect(origin.x, origin.y, patchSideSize, patchSideSize);
-		patch.SetBinImage(_mainImage.BinImage()(rect));
-		patch.SetSdImage(_mainImage.SdImage()(rect));
-		patch.SetGrayImage(_mainImage.GrayImage()(rect));
-		std::cout << "Blur value " << patch.BlurValue(blurMeasureMethod) << std::endl;
-		patches.push_back(patch);
-		sortedPatches.push_back(patch);
-		origin.y += patchSideSize;
-	}
-	
-	std::sort(sortedPatches.begin(), sortedPatches.end(), MoreBlur());
-	
-	std::cout << std::endl;
-	
-	CImage result;
-	for (int i = 0; i < patches.size(); i++) {
-		CImage temp;
-		cv::Mat verticalSeparator(patches[i].GetFrame().height, 1, CV_8UC1, cv::Scalar(255));
-		cv::hconcat(patches[i].GrayImage(), verticalSeparator, temp);
-		cv::hconcat(temp, sortedPatches[i].GrayImage(), temp);
-		
-		std::cout << "Blur value " << sortedPatches[i].BlurValue(blurMeasureMethod) << std::endl;
-		if (result.cols > 0 && result.rows > 0) {
-			cv::Mat horisontalSeparator(1, patches[i].GetFrame().width * 2 + 1, CV_8UC1, cv::Scalar(255));
-			cv::vconcat(result, horisontalSeparator, result);
-			cv::vconcat(result, temp, result);
-		} else {
-			result = temp;
-		}
-	}
-	
-	result.Save("blurTest");
-}
+    // извлекаем все патчи изображения
+    std::deque<CImagePatch> patches = FetchPatches({0, 0, MaxPatchSideSize, MaxPatchSideSize});
+    // кластеризуем их
+    std::map<uint64, std::deque<CImagePatch>> clusters = FetchClusters(patches);
 
-void CImageProcessor::ProcessShowBlurMap(const cv::Rect &patchRect)
-{
-	CImagePatch selectedPatch = FetchPatch(patchRect);
-	std::deque<CImagePatch> patches = FetchPatches(patchRect);
-	CTimeLogger::StartLogging("Show blur map:\n");
-	
-	std::deque<DrawableRect> rectsToDraw;
-	for (auto& patch: patches) {
-		AddBlurValueRect(rectsToDraw, patch);
-	}
-	
-	_window.DrawRects(rectsToDraw);
-}
-
-void CImageProcessor::ProcessHighlightSimilarPatches(const cv::Rect &patchRect)
-{
-	CImagePatch selectedPatch = FetchPatch(patchRect);
-	
-	std::deque<CImagePatch> patches = FetchPatches(patchRect);
-	
-	CTimeLogger::StartLogging("Highlight patches:\n");
-	
-	std::deque<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
-	std::deque<DrawableRect> rectsToDraw;
-	int good = 0;
-	for (auto& similarPatch: similarPatches) {
-		// чем больше размытия, тем темнее рамка вокруг патча
-		cv::Scalar color(RGB(0, similarPatch.BlurValue(BlurMeasureMethod), 0));
-		rectsToDraw.push_back({similarPatch.GetFrame(), color});
-		good++;
-		
-		std::cout << "\t" << std::setw(4) << good << ". Frame: " << similarPatch.GetFrame() << std::endl;
-	}
-	
-	std::cout << "\nGood patches: " << good << std::endl;
-	CTimeLogger::Print("Patches to highlight search:");
-	
-	_window.DrawRects(rectsToDraw);
-}
-
-void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
-{
-	cv::Rect normPatch(450, 432, 8, 8);
-	CImagePatch selectedPatch = FetchPatch(normPatch);
-	std::deque<CImagePatch> patches = FetchPatches(normPatch);
-	
-	auto clusters = FetchClusters(patches);
-	
-	//	CImagePatch selectedPatch = FetchPatch(patchRect);
-	//	std::deque<CImagePatch> patches = FetchPatches(patchRect);
-	
-	std::deque<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
-	if (similarPatches.empty()) {
-		return;
-	}
-	
-	auto buildImage = [](const std::deque<CImagePatch>& similarPatches) {
-		CImage result;
-		for (auto& similarPatch: similarPatches) {
-			CImage temp;
-			cv::hconcat(similarPatch.BinImage(), similarPatch.GrayImage(), temp);
-			if (result.cols > 0 && result.rows > 0) {
-				cv::vconcat(result, temp, result);
-			} else {
-				result = temp;
-			}
-		}
-		return result;
-	};
-	
-	std::sort(similarPatches.begin(), similarPatches.end(), LessSimilarity());
-	CImage similarityDecreaseImg = buildImage(similarPatches);
-	
-	std::sort(similarPatches.begin(), similarPatches.end(), MoreBlur());
-	CImage blurIncreaseImg =  buildImage(similarPatches);
-	
-	similarityDecreaseImg.Save("similarityDecrease");
-	blurIncreaseImg.Save("blurIncrease");
-}
-
-void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
-{
-	CImagePatch selectedPatch = FetchPatch(patchRect);
-	std::deque<CImagePatch> patches = FetchPatches(patchRect);
-	
-	// извлекаем похожие патчи
-	std::deque<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
-	
-	if (similarPatches.empty()) {
-		return;
-	}
-	
-	CTimeLogger::StartLogging();
-	
-	// сортируем по резкости
-	std::sort(similarPatches.begin(), similarPatches.end(), MoreBlur());
-	
-	std::vector<int> labels;
-	std::vector<float> data;
-	int i = 0;
-	for (const CImagePatch& patch: similarPatches) {
-		labels.push_back(i);
-		data.push_back(patch.distanceToTarget);
-	}
-	cv::Mat labelsMat(labels, true);
-	cv::Mat dataMat(data, true);
-	
-	cv::TermCriteria::Type termCriteriaType = cv::TermCriteria::Type::EPS;
-	cv::TermCriteria criteria(termCriteriaType,  10, 1);
-	int k = 5;
-	std::vector<float> centers;
-	cv::kmeans(dataMat, k, labels, criteria, 10, cv::KMEANS_RANDOM_CENTERS, centers);
-	
-	if (labelsMat.isContinuous()) {
-		labels.assign(labelsMat.datastart, labelsMat.dataend);
-	}
-	
-	CImagePatch sharpPatch = similarPatches[0];
-	std::deque<DrawableRect> rectsToDraw;
-	CImage grayImage = _mainImage.GrayImage();
-	
-	// замещаем участки изображения
-	for (CImagePatch& similarPatche: similarPatches) {
-		CImage temp = grayImage(similarPatche.GetFrame());
-		sharpPatch.GrayImage().copyTo(temp);
-		cv::Scalar color = RGB(0, similarPatche.BlurValue(BlurMeasureMethod), 0);
-		rectsToDraw.push_back({similarPatche.GetFrame(), color});
-	}
-	_mainImage.SetGrayImage(grayImage);
-	
-	CTimeLogger::Print("Image fix:");
-	
-	BuildAndShowBinImage(_mainImage.GrayImage(), true);
-	_window.Update(_mainImage.GrayImage());
-	
-	_mainImage.GrayImage().Save("gray_fixed");
-	_mainImage.BinImage().Save("bin_fixed");
+    
 }
 
 #pragma mark - Utils
