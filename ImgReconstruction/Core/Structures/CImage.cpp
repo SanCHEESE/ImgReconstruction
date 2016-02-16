@@ -187,6 +187,7 @@ CImage CImage::GetResizedImage(const cv::Size &size) const
 {
 	CImage result;
 	cv::resize(*this, result, size, cv::INTER_NEAREST);
+    result._frame = cv::Rect(0, 0, size.width, size.height);
 	return result;
 }
 
@@ -203,9 +204,9 @@ CImage CImage::GetPatch(const cv::Rect &rect) const
 	return CImage(*this, rect);
 }
 
-std::deque<CImage> CImage::GetAllPatches(const cv::Size& size, const cv::Point offset) const
+std::vector<CImage> CImage::GetAllPatches(const cv::Size& size, const cv::Point offset) const
 {
-	std::deque<CImage> patches;
+	std::vector<CImage> patches;
 	CImage::CPatchIterator patchIterator = GetPatchIterator(size, offset);
 	while (patchIterator.HasNext()) {
 		patches.push_back(patchIterator.GetNext());
@@ -216,6 +217,11 @@ std::deque<CImage> CImage::GetAllPatches(const cv::Size& size, const cv::Point o
 cv::Rect CImage::GetFrame() const
 {
 	return _frame;
+}
+
+cv::Size CImage::GetSize() const
+{
+    return _frame.size();
 }
 
 void CImage::CopyMetadataTo(CImage &image) const

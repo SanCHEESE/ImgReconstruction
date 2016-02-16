@@ -32,3 +32,14 @@ typedef enum : int {
 	TPatchClusteringMethodAvgHash,
 	TPatchClusteringMethodPHash,
 } TPatchClusteringMethod;
+
+typedef enum : int {
+    TPatchFilteringCriteriaContrast = 1,
+    TPatchFilteringCriteriaBin = 2,
+    TPatchFilteringCriteriaFull = TPatchFilteringCriteriaContrast | TPatchFilteringCriteriaBin
+} TPatchFilteringCriteria;
+
+typedef enum : int {
+    TAccImageSumMethodAvg,
+    TAccImageSumMethodMedian,
+} TAccImageSumMethod;

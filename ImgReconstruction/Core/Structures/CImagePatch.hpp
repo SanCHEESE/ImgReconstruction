@@ -65,10 +65,12 @@ public:
 	uint64 GetAvgHash() const {return _avgHash;};
 	void SetFrame(const cv::Rect& frame) {_frame = frame;};
 	cv::Rect GetFrame() const {return _frame;};
+    cv::Size GetSize() const {return _frame.size();};
 	
 	friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
 	
 	double distanceToTarget;
+    double aClass;
 private:
 	void Initialize();
 	double CalculateBlurValue(TBlurMeasureMethod method) const;

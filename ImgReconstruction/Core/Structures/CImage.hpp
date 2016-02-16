@@ -38,8 +38,9 @@ public:
 	
 	CImage GetPatch(const cv::Rect& rect) const;
 
-	std::deque<CImage> GetAllPatches(const cv::Size& size, const cv::Point offset) const;
+	std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point offset) const;
 	cv::Rect GetFrame() const;
+    cv::Size GetSize() const;
 	
 	class CPatchIterator
 	{

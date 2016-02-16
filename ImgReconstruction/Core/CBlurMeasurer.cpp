@@ -52,7 +52,6 @@ double CBlurMeasurer::MeasureUsingFFT(const CImage &img) const
 {
 	CImage fft = img.GetFFTImage();
 	img.CopyMetadataTo(fft);
-	fft.Save();
 	
 	cv::Size submatrixSize = cv::Size(ceil(img.cols * BlurMetricRadiusRatio), ceil(img.rows * BlurMetricRadiusRatio));
 	cv::Point submatrixOrigin = cv::Point((img.cols - submatrixSize.width) / 2, (img.rows - submatrixSize.height) / 2);

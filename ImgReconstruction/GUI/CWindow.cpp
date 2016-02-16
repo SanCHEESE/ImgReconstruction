@@ -67,7 +67,7 @@ void CWindow::DrawRect(const cv::Rect rect, TRectColor colorType, int thickness)
 	DrawRect(rect, color, thickness);
 }
 
-void CWindow::DrawRects(const std::deque<DrawableRect>& rects)
+void CWindow::DrawRects(const std::vector<DrawableRect>& rects)
 {
 	for (const DrawableRect& rect: rects) {
 		cv::rectangle(_image, cv::Point(rect.rect.x, rect.rect.y),

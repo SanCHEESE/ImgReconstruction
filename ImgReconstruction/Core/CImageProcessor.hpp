@@ -36,7 +36,19 @@ public:
 	virtual void WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect);
 	
 	// utils
-	static inline int CompEpsForCompMetric(TImageCompareMetric metric);
+    int CompEpsForCompMetric(TImageCompareMetric metric)
+    {
+        switch (metric) {
+            case TImageCompareMetricL1:
+                return ComparisonEpsL1;
+            case TImageCompareMetricL2:
+                return ComparisonEpsL2;
+            default:
+                break;
+        }
+        
+        return 0;
+    }
 	
 private:
     // test methods
@@ -49,15 +61,19 @@ private:
     // main method
     void ProcessFixImage();
 	
+    // ui
 	void BuildAndShowBinImage(const CImage& img, bool show);
 	void BuildAndShowSdImage(const CImage& img, bool show);
 	void ConfigureWindow(const CImage& img);
-	
-	std::deque<CImagePatch> FetchPatches(const cv::Rect& patchRect);
+
+	// utils
+	std::vector<CImagePatch> FetchPatches(const cv::Rect& patchRect);
 	CImagePatch FetchPatch(const cv::Rect& patchRect);
-	void AddBlurValueRect(std::deque<DrawableRect>& rects, CImagePatch& imagePatch);
-	std::deque<CImagePatch> FindSimilarPatches(CImagePatch& targetPatch, std::deque<CImagePatch>& patches);
-	std::map<uint64, std::deque<CImagePatch> > FetchClusters(std::deque<CImagePatch>& patches);
+	void AddBlurValueRect(std::vector<DrawableRect>& rects, CImagePatch& imagePatch);
+	std::vector<CImagePatch> FindSimilarPatches(CImagePatch& targetPatch, std::vector<CImagePatch>& patches);
+	std::map<uint64, std::vector<CImagePatch>> Classify(std::vector<CImagePatch>& patches);
+    std::map<int, std::vector<CImagePatch>> Clusterize(const std::vector<CImagePatch>& aClass);
+    std::vector<CImagePatch> FilterPatches(std::vector<CImagePatch>& patches);
 	
 	CImagePatch _mainImage;
 	CImage _displayImage;

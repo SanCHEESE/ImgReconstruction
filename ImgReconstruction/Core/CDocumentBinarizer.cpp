@@ -19,7 +19,7 @@ CImage CDocumentBinarizer::Binarize(const CImage &img) const
 		cv::adaptiveThreshold(img, resultImg, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, _patchSize.width, _c);
 	} else {
 		auto imgPatches = img.GetAllPatches(_patchSize, cv::Point(_patchSize.width, _patchSize.height));
-		auto binarizedPatches = std::deque<CImage>(imgPatches.size());
+		auto binarizedPatches = std::vector<CImage>(imgPatches.size());
 		for (int i = 0; i < imgPatches.size(); i++) {
             
 			CImage patch = imgPatches[i];

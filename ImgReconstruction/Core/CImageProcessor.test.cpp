@@ -16,8 +16,8 @@ void CImageProcessor::ProcessTestBlurMetrics()
     cv::Point origin(20, 25);
     TBlurMeasureMethod blurMeasureMethod = TBlurMeasureMethodFD;
     
-    auto sortedPatches = std::deque<CImagePatch>();
-    auto patches = std::deque<CImagePatch>();
+    auto sortedPatches = std::vector<CImagePatch>();
+    auto patches = std::vector<CImagePatch>();
     for (int i = 0; i < 12; i++) {
         CImagePatch patch;
         cv::Rect rect(origin.x, origin.y, patchSideSize, patchSideSize);
@@ -57,10 +57,10 @@ void CImageProcessor::ProcessTestBlurMetrics()
 void CImageProcessor::ProcessShowBlurMap(const cv::Rect &patchRect)
 {
     CImagePatch selectedPatch = FetchPatch(patchRect);
-    std::deque<CImagePatch> patches = FetchPatches(patchRect);
+    std::vector<CImagePatch> patches = FetchPatches(patchRect);
     CTimeLogger::StartLogging("Show blur map:\n");
     
-    std::deque<DrawableRect> rectsToDraw;
+    std::vector<DrawableRect> rectsToDraw;
     for (auto& patch: patches) {
         AddBlurValueRect(rectsToDraw, patch);
     }
@@ -72,12 +72,12 @@ void CImageProcessor::ProcessHighlightSimilarPatches(const cv::Rect &patchRect)
 {
     CImagePatch selectedPatch = FetchPatch(patchRect);
     
-    std::deque<CImagePatch> patches = FetchPatches(patchRect);
+    std::vector<CImagePatch> patches = FetchPatches(patchRect);
     
     CTimeLogger::StartLogging("Highlight patches:\n");
     
-    std::deque<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
-    std::deque<DrawableRect> rectsToDraw;
+    std::vector<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
+    std::vector<DrawableRect> rectsToDraw;
     int good = 0;
     for (auto& similarPatch: similarPatches) {
         // чем больше размытия, тем темнее рамка вокруг патча
@@ -97,19 +97,17 @@ void CImageProcessor::ProcessHighlightSimilarPatches(const cv::Rect &patchRect)
 void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 {
     CImagePatch selectedPatch = FetchPatch(patchRect);
-    std::deque<CImagePatch> patches = FetchPatches(patchRect);
+    std::vector<CImagePatch> patches = FetchPatches(patchRect);
+    patches = FilterPatches(patches);
     
-    auto clusters = FetchClusters(patches);
+    auto classes = Classify(patches);
     
-    //	CImagePatch selectedPatch = FetchPatch(patchRect);
-    //	std::deque<CImagePatch> patches = FetchPatches(patchRect);
-    
-    std::deque<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
+    std::vector<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
     if (similarPatches.empty()) {
         return;
     }
     
-    auto buildImage = [](const std::deque<CImagePatch>& similarPatches) {
+    auto buildImage = [](const std::vector<CImagePatch>& similarPatches) {
         CImage result;
         for (auto& similarPatch: similarPatches) {
             CImage temp;
@@ -136,10 +134,10 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
 void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
 {
     CImagePatch selectedPatch = FetchPatch(patchRect);
-    std::deque<CImagePatch> patches = FetchPatches(patchRect);
+    std::vector<CImagePatch> patches = FetchPatches(patchRect);
     
     // извлекаем похожие патчи
-    std::deque<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
+    std::vector<CImagePatch> similarPatches = FindSimilarPatches(selectedPatch, patches);
     
     if (similarPatches.empty()) {
         return;
@@ -171,7 +169,7 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
     }
     
     CImagePatch sharpPatch = similarPatches[0];
-    std::deque<DrawableRect> rectsToDraw;
+    std::vector<DrawableRect> rectsToDraw;
     CImage grayImage = _mainImage.GrayImage();
     
     // замещаем участки изображения
@@ -190,4 +188,11 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
     
     _mainImage.GrayImage().Save("gray_fixed");
     _mainImage.BinImage().Save("bin_fixed");
+}
+
+void CImageProcessor::AddBlurValueRect(std::vector<DrawableRect>& rects, CImagePatch& imagePatch)
+{
+    double colorComp = imagePatch.BlurValue(BlurMeasureMethod);
+    cv::Scalar color = RGB(colorComp, colorComp, colorComp);
+    rects.push_back({imagePatch.GetFrame(), color, CV_FILLED});
 }

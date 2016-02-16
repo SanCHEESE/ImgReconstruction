@@ -21,10 +21,18 @@ static const std::string DebugWindowName = "Debug";
 static const std::string BinarizedWindowName = "Binarized";
 static const std::string SaveImgPath = "../../out/";
 
-static const cv::Point PatchOffset = cv::Point(1, 1);
+static const cv::Point PatchOffset = {1, 1};
 
 static const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodFD;
 static const TImageCompareMetric CompMetric = TImageCompareMetricL1;
 static const TPatchClusteringMethod ClusteringMethod = TPatchClusteringMethodAvgHash;
 static const TBinarizationMethod BinMethod = TBinarizationMethodNICK;
-static const cv::Size BinaryWindowSize = cv::Size(25, 25);
+static const cv::Size BinaryWindowSize = {25, 25};
+
+// patch filtering
+static const cv::Size FilteringPatchSize = {2, 2};
+static const float MinPatchContrastValue = 30;
+static const TPatchFilteringCriteria PatchFileringCriteria = TPatchFilteringCriteriaFull;
+
+// acc image
+static const TAccImageSumMethod AccImageSumMethod = TAccImageSumMethodAvg;

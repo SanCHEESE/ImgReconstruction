@@ -8,7 +8,7 @@
 
 #include "CImageComparator.hpp"
 
-double CImageComparator::Compare(const CImagePatch& patch1, const CImagePatch& patch2) const
+double CImageComparator::operator()(const CImagePatch& patch1, const CImagePatch& patch2) const
 {
 	switch (_compMetric) {
 		case TImageCompareMetricL1:
@@ -71,4 +71,6 @@ void CImageComparator::EqualizeBrightness(CImage &img1, CImage &img2) const
         // первая картинка ярче
         img2 += cv::Scalar::all(delta);
     }
+    
+    
 }

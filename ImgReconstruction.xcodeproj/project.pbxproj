@@ -12,6 +12,9 @@
 		5331008B1C536F140089FFE0 /* CImageProcessor.test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5331008A1C536F140089FFE0 /* CImageProcessor.test.cpp */; };
 		5339CA1C1BB7CF2A000B3B28 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5339CA1B1BB7CF2A000B3B28 /* main.cpp */; };
 		53641FE01BC9643A003C10BA /* CDocumentBinarizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53641FDE1BC9643A003C10BA /* CDocumentBinarizer.cpp */; };
+		5374A27C1C6EFC1800A01F12 /* CImageProcessor.utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5374A27B1C6EFC1800A01F12 /* CImageProcessor.utils.cpp */; };
+		5374A27F1C6EFCB800A01F12 /* CImageProcessor.ui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5374A27D1C6EFCB800A01F12 /* CImageProcessor.ui.cpp */; };
+		5374A2821C6F584800A01F12 /* CAccImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5374A2801C6F584800A01F12 /* CAccImage.cpp */; };
 		539319DA1BCA3FA70031292C /* CBlurMeasurer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539319D81BCA3FA70031292C /* CBlurMeasurer.cpp */; };
 		539A444C1BF9B6CF00C92FD9 /* CImagePatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 532225301BDB647700B8CE01 /* CImagePatch.cpp */; };
 		53A6930F1BB7D4BC0097DFED /* CWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53A6930D1BB7D4BC0097DFED /* CWindow.cpp */; };
@@ -47,6 +50,10 @@
 		536A27A21BBB954200D3B4F5 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; path = images; sourceTree = "<group>"; };
 		536C43991C008192003E16D8 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = Core/config.h; sourceTree = "<group>"; };
 		536C439A1C00852C003E16D8 /* typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = typedefs.h; path = Core/typedefs.h; sourceTree = "<group>"; };
+		5374A27B1C6EFC1800A01F12 /* CImageProcessor.utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CImageProcessor.utils.cpp; path = Core/CImageProcessor.utils.cpp; sourceTree = "<group>"; };
+		5374A27D1C6EFCB800A01F12 /* CImageProcessor.ui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CImageProcessor.ui.cpp; sourceTree = "<group>"; };
+		5374A2801C6F584800A01F12 /* CAccImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CAccImage.cpp; path = Core/Structures/CAccImage.cpp; sourceTree = "<group>"; };
+		5374A2811C6F584800A01F12 /* CAccImage.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CAccImage.hpp; path = Core/Structures/CAccImage.hpp; sourceTree = "<group>"; };
 		539319D71BCA3F560031292C /* IMeasurer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IMeasurer.hpp; path = Core/IMeasurer.hpp; sourceTree = "<group>"; };
 		539319D81BCA3FA70031292C /* CBlurMeasurer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = CBlurMeasurer.cpp; path = Core/CBlurMeasurer.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		539319D91BCA3FA70031292C /* CBlurMeasurer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CBlurMeasurer.hpp; path = Core/CBlurMeasurer.hpp; sourceTree = "<group>"; };
@@ -171,6 +178,8 @@
 				53A693231BB7F9150097DFED /* CImage.hpp */,
 				532225301BDB647700B8CE01 /* CImagePatch.cpp */,
 				532225311BDB647700B8CE01 /* CImagePatch.hpp */,
+				5374A2801C6F584800A01F12 /* CAccImage.cpp */,
+				5374A2811C6F584800A01F12 /* CAccImage.hpp */,
 			);
 			name = Structures;
 			sourceTree = "<group>";
@@ -179,7 +188,9 @@
 			isa = PBXGroup;
 			children = (
 				53A6931C1BB7F4950097DFED /* CImageProcessor.cpp */,
+				5374A27D1C6EFCB800A01F12 /* CImageProcessor.ui.cpp */,
 				5331008A1C536F140089FFE0 /* CImageProcessor.test.cpp */,
+				5374A27B1C6EFC1800A01F12 /* CImageProcessor.utils.cpp */,
 				53A6931D1BB7F4950097DFED /* CImageProcessor.hpp */,
 				539319D61BCA36740031292C /* Metrics */,
 				53A693121BB7D6A80097DFED /* ImgComparison */,
@@ -262,14 +273,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				53641FE01BC9643A003C10BA /* CDocumentBinarizer.cpp in Sources */,
+				5374A27F1C6EFCB800A01F12 /* CImageProcessor.ui.cpp in Sources */,
 				539A444C1BF9B6CF00C92FD9 /* CImagePatch.cpp in Sources */,
 				53A6931E1BB7F4950097DFED /* CImageProcessor.cpp in Sources */,
 				5328A5EB1BD8F39300F8594A /* CTimeLogger.cpp in Sources */,
 				5331008B1C536F140089FFE0 /* CImageProcessor.test.cpp in Sources */,
 				53A6930F1BB7D4BC0097DFED /* CWindow.cpp in Sources */,
 				53A693181BB7DB260097DFED /* CImageComparator.cpp in Sources */,
+				5374A27C1C6EFC1800A01F12 /* CImageProcessor.utils.cpp in Sources */,
 				530F95401BF86E970092F3E9 /* utils.cpp in Sources */,
 				53A693241BB7F9150097DFED /* CImage.cpp in Sources */,
+				5374A2821C6F584800A01F12 /* CAccImage.cpp in Sources */,
 				539319DA1BCA3FA70031292C /* CBlurMeasurer.cpp in Sources */,
 				5339CA1C1BB7CF2A000B3B28 /* main.cpp in Sources */,
 			);
