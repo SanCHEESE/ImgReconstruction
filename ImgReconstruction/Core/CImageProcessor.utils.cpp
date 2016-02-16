@@ -114,7 +114,7 @@ std::vector<CImagePatch> CImageProcessor::FindSimilarPatches(CImagePatch& target
     
     std::vector<CImagePatch> similarPatches;
     CImageComparator compare(CompMetric);
-    int eps = CompEpsForCompMetric(CompMetric);
+    double eps = CompEpsForCompMetric(CompMetric);
     for (CImagePatch& patch: patches) {
         if (comparePatches(patch, targetPatch) == 0) {
             int distance = compare(targetPatch, patch);
@@ -141,8 +141,6 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
     for (int i = 0; i < aClassCopy.size(); i++) {
         std::vector<CImagePatch> similarPatches;
         similarPatches.push_back(aClassCopy[i]);
-        aClassCopy.erase(aClassCopy.begin());
-        bool erased = false;
         for (int j = 0; j < aClassCopy.size(); j++) {
             if (compare(aClassCopy[i], aClassCopy[j]) < CompEpsForCompMetric(CompMetric)) {
                 similarPatches.push_back(aClassCopy[j]);
@@ -151,7 +149,8 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
                 j--;
             }
         }
-        i -= erased;
+        aClassCopy.erase(aClassCopy.begin());
+        i--;
         clusters[i] = similarPatches;
     }
     

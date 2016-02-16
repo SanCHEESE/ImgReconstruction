@@ -28,12 +28,12 @@ CAccImage::CAccImage(const CImage& img)
     _size = size;
 }
 
-void CAccImage::SetImage(const CImage &image)
+void CAccImage::SetImageRegion(const CImage &image)
 {
-    SetImage(image, image.GetFrame());
+    SetImageRegion(image, image.GetFrame());
 }
 
-void CAccImage::SetImage(const CImage& image, const cv::Rect& frame)
+void CAccImage::SetImageRegion(const CImage& image, const cv::Rect& frame)
 {
     assert(frame.x + frame.width <= _size.width);
     assert(frame.y + frame.height <= _size.height);

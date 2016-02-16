@@ -54,33 +54,57 @@ void CImageProcessor::ProcessFixImage()
     // фильтрация патчей
     patches = FilterPatches(patches);
     
+    // вычисляем значение размытия
+    for (CImagePatch& patch: patches) {
+        patch.BlurValue(BlurMeasureMethod);
+    }
+    
     // классификация
     std::map<uint64, std::vector<CImagePatch>> classes = Classify(patches);
     
     CAccImage accImage(_mainImage.GrayImage());
+    int i = 0;
     for (auto &it: classes) {
         std::vector<CImagePatch> aClass = it.second;
         if (aClass.size() < 2) {
             // классы из 1 объекта не обрабатываются
-            accImage.SetImage(aClass[0].GrayImage());
+            accImage.SetImageRegion(aClass[0].GrayImage());
             continue;
         } else {
             // ранжировка по похожести внутри класса
             auto clusters = Clusterize(aClass);
+
             for (auto& cluster: clusters) {
-                // сортировка по размытию
-                std::sort(cluster.second.begin(), cluster.second.end(), MoreBlur());
+                auto clusterPatches = cluster.second;
+                
+                // сортировка по возрастанию размытия
+                std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
+                
+#if IMAGE_OUTPUT_ENABLED
+                CImage result(1, MaxPatchSideSize, CV_8UC1, cv::Scalar(255));
+                for (int i = 0; i < clusterPatches.size(); i++) {
+                    CImage greyPatchImg = clusterPatches[i].GrayImage();
+                    cv::Mat horisontalSeparator(1, greyPatchImg.GetFrame().width, CV_8UC1, cv::Scalar(255));
+                    cv::vconcat(result, horisontalSeparator, result);
+                    cv::vconcat(result, greyPatchImg, result);
+                }
+                result.Save(std::to_string(i));
+                i++;
+#endif
+
                 // копирование
-                CImagePatch bestPatch = cluster.second[0];
-                for (auto& patch: cluster.second) {
-                    accImage.SetImage(bestPatch.GrayImage(), patch.GetFrame());
+                CImagePatch bestPatch = clusterPatches[0];
+                for (auto& patch: clusterPatches) {
+                    if (patch.GetFrame() != bestPatch.GetFrame()) {
+                        accImage.SetImageRegion(bestPatch.GrayImage(), patch.GetFrame());
+                    }
                 }
             }
         }
     }
     
     CImage resultImage = accImage.GetResultImage(AccImageSumMethod);
-    resultImage.Save();
+    resultImage.Save("!result");
 }
 
 #pragma mark - Utils

@@ -98,6 +98,15 @@ struct MoreBlur
 	}
 };
 
+struct LessBlur
+{
+    inline bool operator() (const CImagePatch& patch1, const CImagePatch& patch2)
+    {
+        return patch1.GetBlurValue() < patch2.GetBlurValue();
+    }
+};
+
+
 struct LessSimilarity
 {
 	inline bool operator() (const CImagePatch& patch1, const CImagePatch& patch2)

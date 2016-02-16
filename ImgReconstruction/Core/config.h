@@ -11,8 +11,8 @@
 #include "typedefs.h"
 
 // сonfigs
-static const int ComparisonEpsL2 = 35;
-static const int ComparisonEpsL1 = 500;
+static const double ComparisonEpsL1 = 5;
+static const double ComparisonEpsL2 = 35;
 
 static const int MaxPatchSideSize = 8;
 static const float BlurMetricRadiusRatio = 0.4f;

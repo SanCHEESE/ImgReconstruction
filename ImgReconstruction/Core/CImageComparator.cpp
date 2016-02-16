@@ -28,15 +28,21 @@ double CImageComparator::CompareL1(const CImagePatch& patch1, const CImagePatch&
     
 	CImage normPatch2;
     patch2.GrayImage().copyTo(normPatch2);
-
+    
+    normPatch1.Save("normPatch1");    normPatch1.Save("normPatch2");
+    
     EqualizeBrightness(normPatch1, normPatch2);
+    
+    normPatch1.Save("normPatch1-1");    normPatch1.Save("normPatch2-1");
     
 	// вычитаем из одного другой
 	CImage result;
 	cv::absdiff(normPatch1, normPatch2, result);
 	
 	// считаем сумму по пикселям
-	return sum(result)[0];
+    double sum = cv::sum(result)[0];
+    
+	return sum;
 }
 
 double CImageComparator::CompareL2(const CImagePatch& patch1, const CImagePatch& patch2) const

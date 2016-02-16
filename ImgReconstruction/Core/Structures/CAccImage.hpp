@@ -12,8 +12,8 @@ class CAccImage {
 public:
     CAccImage(const CImage& img);
     
-    void SetImage(const CImage& image);
-    void SetImage(const CImage& image, const cv::Rect& frame);
+    void SetImageRegion(const CImage& image);
+    void SetImageRegion(const CImage& image, const cv::Rect& frame);
     
     CImage GetResultImage(TAccImageSumMethod method) const;
 private:

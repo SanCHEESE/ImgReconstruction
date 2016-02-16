@@ -12,6 +12,8 @@
 #include "CImagePatch.hpp"
 #include "CImageComparator.hpp"
 
+#define IMAGE_OUTPUT_ENABLED 0
+
 #define SHOW_BLUR_MAP 0
 #define HIGHLIGHT_SIMILAR_PATCHES 0
 #define SHOW_SORTED_SIMILAR 0
@@ -36,7 +38,7 @@ public:
 	virtual void WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect);
 	
 	// utils
-    int CompEpsForCompMetric(TImageCompareMetric metric)
+    double CompEpsForCompMetric(TImageCompareMetric metric)
     {
         switch (metric) {
             case TImageCompareMetricL1:
