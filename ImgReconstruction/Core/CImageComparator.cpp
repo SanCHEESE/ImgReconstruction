@@ -29,11 +29,7 @@ double CImageComparator::CompareL1(const CImagePatch& patch1, const CImagePatch&
 	CImage normPatch2;
     patch2.GrayImage().copyTo(normPatch2);
     
-    normPatch1.Save("normPatch1");    normPatch1.Save("normPatch2");
-    
     EqualizeBrightness(normPatch1, normPatch2);
-    
-    normPatch1.Save("normPatch1-1");    normPatch1.Save("normPatch2-1");
     
 	// вычитаем из одного другой
 	CImage result;

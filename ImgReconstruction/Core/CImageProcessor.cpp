@@ -62,6 +62,10 @@ void CImageProcessor::ProcessFixImage()
     // классификация
     std::map<uint64, std::vector<CImagePatch>> classes = Classify(patches);
     
+#if IMAGE_OUTPUT_ENABLED
+    utils::CreateHistImg(classes).Save("!!!hist", 100, "jpg");
+#endif
+    
     CAccImage accImage(_mainImage.GrayImage());
     int i = 0;
     for (auto &it: classes) {
@@ -80,14 +84,15 @@ void CImageProcessor::ProcessFixImage()
                 // сортировка по возрастанию размытия
                 std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
                 
-#if IMAGE_OUTPUT_ENABLED
+#if IMAGE_OUTPUT_ENABLED && VERBOSE
                 CImage result(1, MaxPatchSideSize, CV_8UC1, cv::Scalar(255));
                 for (int i = 0; i < clusterPatches.size(); i++) {
                     CImage greyPatchImg = clusterPatches[i].GrayImage();
                     cv::Mat horisontalSeparator(1, greyPatchImg.GetFrame().width, CV_8UC1, cv::Scalar(255));
-                    cv::vconcat(result, horisontalSeparator, result);
                     cv::vconcat(result, greyPatchImg, result);
+                    cv::vconcat(result, horisontalSeparator, result);
                 }
+                
                 result.Save(std::to_string(i));
                 i++;
 #endif

@@ -44,25 +44,22 @@ std::ostream& operator<<(std::ostream& os, const CImage& img)
 
 #pragma mark - Save
 
-void CImage::Save(const std::string &name) const
+void CImage::Save(const std::string& name, int quality, const std::string& ext) const
 {
-	std::vector<int> compression_params;
-	compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-	compression_params.push_back(100);
-	cv::imwrite(SaveImgPath + name + ".bmp", *this, compression_params);
-}
-
-void CImage::Save() const
-{
-	auto start = std::chrono::high_resolution_clock::now();
-	std::stringstream buffer;
-	auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch());
-	buffer << SaveImgPath + "tmp-" << nsec.count() << ".bmp";
-	
-	std::vector<int> compression_params;
-	compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-	compression_params.push_back(100);
-	cv::imwrite(buffer.str(), *this, compression_params);
+    std::stringstream nameBuffer;
+    if (name == "") {
+        auto start = std::chrono::high_resolution_clock::now();
+        auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch());
+        nameBuffer << SaveImgPath + "tmp-" << nsec.count() << "." << ext;
+    } else {
+        nameBuffer << SaveImgPath + name + "." + ext;
+    }
+    
+    std::vector<int> compression_params;
+    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+//    compression_params.push_back(cv::IMWRITE_JPEG_PROGRESSIVE);
+    compression_params.push_back(quality);
+    cv::imwrite(nameBuffer.str(), *this, compression_params);
 }
 
 #pragma mark - Get calculated images
@@ -197,14 +194,41 @@ CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::
 	return CPatchIterator(this, size, offset, pointingRect);
 }
 
+CImage CImage::GetImageWithText(const std::string& text, const cv::Point& origin, const cv::Scalar& textColor, const cv::Scalar& bgColor, const cv::Size& imgSize)
+{
+    CImage textImg(imgSize.height, imgSize.width, CV_8UC1, bgColor);
+    putText(textImg, text, origin, cv::FONT_HERSHEY_SIMPLEX, 0.4, textColor, 1);
+    textImg._frame = cv::Rect(0, 0, imgSize.width, imgSize.height);
+    
+    return textImg;
+}
 
+CImage CImage::GetRotatedImage(double angle) const
+{
+    int len = std::max(this->cols, this->rows);
+    cv::Point2f pt(len/2., len/2.);
+    cv::Mat r = cv::getRotationMatrix2D(pt, angle, 1.0);
+    
+    CImage rotated;
+    cv::warpAffine(*this, rotated, r, cv::Size(len, len));
+    
+    // cut the image
+    if (_frame.width > _frame.height) {
+        rotated._frame = cv::Rect(_frame.width - _frame.height + 1, 0, _frame.height - 1, _frame.width);
+    } else {
+        rotated._frame = cv::Rect(_frame.height - _frame.width + 1, 0, _frame.height - 1, _frame.width);
+    }
+    rotated = rotated(rotated._frame);
+    
+    return rotated;
+}
 
 CImage CImage::GetPatch(const cv::Rect &rect) const
 {
 	return CImage(*this, rect);
 }
 
-std::vector<CImage> CImage::GetAllPatches(const cv::Size& size, const cv::Point offset) const
+std::vector<CImage> CImage::GetAllPatches(const cv::Size& size, const cv::Point& offset) const
 {
 	std::vector<CImage> patches;
 	CImage::CPatchIterator patchIterator = GetPatchIterator(size, offset);

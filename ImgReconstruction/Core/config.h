@@ -11,7 +11,7 @@
 #include "typedefs.h"
 
 // сonfigs
-static const double ComparisonEpsL1 = 5;
+static const double ComparisonEpsL1 = 700;
 static const double ComparisonEpsL2 = 35;
 
 static const int MaxPatchSideSize = 8;

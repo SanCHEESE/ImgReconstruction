@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "CImagePatch.hpp"
+
 namespace utils
 {
 	template<typename T>
@@ -28,6 +30,8 @@ namespace utils
 	// classification
 	uint64 PHash(const CImage &image, const cv::Size& size = {4, 4});
 	uint64 AvgHash(const CImage &image, const cv::Size& size = {4, 4});
+    
+    CImage CreateHistImg(const std::map<uint64, std::vector<CImagePatch>>& data);
 	
 	std::ostream& operator<<(std::ostream& os, const cv::Mat& mat);
 }

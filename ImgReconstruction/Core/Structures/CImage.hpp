@@ -27,18 +27,18 @@ public:
 	void CopyMetadataTo(CImage& image) const;
 	
 	// save
-	void Save(const std::string& name) const;
-	void Save() const;
+    void Save(const std::string& name = "", int quality = 100, const std::string& ext = "png") const;
 	
 	// get calculated images
 	CImage GetFFTImage() const;
 	CImage GetResizedImage(const cv::Size& size) const;
 	CImage GetExtentImage(const cv::Size size) const;
 	CImage GetSDImage(const cv::Size& filterSize) const;
-	
 	CImage GetPatch(const cv::Rect& rect) const;
+    CImage GetRotatedImage(double angle) const;
+    static CImage GetImageWithText(const std::string& text, const cv::Point& origin, const cv::Scalar& textColor, const cv::Scalar& bgColor, const cv::Size& imgSize);
 
-	std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point offset) const;
+	std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point& offset) const;
 	cv::Rect GetFrame() const;
     cv::Size GetSize() const;
 	

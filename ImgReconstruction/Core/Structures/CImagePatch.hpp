@@ -70,7 +70,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
 	
 	double distanceToTarget;
-    double aClass;
+    int aClass;
 private:
 	void Initialize();
 	double CalculateBlurValue(TBlurMeasureMethod method) const;

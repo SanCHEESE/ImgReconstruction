@@ -138,20 +138,28 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
     auto aClassCopy = std::vector<CImagePatch>(aClass);
     
     CImageComparator compare = CImageComparator(CompMetric);
+    int aClassIdx = 0;
     for (int i = 0; i < aClassCopy.size(); i++) {
+        
         std::vector<CImagePatch> similarPatches;
         similarPatches.push_back(aClassCopy[i]);
-        for (int j = 0; j < aClassCopy.size(); j++) {
+        aClassCopy[i].aClass = aClassIdx;
+        
+        for (int j = 1; j < aClassCopy.size(); j++) {
             if (compare(aClassCopy[i], aClassCopy[j]) < CompEpsForCompMetric(CompMetric)) {
                 similarPatches.push_back(aClassCopy[j]);
+                aClassCopy[j].aClass = aClassIdx;
                 auto it = aClassCopy.begin() + j;
                 aClassCopy.erase(it);
                 j--;
             }
         }
+        
         aClassCopy.erase(aClassCopy.begin());
         i--;
         clusters[i] = similarPatches;
+        
+        aClassIdx++;
     }
     
     return clusters;
@@ -242,6 +250,12 @@ std::map<uint64, std::vector<CImagePatch>> CImageProcessor::Classify(std::vector
     }
     
     CTimeLogger::Print("Patch classification: ");
+    
+#ifdef IMAGE_OUTPUT_ENABLED
+    
+    
+    
+#endif
     
     return classes;
 }

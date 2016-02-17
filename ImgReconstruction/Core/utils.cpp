@@ -81,6 +81,48 @@ namespace utils
 		
 		return result;
 	}
+    
+    CImage CreateHistImg(const std::map<uint64, std::vector<CImagePatch>>& data)
+    {
+        cv::Size patchSize = data.begin()->second[0].GetSize();
+        
+        int maxHeight = 0;
+        // count height
+        for (auto& it: data) {
+            int rowHeight = it.second.size() * (patchSize.height + 1);
+            if (maxHeight < rowHeight) {
+                maxHeight = rowHeight;
+            }
+        }
+        
+        CImage histogramImg(maxHeight + 3 + 50, data.size() * (patchSize.width + 1) + 3, CV_8UC1, cv::Scalar(255));
+        
+        int x = 0;
+        for (auto& it: data) {
+            auto patches = it.second;
+            
+            CImage columnImage(1, MaxPatchSideSize, CV_8UC1, cv::Scalar(255));
+            for (int i = 0; i < patches.size(); i++) {
+                CImage greyPatchImg = patches[i].GrayImage();
+                cv::Mat horisontalSeparator(1, greyPatchImg.GetFrame().width, CV_8UC1, cv::Scalar(255));
+                cv::vconcat(columnImage, greyPatchImg, columnImage);
+                cv::vconcat(columnImage, horisontalSeparator, columnImage);
+            }
+            
+            CImage textImg = CImage::GetImageWithText(std::to_string(patches.size()), cv::Point(0, 10), RGB(0, 0, 0), RGB(255, 255, 255), cv::Size(50, 11));
+            textImg = textImg.GetRotatedImage(-90); // clockwise
+
+            cv::Mat roi = histogramImg.rowRange(histogramImg.rows - 50 - columnImage.rows, histogramImg.rows - 50).colRange(x, x + columnImage.cols);
+            columnImage.copyTo(roi);
+            
+            roi = histogramImg.rowRange(histogramImg.rows - 50, histogramImg.rows).colRange(x, x + textImg.cols);
+            textImg.copyTo(roi);
+            
+            x += columnImage.cols + 1;
+        }
+        
+        return histogramImg;
+    }
 	
 	std::ostream& operator<<(std::ostream& os, const cv::Mat& mat)
 	{

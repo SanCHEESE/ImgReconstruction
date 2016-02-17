@@ -12,7 +12,8 @@
 #include "CImagePatch.hpp"
 #include "CImageComparator.hpp"
 
-#define IMAGE_OUTPUT_ENABLED 0
+#define IMAGE_OUTPUT_ENABLED 1
+#define VERBOSE 0
 
 #define SHOW_BLUR_MAP 0
 #define HIGHLIGHT_SIMILAR_PATCHES 0
