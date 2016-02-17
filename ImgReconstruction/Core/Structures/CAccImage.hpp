@@ -16,6 +16,8 @@ public:
     void SetImageRegion(const CImage& image, const cv::Rect& frame);
     
     CImage GetResultImage(TAccImageSumMethod method) const;
+    CImage CreateHistImage() const;
+    
 private:
     static uchar Sum(TAccImageSumMethod method, std::vector<uchar> colors);
     

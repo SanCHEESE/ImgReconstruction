@@ -63,10 +63,14 @@ void CImageProcessor::ProcessFixImage()
     std::map<uint64, std::vector<CImagePatch>> classes = Classify(patches);
     
 #if IMAGE_OUTPUT_ENABLED
-    utils::CreateHistImg(classes).Save("!!!hist", 100, "jpg");
+//    utils::CreateHistImg(classes).Save("!!!hist", 100, "jpg");
 #endif
     
     CAccImage accImage(_mainImage.GrayImage());
+    
+//    CImage whiteImage(30, 30, CV_8UC1, cv::Scalar(255));
+//    accImage.SetImageRegion(whiteImage, {0, 0, 30, 30});
+    
     int i = 0;
     for (auto &it: classes) {
         std::vector<CImagePatch> aClass = it.second;
@@ -77,6 +81,8 @@ void CImageProcessor::ProcessFixImage()
         } else {
             // ранжировка по похожести внутри класса
             auto clusters = Clusterize(aClass);
+            
+//            utils::CreateHistImg(clusters).Save(std::to_string(i), 100, "jpg");
 
             for (auto& cluster: clusters) {
                 auto clusterPatches = cluster.second;
@@ -94,8 +100,8 @@ void CImageProcessor::ProcessFixImage()
                 }
                 
                 result.Save(std::to_string(i));
-                i++;
 #endif
+                i++;
 
                 // копирование
                 CImagePatch bestPatch = clusterPatches[0];
@@ -108,8 +114,9 @@ void CImageProcessor::ProcessFixImage()
         }
     }
     
+    accImage.CreateHistImage().Save("!!acc_hist", 100, "jpg");
     CImage resultImage = accImage.GetResultImage(AccImageSumMethod);
-    resultImage.Save("!result");
+    resultImage.Save("!!!result");
 }
 
 #pragma mark - Utils

@@ -57,6 +57,29 @@ CImage CAccImage::GetResultImage(TAccImageSumMethod method) const
     return resultImage;
 }
 
+CImage CAccImage::CreateHistImage() const
+{
+    const int PixelScale = 16;
+    
+    CImage histImage(_size.height * PixelScale, _size.width * PixelScale, CV_8UC1, cv::Scalar(255));
+    for (int x = 0; x < histImage.cols; x += PixelScale) {
+        for (int y = 0; y < histImage.rows; y+= PixelScale) {
+            auto colors = _accImg[x/PixelScale][y/PixelScale];
+            uchar color = Sum(TAccImageSumMethodAvg, colors);
+            std::string text = std::to_string(colors.size());
+            cv::Point origin = {3, 12};
+            if (text.length() > 1) {
+                origin = {0, 12};
+            }
+            CImage textWithBg = CImage::GetImageWithText(text, origin, cv::Scalar(0), cv::Scalar(color), {PixelScale, PixelScale});
+            cv::Mat roi = histImage.colRange(x, x + PixelScale).rowRange(y, y + PixelScale);
+            textWithBg.copyTo(roi);
+        }
+    }
+    
+    return histImage;
+}
+
 uchar CAccImage::Sum(TAccImageSumMethod method, std::vector<uchar> colors)
 {
     uchar result;

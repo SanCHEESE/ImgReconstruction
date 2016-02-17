@@ -135,6 +135,7 @@ std::vector<CImagePatch> CImageProcessor::FindSimilarPatches(CImagePatch& target
 std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::vector<CImagePatch>& aClass)
 {
     std::map<int, std::vector<CImagePatch>> clusters;
+    
     auto aClassCopy = std::vector<CImagePatch>(aClass);
     
     CImageComparator compare = CImageComparator(CompMetric);
@@ -146,21 +147,26 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
         aClassCopy[i].aClass = aClassIdx;
         
         for (int j = 1; j < aClassCopy.size(); j++) {
-            if (compare(aClassCopy[i], aClassCopy[j]) < CompEpsForCompMetric(CompMetric)) {
+            double distance = compare(aClassCopy[i], aClassCopy[j]);
+            if (distance < CompEpsForCompMetric(CompMetric)) {
                 similarPatches.push_back(aClassCopy[j]);
                 aClassCopy[j].aClass = aClassIdx;
                 auto it = aClassCopy.begin() + j;
                 aClassCopy.erase(it);
                 j--;
             }
+            
+//            std::cout << "Clustering distance " << i << " and " << j << ": " << distance << std::endl;;
         }
         
         aClassCopy.erase(aClassCopy.begin());
-        i--;
-        clusters[i] = similarPatches;
+        clusters[aClassIdx] = similarPatches;
         
         aClassIdx++;
+        i--;
     }
+    
+//    std::cout << "Patches left: " << aClass.size() - aClassCopy.size() << std::endl;
     
     return clusters;
 }

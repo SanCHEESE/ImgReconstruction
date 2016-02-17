@@ -28,12 +28,6 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/core.hpp>
 
-#include "CImage.hpp"
-#include "config.h"
-#include "utils.hpp"
-#include "CImagePatch.hpp"
-
-
 #define RGB(r, g, b) (cv::Scalar((b), (g), (r)))
 #define RGBA(r, g, b, a) (cv::Scalar((b), (g), (r), (a)))
 #define PRINT_LINE(line) (std::cout<<(line)<<std::endl)
@@ -41,6 +35,9 @@
 #define PRINT_BITS(num)  std::bitset<sizeof(uint64) * 8> b(num); \
 std::cout << b << std::endl;
 
-
+#include "CImage.hpp"
+#include "config.h"
+#include "utils.hpp"
+#include "CImagePatch.hpp"
 
 #endif /* PrefixHeader_pch */
