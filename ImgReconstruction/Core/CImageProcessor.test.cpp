@@ -13,8 +13,9 @@
 void CImageProcessor::ProcessTestBlurMetrics()
 {
     int patchSideSize = 25;
-    cv::Point origin(20, 25);
-    TBlurMeasureMethod blurMeasureMethod = TBlurMeasureMethodFD;
+//    cv::Point origin(20, 25);
+    cv::Point origin(32, 54);
+    TBlurMeasureMethod blurMeasureMethod = TBlurMeasureMethodFFT;
     
     auto sortedPatches = std::vector<CImagePatch>();
     auto patches = std::vector<CImagePatch>();
@@ -51,7 +52,7 @@ void CImageProcessor::ProcessTestBlurMetrics()
         }
     }
     
-    result.Save("blurTest");
+    result.Save();
 }
 
 void CImageProcessor::ProcessShowBlurMap(const cv::Rect &patchRect)

@@ -11,6 +11,7 @@
 class CAccImage {
 public:
     CAccImage(const CImage& img);
+    CAccImage(const cv::Size& size);
     
     void SetImageRegion(const CImage& image);
     void SetImageRegion(const CImage& image, const cv::Rect& frame);

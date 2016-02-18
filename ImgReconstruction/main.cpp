@@ -10,9 +10,9 @@
 #include "CImageProcessor.hpp"
 
 #if TEST_BLUR_METRICS
-static const std::string PathToImg = "../../images/img2blur.jpg";
+static const std::string PathToImg = "../../images/blurredImageTest.jpg";
 #else 
-static const std::string PathToImg = "../../images/img1.jpg";
+static const std::string PathToImg = "../../images/img.jpg";
 #endif
 
 static const std::string WindowName = "Press Esc to quit";

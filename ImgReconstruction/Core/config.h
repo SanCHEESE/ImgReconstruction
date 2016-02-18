@@ -11,7 +11,7 @@
 #include "typedefs.h"
 
 // сonfigs
-static const double ComparisonEpsL1 = 2000;
+static const double ComparisonEpsL1 = 1500;
 static const double ComparisonEpsL2 = 35;
 
 static const int MaxPatchSideSize = 8;
@@ -25,7 +25,7 @@ static const cv::Point PatchOffset = {1, 1};
 
 static const TBlurMeasureMethod BlurMeasureMethod = TBlurMeasureMethodFD;
 static const TImageCompareMetric CompMetric = TImageCompareMetricL1;
-static const TPatchClusteringMethod ClusteringMethod = TPatchClusteringMethodAvgHash;
+static const TPatchClusteringMethod ClusteringMethod = TPatchClusteringMethodPHash;
 static const TBinarizationMethod BinMethod = TBinarizationMethodNICK;
 static const cv::Size BinaryWindowSize = {25, 25};
 

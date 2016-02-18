@@ -71,23 +71,24 @@ std::vector<CImagePatch> CImageProcessor::FilterPatches(std::vector<CImagePatch>
     
     CDocumentBinarizer b(size2x2, BinMethod, 1.);
     for (CImagePatch& patch: patches) {
-        bool passed = false;
+        bool passedBin = !filterBin;
 
         CImage grey2x2 = patch.GrayImage().GetResizedImage(size2x2);
         if (filterBin) {
             CImage bin2x2 = b.Binarize(grey2x2);
             for (int column = 0; column < bin2x2.GetSize().width; column++) {
                 for (int row = 0; row < bin2x2.GetSize().height; row++) {
-                    passed = bin2x2.at<uchar>(column, row) < 255;
+                    passedBin = bin2x2.at<uchar>(column, row) < 255;
                 }
             }
         }
         
-        if (filterContrast && passed) {
-            passed = passed && (utils::StandartDeviation(grey2x2) >= MinPatchContrastValue);
+        bool passedContrast = !filterContrast;
+        if (filterContrast) {
+            passedContrast = utils::StandartDeviation(grey2x2) >= MinPatchContrastValue;
         }
         
-        if (passed) {
+        if (passedContrast && passedBin) {
             filteredPatches.push_back(patch);
         }
     }
