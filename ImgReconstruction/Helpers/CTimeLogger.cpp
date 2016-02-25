@@ -13,7 +13,7 @@ clock_t CTimeLogger::_totalTime = 0;
 
 void CTimeLogger::StartLogging(const std::string& desc)
 {
-	std::cout << desc << std::endl;
+	std::clog << desc << std::endl;
 	_time = clock();
 }
 
@@ -21,12 +21,12 @@ void CTimeLogger::Print(const std::string& decr)
 {
 	double diff = ((double)clock()-(double)_time);
 	_totalTime += diff;
-	std::cout << "◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷" << std::endl;
-	std::cout << decr << "\n\t" << "Time: " << diff/CLOCKS_PER_SEC << " s" << std::endl;
-	std::cout << "◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷" << std::endl;
+	std::clog << "◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷" << std::endl;
+	std::clog << decr << "\n\t" << "Time: " << diff/CLOCKS_PER_SEC << " s" << std::endl;
+	std::clog << "◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷◴◵◶◷" << std::endl;
 }
 
 void CTimeLogger::PrintTotalTime()
 {
-	std::cout << "Total execution time: " << (double)_totalTime/CLOCKS_PER_SEC << " s" << std::endl;
+	std::clog << "Total execution time: " << (double)_totalTime/CLOCKS_PER_SEC << " s" << std::endl;
 }

@@ -10,37 +10,38 @@
 #include "CDocumentBinarizer.hpp"
 #include "CAccImage.hpp"
 
-void CImageProcessor::StartProcessingChain(const CImage& img)
+void CImageProcessor::StartProcessingChain(const CImage& img, const std::string& resultImageName)
 {
+    _resultImageName = resultImageName;
+    
 	CImage extentImage = img.GetExtentImage(BinaryWindowSize);
-	
+    
 	_mainImage = CImagePatch();
 	_mainImage.SetGrayImage(extentImage);
-	BuildAndShowBinImage(extentImage, false);
-	BuildAndShowSdImage(extentImage, false);
+	BuildAndShowBinImage(extentImage, ENABLE_GUI);
+	BuildAndShowSdImage(extentImage, ENABLE_GUI);
     
-#if TEST_BLUR_METRICS || PROCESS_IMAGE
+#if TEST_BLUR_METRICS || PROCESS_IMAGE || SHOW_BLUR_MAP
 	WindowDidSelectPatch(_window.GetName(), {0, 0, 0, 0});
-	exit(0);
-#else
+#elif ENABLE_GUI
 	ConfigureWindow(extentImage);
 #endif
 }
 
 void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect)
 {
-#if SHOW_BLUR_MAP
-	ProcessShowBlurMap(patchRect);
-#elif HIGHLIGHT_SIMILAR_PATCHES
+#if HIGHLIGHT_SIMILAR_PATCHES
 	ProcessHighlightSimilarPatches(patchRect);
 #elif SHOW_SORTED_SIMILAR
 	ProcessShowSortedSimilar(patchRect);
 #elif REPLACE_SIMILAR_PATCHES
 	ProcessReplaceSimilarPatches(patchRect);
-#elif TEST_BLUR_METRICS
-	ProcessTestBlurMetrics();
 #elif PROCESS_IMAGE
     ProcessFixImage();
+#elif TEST_BLUR_METRICS
+    ProcessTestBlurMetrics();
+#elif SHOW_BLUR_MAP
+    ProcessShowBlurMap();
 #endif
 }
 
@@ -91,7 +92,7 @@ void CImageProcessor::ProcessFixImage()
                     cv::vconcat(result, horisontalSeparator, result);
                 }
                 
-                result.Save(std::to_string(i));
+                result.Save(_resultImageName + "_" + std::to_string(i) + "_hist", 100, "jpg");
 #endif
                 i++;
 
@@ -107,9 +108,7 @@ void CImageProcessor::ProcessFixImage()
     }
     
 #if IMAGE_OUTPUT_ENABLED
-    accImage.CreateHistImage().Save("!!acc_hist", 100, "jpg");
+    accImage.CreateHistImage().Save(_resultImageName + "_hist_total", 100, "jpg");
 #endif
-    accImage.GetResultImage(AccImageSumMethod).Save("!!!result");
+    accImage.GetResultImage(AccImageSumMethod).Save(_resultImageName, 100, "jpg");
 }
-
-#pragma mark - Utils

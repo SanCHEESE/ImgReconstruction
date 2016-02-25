@@ -106,11 +106,12 @@ std::vector<CImagePatch> CImageProcessor::FindSimilarPatches(CImagePatch& target
     CTimeLogger::StartLogging();
     
     auto comparePatches = [](CImagePatch& patch1, CImagePatch& patch2) {
-        if (ClusteringMethod == TPatchClusteringMethodPHash) {
+        if (ClassifyingMethod == TPatchClassifyingMethodPHash) {
             return utils::hamming<uint64>(patch1.PHash(), patch2.PHash());
-        } else if (ClusteringMethod == TPatchClusteringMethodAvgHash) {
+        } else if (ClassifyingMethod == TPatchClassifyingMethodAvgHash) {
             return utils::hamming<uint64>(patch1.AvgHash(), patch2.AvgHash());
         }
+        return INT_MAX;
     };
     
     std::vector<CImagePatch> similarPatches;
@@ -156,8 +157,6 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
                 aClassCopy.erase(it);
                 j--;
             }
-            
-//            std::cout << "Clustering distance " << i << " and " << j << ": " << distance << std::endl;;
         }
         
         aClassCopy.erase(aClassCopy.begin());
@@ -167,71 +166,10 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
         i--;
     }
     
-//    std::cout << "Patches left: " << aClass.size() - aClassCopy.size() << std::endl;
-    
     return clusters;
 }
 
-//std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(std::vector<CImagePatch>& aClass)
-//{
-//    // симметричная матрица попарных расстояний
-//    std::vector<std::vector<double>> distances(aClass.size());
-//    for (int i = 0; i < aClass.size(); i++) {
-//        distances[i] = std::vector<double>(aClass.size(), -1);
-//    }
-//    
-//    // заполняем матрицу
-//    CImageComparator cmp = CImageComparator(CompMetric);
-//    for (int i = 0; i < aClass.size(); i++) {
-//        for (int j = 0; j < aClass.size(); j++) {
-//            if (i == j) {
-//                distances[i][j] = 0;
-//                continue;
-//            }
-//            distances[i][j] = cmp.Compare(aClass[i], aClass[j]);
-//        }
-//    }
-//    
-//    // извлекаем ближайшие патчи и расфасовываем по кластерам
-//    std::map<int, std::vector<CImagePatch>> clusters;
-//    for (int i = 0; i < aClass.size(); i++) {
-//        std::vector<CImagePatch> similarPatches;
-//        for (int j = 0; j < aClass.size(); j++) {
-//            if (distances[i][j] > 0 && distances[i][j] < CompEpsForCompMetric(CompMetric)) {
-//                similarPatches.push_back(aClass[j]);
-//                aClass[j].aClass = i;
-//                for (int k = 0; k < aClass.size(); k++) {
-//                    distances[j][k] = -1;
-//                    distances[k][j] = -1;
-//                }
-//            }
-//        }
-//        similarPatches.push_back(aClass[i]);
-//        clusters[i] = similarPatches;
-//    }
-//    
-//    // ищем патчи, которые не кластеризовали
-//    for (int j = 0; j < aClass.size(); j++) {
-//        // проходим по первой строке
-//        if (distances[0][j] > 0) {
-//            int minIdx = 0;
-//            // ищем индекс минимального элемента в столбце
-//            for (int i = 0; i < aClass.size(); i++) {
-//                if (distances[i][j] < distances[minIdx][j] && distances[i][j] > 0) {
-//                    minIdx = i;
-//                }
-//            }
-//            auto cluster = clusters.find(minIdx);
-//            if (cluster == clusters.end()) {
-//                clusters[minIdx] = std::vector<CImagePatch>(1, aClass[j]);
-//            } else {
-//                cluster->second.push_back(aClass[j]);
-//            }
-//        }
-//    }
-//    
-//    return clusters;
-//}
+
 
 std::map<uint64, std::vector<CImagePatch>> CImageProcessor::Classify(std::vector<CImagePatch>& patches)
 {
@@ -240,11 +178,12 @@ std::map<uint64, std::vector<CImagePatch>> CImageProcessor::Classify(std::vector
     std::map<uint64, std::vector<CImagePatch>> classes;
     
     auto classHash = [](CImagePatch& patch) {
-        if (ClusteringMethod == TPatchClusteringMethodPHash) {
+        if (ClassifyingMethod == TPatchClassifyingMethodPHash) {
             return patch.PHash();
-        } else if (ClusteringMethod == TPatchClusteringMethodAvgHash) {
+        } else if (ClassifyingMethod == TPatchClassifyingMethodAvgHash) {
             return patch.AvgHash();
         }
+        return UINT64_MAX;
     };
     
     for (CImagePatch& patch: patches) {
@@ -257,12 +196,6 @@ std::map<uint64, std::vector<CImagePatch>> CImageProcessor::Classify(std::vector
     }
     
     CTimeLogger::Print("Patch classification: ");
-    
-#ifdef IMAGE_OUTPUT_ENABLED
-    
-    
-    
-#endif
     
     return classes;
 }

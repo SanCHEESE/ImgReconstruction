@@ -11,6 +11,8 @@
 typedef enum : int {
 	TImageCompareMetricL1,
 	TImageCompareMetricL2,
+    
+    TImageCompareMetricNone
 } TImageCompareMetric;
 
 typedef enum : int {
@@ -26,20 +28,28 @@ typedef enum : int {
 	TBinarizationMethodNICK,
 	TBinarizationMethodNiBlack,
 	TBinarizationMethodAdaptiveGaussian,
+    
+    TBinarizationMethodNone
 } TBinarizationMethod;
 
 typedef enum : int {
-	TPatchClusteringMethodAvgHash,
-	TPatchClusteringMethodPHash,
-} TPatchClusteringMethod;
+	TPatchClassifyingMethodAvgHash,
+	TPatchClassifyingMethodPHash,
+    
+    TPatchClassifyingMethodNone
+} TPatchClassifyingMethod;
 
 typedef enum : int {
     TPatchFilteringCriteriaContrast = 1,
     TPatchFilteringCriteriaBin = 2,
-    TPatchFilteringCriteriaFull = TPatchFilteringCriteriaContrast | TPatchFilteringCriteriaBin
+    TPatchFilteringCriteriaFull = TPatchFilteringCriteriaContrast | TPatchFilteringCriteriaBin,
+    
+    TPatchFilteringCriteriaNone
 } TPatchFilteringCriteria;
 
 typedef enum : int {
     TAccImageSumMethodAvg,
     TAccImageSumMethodMedian,
+    
+    TAccImageSumMethodNone
 } TAccImageSumMethod;

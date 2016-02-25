@@ -12,8 +12,10 @@
 #include "CImagePatch.hpp"
 #include "CImageComparator.hpp"
 
-#define IMAGE_OUTPUT_ENABLED 1
+#define IMAGE_OUTPUT_ENABLED 0
 #define VERBOSE 0
+
+#define ENABLE_GUI 0
 
 #define SHOW_BLUR_MAP 0
 #define HIGHLIGHT_SIMILAR_PATCHES 0
@@ -32,9 +34,11 @@ public:
 	{
 		_window.delegate = this;
 	}
+    
+    CImageProcessor() : _window(""), _debugWindow(""), _binarizedWindow("") {};
 	
 	// Project specific
-	void StartProcessingChain(const CImage& img);
+    void StartProcessingChain(const CImage& img, const std::string& outputImageName);
 	// CWindowDelegate
 	virtual void WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect);
 	
@@ -55,7 +59,7 @@ public:
 	
 private:
     // test methods
-	void ProcessShowBlurMap(const cv::Rect& patchRect);
+	void ProcessShowBlurMap();
 	void ProcessHighlightSimilarPatches(const cv::Rect& patchRect);
 	void ProcessShowSortedSimilar(const cv::Rect& patchRect);
 	void ProcessReplaceSimilarPatches(const cv::Rect &patchRect);
@@ -78,9 +82,12 @@ private:
     std::map<int, std::vector<CImagePatch>> Clusterize(const std::vector<CImagePatch>& aClass);
     std::vector<CImagePatch> FilterPatches(std::vector<CImagePatch>& patches);
 	
+    // misc
+    std::string _resultImageName;
+    
+    // gui
 	CImagePatch _mainImage;
 	CImage _displayImage;
-	
 	CWindow _window;
 	CWindow _debugWindow;
 	CWindow _binarizedWindow;

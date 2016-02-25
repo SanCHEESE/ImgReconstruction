@@ -52,11 +52,13 @@ void CImageProcessor::ProcessTestBlurMetrics()
         }
     }
     
-    result.Save();
+    result.Save("blur_metrics_test");
 }
 
-void CImageProcessor::ProcessShowBlurMap(const cv::Rect &patchRect)
+void CImageProcessor::ProcessShowBlurMap()
 {
+    cv::Rect patchRect = {0, 0, MaxPatchSideSize, MaxPatchSideSize};
+    
     CImagePatch selectedPatch = FetchPatch(patchRect);
     std::vector<CImagePatch> patches = FetchPatches(patchRect);
     CTimeLogger::StartLogging("Show blur map:\n");
@@ -128,8 +130,8 @@ void CImageProcessor::ProcessShowSortedSimilar(const cv::Rect &patchRect)
     std::sort(similarPatches.begin(), similarPatches.end(), MoreBlur());
     CImage blurIncreaseImg =  buildImage(similarPatches);
     
-    similarityDecreaseImg.Save("similarityDecrease");
-    blurIncreaseImg.Save("blurIncrease");
+    similarityDecreaseImg.Save("similarity_decrease");
+    blurIncreaseImg.Save("blur_increase");
 }
 
 void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
