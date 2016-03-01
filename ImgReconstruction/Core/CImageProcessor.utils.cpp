@@ -135,7 +135,7 @@ std::vector<CImagePatch> CImageProcessor::FindSimilarPatches(CImagePatch& target
     
     std::vector<CImagePatch> similarPatches;
     CImageComparator compare(compMetric);
-    double eps = CompEpsForCompMetric(compMetric);
+    int eps = CompEpsForCompMetric(compMetric);
     for (CImagePatch& patch: patches) {
         if (comparePatches(patch, targetPatch) == 0) {
             int distance = compare(targetPatch, patch);
@@ -163,7 +163,7 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
     
     CImageComparator compare = CImageComparator(compMetric);
     int aClassIdx = 0;
-    double eps = CompEpsForCompMetric(compMetric);
+    int eps = CompEpsForCompMetric(compMetric);
     for (int i = 0; i < aClassCopy.size(); i++) {
         
         std::vector<CImagePatch> similarPatches;

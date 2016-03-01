@@ -44,9 +44,9 @@ public:
 	virtual void WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect);
 	
 	// utils
-    double CompEpsForCompMetric(TImageCompareMetric metric)
+    int CompEpsForCompMetric(TImageCompareMetric metric)
     {
-        double eps = 0;
+        int eps = 0;
         switch (metric) {
             case TImageCompareMetricL1:
                 _config.GetParam(ComparisonEpsL1ConfigKey).GetValue(eps);
