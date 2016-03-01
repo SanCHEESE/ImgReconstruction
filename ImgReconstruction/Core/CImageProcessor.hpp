@@ -11,6 +11,7 @@
 #include "CWindow.hpp"
 #include "CImagePatch.hpp"
 #include "CImageComparator.hpp"
+#include "CConfig.hpp"
 
 #define IMAGE_OUTPUT_ENABLED 0
 #define VERBOSE 0
@@ -35,7 +36,7 @@ public:
 		_window.delegate = this;
 	}
     
-    CImageProcessor() : _window(""), _debugWindow(""), _binarizedWindow("") {};
+    CImageProcessor() : _window(""), _debugWindow(""), _binarizedWindow("") {_config = CConfig();};
 	
 	// Project specific
     void StartProcessingChain(const CImage& img, const std::string& outputImageName);
@@ -45,18 +46,23 @@ public:
 	// utils
     double CompEpsForCompMetric(TImageCompareMetric metric)
     {
+        double eps = 0;
         switch (metric) {
             case TImageCompareMetricL1:
-                return ComparisonEpsL1;
+                _config.GetParam(ComparisonEpsL1ConfigKey).GetValue(eps);
+                break;
             case TImageCompareMetricL2:
-                return ComparisonEpsL2;
+                _config.GetParam(ComparisonEpsL2ConfigKey).GetValue(eps);
+                break;
             default:
                 break;
         }
-        
-        return 0;
+//        std::cout << "eps = " << eps << std::endl;
+        return eps;
     }
 	
+    CConfig& GetConfig() {return _config;}
+    
 private:
     // test methods
 	void ProcessShowBlurMap();
@@ -84,6 +90,7 @@ private:
 	
     // misc
     std::string _resultImageName;
+    CConfig _config;
     
     // gui
 	CImagePatch _mainImage;

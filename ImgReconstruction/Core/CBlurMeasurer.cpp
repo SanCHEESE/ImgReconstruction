@@ -11,20 +11,25 @@
 
 double CBlurMeasurer::Measure(const CImage& img) const
 {
-	switch (_measureMethod) {
-		case TBlurMeasureMethodStandartDeviation:
-			return MeasureUsingStdDeviation(img);
-		case TBlurMeasureMethodDynamicRange:
-			return MeasureUsingDynamicRange(img);
-		case TBlurMeasureMethodFFT:
-			return MeasureUsingFFT(img);
-		case TBlurMeasureMethodFD:
-			return MeasureUsingFD(img);
-		default:
-			break;
-	}
-	
-	return 0;
+    return CBlurMeasurer::Measure(img, 0);
+}
+
+double CBlurMeasurer::Measure(const CImage& img, double radiusRatio) const
+{
+    switch (_measureMethod) {
+        case TBlurMeasureMethodStandartDeviation:
+            return MeasureUsingStdDeviation(img);
+        case TBlurMeasureMethodDynamicRange:
+            return MeasureUsingDynamicRange(img);
+        case TBlurMeasureMethodFFT:
+            return MeasureUsingFFT(img, radiusRatio);
+        case TBlurMeasureMethodFD:
+            return MeasureUsingFD(img);
+        default:
+            break;
+    }
+    
+    return 0;
 }
 
 double CBlurMeasurer::MeasureUsingStdDeviation(const CImage &img) const
@@ -48,12 +53,12 @@ double CBlurMeasurer::MeasureUsingDynamicRange(const CImage &img) const
 	return std::abs(*(minMaxElem.first) - *(minMaxElem.second));
 }
 
-double CBlurMeasurer::MeasureUsingFFT(const CImage &img) const
+double CBlurMeasurer::MeasureUsingFFT(const CImage &img, double radiusRatio) const
 {
 	CImage fft = img.GetFFTImage();
 	img.CopyMetadataTo(fft);
-	
-	cv::Size submatrixSize = cv::Size(ceil(img.cols * BlurMetricRadiusRatio), ceil(img.rows * BlurMetricRadiusRatio));
+    
+	cv::Size submatrixSize = cv::Size(ceil(img.cols * radiusRatio), ceil(img.rows * radiusRatio));
 	cv::Point submatrixOrigin = cv::Point((img.cols - submatrixSize.width) / 2, (img.rows - submatrixSize.height) / 2);
 	cv::Rect submatrixRect = cv::Rect(submatrixOrigin, submatrixSize);
 	
@@ -77,8 +82,6 @@ double CBlurMeasurer::MeasureUsingFD(const CImage &img) const
     cv::Mat fft;
     merge(planes, 2, fft);
     dft(fft, fft);
-    
-//    std::cout << fft << std::endl << std::endl;
     
     // centered fft image representation
     cv::Mat Fc;
@@ -109,13 +112,9 @@ double CBlurMeasurer::MeasureUsingFD(const CImage &img) const
     
     split(Fc, planes);
     
-//    std::cout << Fc << std::endl << std::endl;
-    
     // absolute centered fft image representation values
     cv::Mat AF;
     magnitude(planes[0], planes[1], AF);
-    
-//    std::cout << AF << std::endl << std::endl;
 
     // maximum of the value frequency component in F
     double min, max;

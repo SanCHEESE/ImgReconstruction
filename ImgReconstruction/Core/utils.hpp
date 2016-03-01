@@ -51,7 +51,7 @@ namespace utils
         for (auto& it: data) {
             auto patches = it.second;
             
-            CImage columnImage(1, MaxPatchSideSize, CV_8UC1, cv::Scalar(255));
+            CImage columnImage(1, patchSize.width, CV_8UC1, cv::Scalar(255));
             for (int i = 0; i < patches.size(); i++) {
                 CImage greyPatchImg = patches[i].GrayImage();
                 cv::Mat horisontalSeparator(1, greyPatchImg.GetFrame().width, CV_8UC1, cv::Scalar(255));
@@ -75,4 +75,5 @@ namespace utils
     }
 	
 	std::ostream& operator<<(std::ostream& os, const cv::Mat& mat);
+    void WriteParamsToFile(const std::string& filename);
 }

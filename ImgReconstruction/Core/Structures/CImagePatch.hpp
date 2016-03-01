@@ -36,6 +36,7 @@ public:
 	}
 	
 	double BlurValue(TBlurMeasureMethod method);
+    double BlurValue(TBlurMeasureMethod method, double addionalParam);
 	double StandartDeviation();
 	uint64 PHash();
 	uint64 AvgHash();
@@ -73,7 +74,7 @@ public:
     int aClass;
 private:
 	void Initialize();
-	double CalculateBlurValue(TBlurMeasureMethod method) const;
+	double CalculateBlurValue(TBlurMeasureMethod method, double addionalParam) const;
 	double CalculateStandartDeviation() const;
 	
 	cv::Rect _frame;

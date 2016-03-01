@@ -12,13 +12,16 @@
 
 CImagePatch CImageProcessor::FetchPatch(const cv::Rect &patchRect)
 {
+    TBlurMeasureMethod blurMeasureMethod;
+    _config.GetParam(BlurMeasureMethodConfigKey).GetValue(blurMeasureMethod);
+    
     cv::Size patchSize = cv::Size(patchRect.width, patchRect.height);
     CDocumentBinarizer binarizer = CDocumentBinarizer(patchSize);
     
     CImagePatch selectedPatch = CImagePatch();
     selectedPatch.SetGrayImage(CImage(_mainImage.GrayImage(), patchRect));
     selectedPatch.SetBinImage(CImage(_mainImage.BinImage(), patchRect));
-    selectedPatch.BlurValue(BlurMeasureMethod);
+    selectedPatch.BlurValue(blurMeasureMethod);
     selectedPatch.StandartDeviation();
     selectedPatch.PHash();
     selectedPatch.AvgHash();
@@ -41,9 +44,12 @@ std::vector<CImagePatch> CImageProcessor::FetchPatches(const cv::Rect& patchRect
     CImage binImage = _mainImage.BinImage();
     CImage sdImage = _mainImage.SdImage();
     
-    CImage::CPatchIterator patchIterator = grayImage.GetPatchIterator(patchSize, PatchOffset);
-    CImage::CPatchIterator binPatchIterator = binImage.GetPatchIterator(patchSize, PatchOffset);
-    CImage::CPatchIterator sdPatchIterator = sdImage.GetPatchIterator(patchSize, PatchOffset);
+    cv::Point patchOffset;
+    _config.GetParam(PatchOffsetConfigKey).GetValue(patchOffset);
+    
+    CImage::CPatchIterator patchIterator = grayImage.GetPatchIterator(patchSize, patchOffset);
+    CImage::CPatchIterator binPatchIterator = binImage.GetPatchIterator(patchSize, patchOffset);
+    CImage::CPatchIterator sdPatchIterator = sdImage.GetPatchIterator(patchSize, patchOffset);
     
     while (patchIterator.HasNext()) {
         CImagePatch imgPatch;
@@ -65,11 +71,17 @@ std::vector<CImagePatch> CImageProcessor::FilterPatches(std::vector<CImagePatch>
     std::vector<CImagePatch> filteredPatches;
     
     cv::Size size2x2(2, 2);
+    TPatchFilteringCriteria filterCriteria;
+    TBinarizationMethod binMethod;
+    double minContrastValue;
+    _config.GetParam(MinPatchContrastValueConfigKey).GetValue(minContrastValue);
+    _config.GetParam(BinMethodConfigKey).GetValue(binMethod);
+    _config.GetParam(PatchFileringCriteriaConfigKey).GetValue(filterCriteria);
     
-    bool filterBin = (TPatchFilteringCriteriaBin & PatchFileringCriteria) == TPatchFilteringCriteriaBin;
-    bool filterContrast = (TPatchFilteringCriteriaContrast & PatchFileringCriteria) == TPatchFilteringCriteriaContrast;
+    bool filterBin = (TPatchFilteringCriteriaBin & filterCriteria) == TPatchFilteringCriteriaBin;
+    bool filterContrast = (TPatchFilteringCriteriaContrast & filterCriteria) == TPatchFilteringCriteriaContrast;
     
-    CDocumentBinarizer b(size2x2, BinMethod, 1.);
+    CDocumentBinarizer b(size2x2, binMethod, 1.);
     for (CImagePatch& patch: patches) {
         bool passedBin = !filterBin;
 
@@ -85,7 +97,7 @@ std::vector<CImagePatch> CImageProcessor::FilterPatches(std::vector<CImagePatch>
         
         bool passedContrast = !filterContrast;
         if (filterContrast) {
-            passedContrast = utils::StandartDeviation(grey2x2) >= MinPatchContrastValue;
+            passedContrast = utils::StandartDeviation(grey2x2) >= minContrastValue;
         }
         
         if (passedContrast && passedBin) {
@@ -105,24 +117,31 @@ std::vector<CImagePatch> CImageProcessor::FindSimilarPatches(CImagePatch& target
 {
     CTimeLogger::StartLogging();
     
-    auto comparePatches = [](CImagePatch& patch1, CImagePatch& patch2) {
-        if (ClassifyingMethod == TPatchClassifyingMethodPHash) {
+    TPatchClassifyingMethod classifyingMethod;
+    TImageCompareMetric compMetric;
+    TBlurMeasureMethod blurMeasureMethod;;
+    _config.GetParam(CompMetricConfigKey).GetValue(compMetric);
+    _config.GetParam(ClassifyingMethodConfigKey).GetValue(classifyingMethod);
+    _config.GetParam(BlurMeasureMethodConfigKey).GetValue(blurMeasureMethod);
+    
+    auto comparePatches = [&](CImagePatch& patch1, CImagePatch& patch2) {
+        if (classifyingMethod == TPatchClassifyingMethodPHash) {
             return utils::hamming<uint64>(patch1.PHash(), patch2.PHash());
-        } else if (ClassifyingMethod == TPatchClassifyingMethodAvgHash) {
+        } else if (classifyingMethod == TPatchClassifyingMethodAvgHash) {
             return utils::hamming<uint64>(patch1.AvgHash(), patch2.AvgHash());
         }
         return INT_MAX;
     };
     
     std::vector<CImagePatch> similarPatches;
-    CImageComparator compare(CompMetric);
-    double eps = CompEpsForCompMetric(CompMetric);
+    CImageComparator compare(compMetric);
+    double eps = CompEpsForCompMetric(compMetric);
     for (CImagePatch& patch: patches) {
         if (comparePatches(patch, targetPatch) == 0) {
             int distance = compare(targetPatch, patch);
             patch.distanceToTarget = distance;
             if (distance < eps) {
-                patch.BlurValue(BlurMeasureMethod);
+                patch.BlurValue(blurMeasureMethod);
                 similarPatches.push_back(patch);
             }
         }
@@ -137,11 +156,14 @@ std::vector<CImagePatch> CImageProcessor::FindSimilarPatches(CImagePatch& target
 std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::vector<CImagePatch>& aClass)
 {
     std::map<int, std::vector<CImagePatch>> clusters;
-    
     auto aClassCopy = std::vector<CImagePatch>(aClass);
     
-    CImageComparator compare = CImageComparator(CompMetric);
+    TImageCompareMetric compMetric;
+    _config.GetParam(CompMetricConfigKey).GetValue(compMetric);
+    
+    CImageComparator compare = CImageComparator(compMetric);
     int aClassIdx = 0;
+    double eps = CompEpsForCompMetric(compMetric);
     for (int i = 0; i < aClassCopy.size(); i++) {
         
         std::vector<CImagePatch> similarPatches;
@@ -150,7 +172,7 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
         
         for (int j = 1; j < aClassCopy.size(); j++) {
             double distance = compare(aClassCopy[i], aClassCopy[j]);
-            if (distance < CompEpsForCompMetric(CompMetric)) {
+            if (distance < eps) {
                 similarPatches.push_back(aClassCopy[j]);
                 aClassCopy[j].aClass = aClassIdx;
                 auto it = aClassCopy.begin() + j;
@@ -176,11 +198,13 @@ std::map<uint64, std::vector<CImagePatch>> CImageProcessor::Classify(std::vector
     CTimeLogger::StartLogging();
     
     std::map<uint64, std::vector<CImagePatch>> classes;
+    TPatchClassifyingMethod classifyingMethod;
+    _config.GetParam(ClassifyingMethodConfigKey).GetValue(classifyingMethod);
     
-    auto classHash = [](CImagePatch& patch) {
-        if (ClassifyingMethod == TPatchClassifyingMethodPHash) {
+    auto classHash = [&](CImagePatch& patch) {
+        if (classifyingMethod == TPatchClassifyingMethodPHash) {
             return patch.PHash();
-        } else if (ClassifyingMethod == TPatchClassifyingMethodAvgHash) {
+        } else if (classifyingMethod == TPatchClassifyingMethodAvgHash) {
             return patch.AvgHash();
         }
         return UINT64_MAX;

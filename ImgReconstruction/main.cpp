@@ -39,11 +39,24 @@ int main(int argc, char** argv)
     CImageProcessor imProc = CImageProcessor();
 #endif
     
-    for () {
+    int counter = 0;
+    for (int eps = 1100; eps < 2000; eps += 100) {
+        imProc.GetConfig().SetParam(ComparisonEpsL1ConfigKey, eps);
+        imProc.StartProcessingChain(image, "result_" + std::to_string(counter));
+        imProc.GetConfig().WriteToFile(SaveImgPath + "result_" + std::to_string(counter) + "_params");
+        counter++;
         
+//        for (int blurMethod = 0; blurMethod < TBlurMeasureMethodNone; blurMethod++) {
+//            imProc.GetConfig().SetParam(BlurMeasureMethodConfigKey, blurMethod);
+//            for (int classifyingMethod = 0; classifyingMethod < TPatchClassifyingMethodNone; classifyingMethod++) {
+//                imProc.GetConfig().SetParam(ClassifyingMethodConfigKey, classifyingMethod);
+//                for (int accSumMethod = 0; accSumMethod < TAccImageSumMethodNone; accSumMethod++) {
+//                    imProc.GetConfig().SetParam(AccImageSumMethodConfigKey, accSumMethod);
+//
+//                }
+//            }
+//        }
     }
-    
-	imProc.StartProcessingChain(image, "!result");
 	
 	return 0;
 }

@@ -57,7 +57,10 @@ void CImageProcessor::ProcessTestBlurMetrics()
 
 void CImageProcessor::ProcessShowBlurMap()
 {
-    cv::Rect patchRect = {0, 0, MaxPatchSideSize, MaxPatchSideSize};
+    int maxSideSize;
+    _config.GetParam(MaxPatchSideSizeConfigKey).GetValue(maxSideSize);
+    
+    cv::Rect patchRect = {0, 0, maxSideSize, maxSideSize};
     
     CImagePatch selectedPatch = FetchPatch(patchRect);
     std::vector<CImagePatch> patches = FetchPatches(patchRect);
@@ -73,6 +76,9 @@ void CImageProcessor::ProcessShowBlurMap()
 
 void CImageProcessor::ProcessHighlightSimilarPatches(const cv::Rect &patchRect)
 {
+    TBlurMeasureMethod blurMeasureMethod;
+    _config.GetParam(BlurMeasureMethodConfigKey).GetValue(blurMeasureMethod);
+    
     CImagePatch selectedPatch = FetchPatch(patchRect);
     
     std::vector<CImagePatch> patches = FetchPatches(patchRect);
@@ -84,7 +90,7 @@ void CImageProcessor::ProcessHighlightSimilarPatches(const cv::Rect &patchRect)
     int good = 0;
     for (auto& similarPatch: similarPatches) {
         // чем больше размытия, тем темнее рамка вокруг патча
-        cv::Scalar color(RGB(0, similarPatch.BlurValue(BlurMeasureMethod), 0));
+        cv::Scalar color(RGB(0, similarPatch.BlurValue(blurMeasureMethod), 0));
         rectsToDraw.push_back({similarPatch.GetFrame(), color});
         good++;
         
@@ -175,11 +181,14 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
     std::vector<DrawableRect> rectsToDraw;
     CImage grayImage = _mainImage.GrayImage();
     
+    TBlurMeasureMethod blurMeasureMethod;
+    _config.GetParam(BlurMeasureMethodConfigKey).GetValue(blurMeasureMethod);
+    
     // замещаем участки изображения
     for (CImagePatch& similarPatche: similarPatches) {
         CImage temp = grayImage(similarPatche.GetFrame());
         sharpPatch.GrayImage().copyTo(temp);
-        cv::Scalar color = RGB(0, similarPatche.BlurValue(BlurMeasureMethod), 0);
+        cv::Scalar color = RGB(0, similarPatche.BlurValue(blurMeasureMethod), 0);
         rectsToDraw.push_back({similarPatche.GetFrame(), color});
     }
     _mainImage.SetGrayImage(grayImage);
@@ -195,7 +204,10 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
 
 void CImageProcessor::AddBlurValueRect(std::vector<DrawableRect>& rects, CImagePatch& imagePatch)
 {
-    double colorComp = imagePatch.BlurValue(BlurMeasureMethod);
+    TBlurMeasureMethod blurMeasureMethod;
+    _config.GetParam(BlurMeasureMethodConfigKey).GetValue(blurMeasureMethod);
+    
+    double colorComp = imagePatch.BlurValue(blurMeasureMethod);
     cv::Scalar color = RGB(colorComp, colorComp, colorComp);
     rects.push_back({imagePatch.GetFrame(), color, CV_FILLED});
 }

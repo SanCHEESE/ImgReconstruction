@@ -14,7 +14,10 @@ void CImageProcessor::StartProcessingChain(const CImage& img, const std::string&
 {
     _resultImageName = resultImageName;
     
-	CImage extentImage = img.GetExtentImage(BinaryWindowSize);
+    cv::Size binaryWindowSize;
+    _config.GetParam(BinaryWindowSizeConfigKey).GetValue(binaryWindowSize);
+    
+	CImage extentImage = img.GetExtentImage(binaryWindowSize);
     
 	_mainImage = CImagePatch();
 	_mainImage.SetGrayImage(extentImage);
@@ -49,15 +52,28 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 
 void CImageProcessor::ProcessFixImage()
 {
+    int patchSideSize;
+    TBlurMeasureMethod blurMethod;
+    TAccImageSumMethod sumMethod;
+    double blurParam;
+    _config.GetParam(MaxPatchSideSizeConfigKey).GetValue(patchSideSize);
+    _config.GetParam(BlurMeasureMethodConfigKey).GetValue(blurMethod);
+    _config.GetParam(AccImageSumMethodConfigKey).GetValue(sumMethod);
+    
+    
     // извлечение всех патчей изображения
-    std::vector<CImagePatch> patches = FetchPatches({0, 0, MaxPatchSideSize, MaxPatchSideSize});
+    std::vector<CImagePatch> patches = FetchPatches({0, 0, patchSideSize, patchSideSize});
     
     // фильтрация патчей
     patches = FilterPatches(patches);
     
     // вычисляем значение размытия
     for (CImagePatch& patch: patches) {
-        patch.BlurValue(BlurMeasureMethod);
+        if (blurMethod == TBlurMeasureMethodFFT) {
+            patch.BlurValue(blurMethod, blurParam);
+        } else {
+            patch.BlurValue(blurMethod);
+        }
     }
     
     // классификация
@@ -110,5 +126,5 @@ void CImageProcessor::ProcessFixImage()
 #if IMAGE_OUTPUT_ENABLED
     accImage.CreateHistImage().Save(_resultImageName + "_hist_total", 100, "jpg");
 #endif
-    accImage.GetResultImage(AccImageSumMethod).Save(_resultImageName, 100, "jpg");
+    accImage.GetResultImage(sumMethod).Save(_resultImageName, 100, "jpg");
 }
