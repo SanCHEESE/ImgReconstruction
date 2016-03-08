@@ -34,9 +34,10 @@ public:
 	CImageProcessor(const CWindow& window) : _window(window), _debugWindow(DebugWindowName), _binarizedWindow(BinarizedWindowName)
 	{
 		_window.delegate = this;
+        _iterCount = 1;
 	}
     
-    CImageProcessor() : _window(""), _debugWindow(""), _binarizedWindow("") {_config = CConfig();};
+    CImageProcessor() : _window(""), _debugWindow(""), _binarizedWindow(""), _iterCount(1) {_config = CConfig();};
 	
 	// Project specific
     void StartProcessingChain(const CImage& img, const std::string& outputImageName);
@@ -62,6 +63,7 @@ public:
     }
 	
     CConfig& GetConfig() {return _config;}
+    void SetIterCount(int iterCount) {_iterCount = iterCount;};
     
 private:
     // test methods
@@ -71,12 +73,14 @@ private:
 	void ProcessReplaceSimilarPatches(const cv::Rect &patchRect);
     void ProcessTestBlurMetrics();
     
-    // main method
-    void ProcessFixImage();
+    // main methods
+    CImage ProcessRecoverImage();
+    CImage ProcessRecoverImageIteratively(int iterCount, const CImage& img);
+    void GenerateHelperImages(const CImage& img);
 	
     // ui
-	void BuildAndShowBinImage(const CImage& img, bool show);
-	void BuildAndShowSdImage(const CImage& img, bool show);
+	void BuildBinImage(const CImage& img);
+	void BuildSdImage(const CImage& img);
 	void ConfigureWindow(const CImage& img);
 
 	// utils
@@ -98,4 +102,6 @@ private:
 	CWindow _window;
 	CWindow _debugWindow;
 	CWindow _binarizedWindow;
+    
+    int _iterCount;
 };

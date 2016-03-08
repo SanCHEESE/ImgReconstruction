@@ -36,7 +36,7 @@ static int DefaultMaxPatchSideSize = 8;
 
 // comparison
 static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL1;
-static int DefaultComparisonEpsL1 = 900;
+static int DefaultComparisonEpsL1 = 500;
 static int DefaultComparisonEpsL2 = 2000;
 
 // blur config

@@ -39,22 +39,27 @@ int main(int argc, char** argv)
     CImageProcessor imProc = CImageProcessor();
 #endif
     
-    int counter = 0;
-    for (int eps = 900; eps < 2000; eps += 100) {
-        for (int blurMethod = 0; blurMethod < TBlurMeasureMethodNone; blurMethod++) {
-            imProc.GetConfig().SetParam(BlurMeasureMethodConfigKey, blurMethod);
-            for (int classifyingMethod = 0; classifyingMethod < TPatchClassifyingMethodNone; classifyingMethod++) {
-                imProc.GetConfig().SetParam(ClassifyingMethodConfigKey, classifyingMethod);
-                for (int accSumMethod = 0; accSumMethod < TAccImageSumMethodNone; accSumMethod++) {
-                    imProc.GetConfig().SetParam(AccImageSumMethodConfigKey, accSumMethod);
-                    imProc.GetConfig().SetParam(ComparisonEpsL1ConfigKey, eps);
-                    imProc.StartProcessingChain(image, "result_" + std::to_string(counter));
-                    imProc.GetConfig().WriteToFile(SaveImgPath + "result_" + std::to_string(counter) + "_params");
-                    counter++;
-                }
-            }
-        }
+    for (int i = 1; i < 100; i++) {
+        imProc.SetIterCount(i);
+        imProc.StartProcessingChain(image, "result_" + std::to_string(i));
     }
+
+//    int counter = 0;
+//    for (int eps = 900; eps < 2000; eps += 100) {
+//        for (int blurMethod = 0; blurMethod < TBlurMeasureMethodNone; blurMethod++) {
+//            imProc.GetConfig().SetParam(BlurMeasureMethodConfigKey, blurMethod);
+//            for (int classifyingMethod = 0; classifyingMethod < TPatchClassifyingMethodNone; classifyingMethod++) {
+//                imProc.GetConfig().SetParam(ClassifyingMethodConfigKey, classifyingMethod);
+//                for (int accSumMethod = 0; accSumMethod < TAccImageSumMethodNone; accSumMethod++) {
+//                    imProc.GetConfig().SetParam(AccImageSumMethodConfigKey, accSumMethod);
+//                    imProc.GetConfig().SetParam(ComparisonEpsL1ConfigKey, eps);
+//                    imProc.StartProcessingChain(image, "result_" + std::to_string(counter));
+//                    imProc.GetConfig().WriteToFile(SaveImgPath + "result_" + std::to_string(counter) + "_params");
+//                    counter++;
+//                }
+//            }
+//        }
+//    }
 	
 	return 0;
 }

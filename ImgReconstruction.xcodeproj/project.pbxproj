@@ -413,6 +413,7 @@
 		5339CA211BB7CF2A000B3B28 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREFIX_HEADER = "$(PROJECT_DIR)/ImgReconstruction/PrefixHeader.pch";
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;

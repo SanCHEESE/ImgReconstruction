@@ -14,19 +14,17 @@ void CImageProcessor::StartProcessingChain(const CImage& img, const std::string&
 {
     _resultImageName = resultImageName;
     
-    cv::Size binaryWindowSize;
-    _config.GetParam(BinaryWindowSizeConfigKey).GetValue(binaryWindowSize);
+    GenerateHelperImages(img);
     
-	CImage extentImage = img.GetExtentImage(binaryWindowSize);
-    
-	_mainImage = CImagePatch();
-	_mainImage.SetGrayImage(extentImage);
-	BuildAndShowBinImage(extentImage, ENABLE_GUI);
-	BuildAndShowSdImage(extentImage, ENABLE_GUI);
+#if ENABLE_GUI
+    _binarizedWindow.ShowAndUpdate(_mainImage.BinImage());
+    _debugWindow.ShowAndUpdate(_mainImage.SdImage());
+#endif
     
 #if TEST_BLUR_METRICS || PROCESS_IMAGE || SHOW_BLUR_MAP
 	WindowDidSelectPatch(_window.GetName(), {0, 0, 0, 0});
 #elif ENABLE_GUI
+    _binarizedWindow.ShowAndUpdate(binarizedImage);
 	ConfigureWindow(extentImage);
 #endif
 }
@@ -40,7 +38,7 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 #elif REPLACE_SIMILAR_PATCHES
 	ProcessReplaceSimilarPatches(patchRect);
 #elif PROCESS_IMAGE
-    ProcessFixImage();
+    ProcessRecoverImageIteratively(_iterCount, _mainImage.GrayImage());
 #elif TEST_BLUR_METRICS
     ProcessTestBlurMetrics();
 #elif SHOW_BLUR_MAP
@@ -50,7 +48,33 @@ void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const 
 
 #pragma mark - Private
 
-void CImageProcessor::ProcessFixImage()
+void CImageProcessor::GenerateHelperImages(const CImage& img)
+{
+    cv::Size binaryWindowSize;
+    _config.GetParam(BinaryWindowSizeConfigKey).GetValue(binaryWindowSize);
+    
+    CImage extentImage = img.GetExtentImage(binaryWindowSize);
+    
+    _mainImage = CImagePatch();
+    _mainImage.SetGrayImage(extentImage);
+    BuildBinImage(extentImage);
+    BuildSdImage(extentImage);
+}
+
+CImage CImageProcessor::ProcessRecoverImageIteratively(int iterCount, const CImage& img)
+{
+    CImage image = img;
+    for (int iter = 0; iter < iterCount; iter++) {
+        image = ProcessRecoverImage();
+        GenerateHelperImages(image);
+    }
+    
+    image.Save(_resultImageName, 100, "jpg");
+    
+    return image;
+}
+
+CImage CImageProcessor::ProcessRecoverImage()
 {
     int patchSideSize;
     TBlurMeasureMethod blurMethod;
@@ -126,5 +150,6 @@ void CImageProcessor::ProcessFixImage()
 #if IMAGE_OUTPUT_ENABLED
     accImage.CreateHistImage().Save(_resultImageName + "_hist_total", 100, "jpg");
 #endif
-    accImage.GetResultImage(sumMethod).Save(_resultImageName, 100, "jpg");
+
+    return accImage.GetResultImage(sumMethod);
 }

@@ -10,7 +10,7 @@
 #include "CTimeLogger.hpp"
 #include "CDocumentBinarizer.hpp"
 
-void CImageProcessor::BuildAndShowBinImage(const CImage &img, bool show)
+void CImageProcessor::BuildBinImage(const CImage &img)
 {
     // строим бинаризованное изображение
     CTimeLogger::StartLogging();
@@ -26,16 +26,13 @@ void CImageProcessor::BuildAndShowBinImage(const CImage &img, bool show)
     cv::bilateralFilter(img, blurredImage, 2, 1, 1);
     CImage binarizedImage;
     binarizedImage = binarizer.Binarize(img.GetExtentImage(binaryWindowSize));
-    if (show) {
-        _binarizedWindow.ShowAndUpdate(binarizedImage);
-    }
     
     CTimeLogger::Print("Binarization: ");
     
     _mainImage.SetBinImage(binarizedImage);
 }
 
-void CImageProcessor::BuildAndShowSdImage(const CImage &img, bool show)
+void CImageProcessor::BuildSdImage(const CImage &img)
 {
     // строим sd изображение
     CTimeLogger::StartLogging();
@@ -44,10 +41,6 @@ void CImageProcessor::BuildAndShowSdImage(const CImage &img, bool show)
     _config.GetParam(MaxPatchSideSizeConfigKey).GetValue(patchSideSize);
     
     CImage sdImage = img.GetSDImage({patchSideSize, patchSideSize});
-    
-    if (show) {
-        _debugWindow.ShowAndUpdate(sdImage);
-    }
     
     CTimeLogger::Print("SD filter: ");
     

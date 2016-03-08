@@ -195,7 +195,8 @@ void CImageProcessor::ProcessReplaceSimilarPatches(const cv::Rect &patchRect)
     
     CTimeLogger::Print("Image fix:");
     
-    BuildAndShowBinImage(_mainImage.GrayImage(), true);
+    BuildBinImage(_mainImage.GrayImage());
+    _binarizedWindow.ShowAndUpdate(_mainImage.BinImage());
     _window.Update(_mainImage.GrayImage());
     
     _mainImage.GrayImage().Save("gray_fixed");
