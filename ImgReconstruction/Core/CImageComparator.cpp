@@ -147,8 +147,8 @@ double CImageComparator::Sum(const CImage &img) const
         case TCompSumBorder:
             for (int i = 0; i < img.rows; i++) {
                 for (int j = 0; j < img.cols; j++) {
-                    bool isBorderPixel = i == 0 || j == 0 || i == img.rows - 1 || j == img.cols - 1;
-                    sum += isBorderPixel ? img.at<uchar>(i, j) : (_borderWeight * img.at<uchar>(i, j));
+                    bool isBorderPixel = i == 0 || j == 0 || (i == img.rows - 1) || (j == img.cols - 1);
+                    sum += isBorderPixel ? (_borderWeight * img.at<uchar>(i, j)) : img.at<uchar>(i, j);
                 }
             }
             break;

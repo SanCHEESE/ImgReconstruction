@@ -18,7 +18,12 @@ public:
         _configMap[MaxPatchSideSizeConfigKey] = DefaultMaxPatchSideSize;
         _configMap[CompMetricConfigKey] = DefaultCompMetric;
         _configMap[ComparisonEpsL1ConfigKey] = DefaultComparisonEpsL1;
-        _configMap[ComparisonEpsL2ConfigKey] = DefaultComparisonEpsL2;
+        if (DefaultCompSum == TCompSumBorder) {
+            _configMap[ComparisonEpsL2ConfigKey] = DefaultComparisonEpsBorderL2;
+        } else {
+            _configMap[ComparisonEpsL2ConfigKey] = DefaultComparisonEpsStdL2;
+
+        }
         _configMap[CompSumConfigKey] = DefaultCompSum;
         _configMap[BorderSumWeightConfigKey] = DefaultBorderSumWeight;
         _configMap[BlurMetricRadiusRatioConfigKey] = DefaultBlurMetricRadiusRatio;

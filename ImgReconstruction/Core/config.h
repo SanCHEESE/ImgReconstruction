@@ -40,7 +40,8 @@ static int DefaultMaxPatchSideSize = 8;
 // comparison
 static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL2;
 static int DefaultComparisonEpsL1 = 500;
-static int DefaultComparisonEpsL2 = 20;
+static int DefaultComparisonEpsStdL2 = 6000;
+static int DefaultComparisonEpsBorderL2 = 600;
 static TBrightnessEqualization DefaultBrightnessEqualization = TBrightnessEqualizationDynRange;
 static TCompSum DefaultCompSum = TCompSumStd;
 static double DefaultBorderSumWeight = 1.5;
@@ -58,7 +59,7 @@ static cv::Size DefaultBinaryWindowSize = {25, 25};
 
 // patch filtering
 static cv::Size DefaultFilteringPatchSize = {2, 2};
-static float DefaultMinPatchContrastValue = 30;
+static float DefaultMinPatchContrastValue = 40;
 static TPatchFilteringCriteria DefaultPatchFileringCriteria = TPatchFilteringCriteriaFull;
 
 // acc image
