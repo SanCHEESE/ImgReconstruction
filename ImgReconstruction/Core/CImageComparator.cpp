@@ -44,15 +44,37 @@ double CImageComparator::CompareL1(const CImagePatch& patch1, const CImagePatch&
 double CImageComparator::CompareL2(const CImagePatch& patch1, const CImagePatch& patch2) const
 {
 	// нормализуем патчи
+    CImage normPatch1;
+    patch1.GrayImage().copyTo(normPatch1);
+    
+    CImage normPatch2;
+    patch2.GrayImage().copyTo(normPatch2);
+    
+    EqualizeBrightness(normPatch1, normPatch2);
+    
 	cv::Mat result;
-	cv::absdiff(patch1.BinImage(), patch2.BinImage(), result);
+	cv::absdiff(normPatch1, normPatch2, result);
 	result.convertTo(result, CV_32S);
 	result = result.mul(result);
-	double dist = sqrt(sum(result)[0])/25.5;
+	double dist = sqrt(sum(result)[0]);
 	return dist;
 }
 
 void CImageComparator::EqualizeBrightness(CImage &img1, CImage &img2) const
+{
+    switch (_brightnessEqualization) {
+        case TBrightnessEqualizationMean:
+            EqualizeBrightnessMean(img1, img2);
+            break;
+        case TBrightnessEqualizationDynRange:
+            EqualizeBrightnessDynRange(img1, img2);
+            break;
+        default:
+            break;
+    }
+}
+
+void CImageComparator::EqualizeBrightnessMean(CImage &img1, CImage &img2) const
 {
     // нормализуем первый патч
     img1.convertTo(img1, CV_16S);
@@ -73,6 +95,43 @@ void CImageComparator::EqualizeBrightness(CImage &img1, CImage &img2) const
         // первая картинка ярче
         img2 += cv::Scalar::all(delta);
     }
+}
+
+void CImageComparator::EqualizeBrightnessDynRange(CImage &img1, CImage &img2) const
+{
+    double min1, max1;
+    cv::minMaxLoc(img1, &min1, &max1);
     
+    double min2, max2;
+    cv::minMaxLoc(img2, &min2, &max2);
     
+    // https://en.wikipedia.org/wiki/Normalization_(image_processing)
+    bool isFirstImage = true;
+    CImage I = img1;
+    double min = min1;
+    double max = max1;
+    double newMin = min2;
+    double newMax = max2;
+    if (max1 - min1 > max2 - min2) {
+        // first range is bigger than second
+        I = img2;
+        
+        min = min2;
+        max = max2;
+        newMin = min1;
+        newMax = max1;
+        isFirstImage = false;
+    }
+    
+    for (int i = 0; i < I.rows; i++) {
+        for (int j = 0; j < I.cols; j++) {
+            I.at<uchar>(i, j) = (I.at<uchar>(i, j) - min) * (newMax - newMin)/(max - min) + newMin;
+        }
+    }
+    
+    if (isFirstImage) {
+        img1 = I;
+    } else {
+        img2 = I;
+    }
 }

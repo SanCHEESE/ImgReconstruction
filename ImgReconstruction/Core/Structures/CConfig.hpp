@@ -28,7 +28,9 @@ public:
         _configMap[MinPatchContrastValueConfigKey] = DefaultMinPatchContrastValue;
         _configMap[PatchFileringCriteriaConfigKey] = DefaultPatchFileringCriteria;
         _configMap[AccImageSumMethodConfigKey] = DefaultAccImageSumMethod;
+        _configMap[BrightnessEqualizationConfigKey] = DefaultBrightnessEqualization;
     };
+    
     CConfig(const std::string& path) {
         ReadFromFile(path);
     };

@@ -95,6 +95,9 @@ public:
     void SetValue(TAccImageSumMethod value) {
         SetValue((int)value);
     }
+    void SetValue(TBrightnessEqualization value) {
+        SetValue((int)value);
+    }
     
     void GetValue(cv::Size& value) const {value = _sizeValue;};
     void GetValue(int& value) const {value = _intValue;}
@@ -107,6 +110,7 @@ public:
     void GetValue(TBinarizationMethod& value) const {value = (TBinarizationMethod)_intValue;}
     void GetValue(TPatchFilteringCriteria& value) const {value = (TPatchFilteringCriteria)_intValue;}
     void GetValue(TAccImageSumMethod& value) const {value = (TAccImageSumMethod)_intValue;}
+    void GetValue(TBrightnessEqualization& value) const {value = (TBrightnessEqualization)_intValue;};
     
     friend std::ostream& operator<<(std::ostream& os, const CParameter& param);
 private:

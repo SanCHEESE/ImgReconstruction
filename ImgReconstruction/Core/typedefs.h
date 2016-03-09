@@ -25,6 +25,13 @@ typedef enum : int {
 } TBlurMeasureMethod;
 
 typedef enum : int {
+    TBrightnessEqualizationMean,
+    TBrightnessEqualizationDynRange,
+    
+    TBrightnessEqualizationNone
+} TBrightnessEqualization;
+
+typedef enum : int {
 	TBinarizationMethodNICK,
 	TBinarizationMethodNiBlack,
 	TBinarizationMethodAdaptiveGaussian,
