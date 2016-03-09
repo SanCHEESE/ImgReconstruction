@@ -38,11 +38,13 @@ int main(int argc, char** argv)
 #else 
     CImageProcessor imProc = CImageProcessor();
 #endif
+    imProc.StartProcessingChain(image, "result");
+
     
-    for (int i = 1; i < 100; i++) {
-        imProc.SetIterCount(i);
-        imProc.StartProcessingChain(image, "result_" + std::to_string(i));
-    }
+//    for (int i = 1; i < 100; i++) {
+//        imProc.SetIterCount(i);
+//    imProc.StartProcessingChain(image, "result_" + std::to_string(i));
+//    }
 
 //    int counter = 0;
 //    for (int eps = 900; eps < 2000; eps += 100) {

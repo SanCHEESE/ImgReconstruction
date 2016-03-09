@@ -20,6 +20,8 @@ static const std::string MaxPatchSideSizeConfigKey = "MaxPatchSideSizeConfigKey"
 static const std::string CompMetricConfigKey = "CompMetricConfigKey";
 static const std::string ComparisonEpsL1ConfigKey = "ComparisonEpsL1ConfigKey";
 static const std::string ComparisonEpsL2ConfigKey = "ComparisonEpsL2ConfigKey";
+static const std::string CompSumConfigKey = "CompSumConfigKey";
+static const std::string BorderSumWeightConfigKey = "BorderSumWeightConfigKey";
 static const std::string BrightnessEqualizationConfigKey = "BrightnessEqualizationConfigKey";
 static const std::string BlurMetricRadiusRatioConfigKey = "BlurMetricRadiusRatioConfigKey";
 static const std::string BlurMeasureMethodConfigKey = "BlurMeasureMethodConfigKey";
@@ -36,10 +38,12 @@ static cv::Point DefaultPatchOffset = {1, 1};
 static int DefaultMaxPatchSideSize = 8;
 
 // comparison
-static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL1;
+static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL2;
 static int DefaultComparisonEpsL1 = 500;
-static int DefaultComparisonEpsL2 = 2000;
+static int DefaultComparisonEpsL2 = 20;
 static TBrightnessEqualization DefaultBrightnessEqualization = TBrightnessEqualizationDynRange;
+static TCompSum DefaultCompSum = TCompSumStd;
+static double DefaultBorderSumWeight = 1.5;
 
 // blur config
 static float DefaultBlurMetricRadiusRatio = 0.4f;

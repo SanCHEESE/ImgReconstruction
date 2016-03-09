@@ -36,7 +36,8 @@ double CImageComparator::CompareL1(const CImagePatch& patch1, const CImagePatch&
 	cv::absdiff(normPatch1, normPatch2, result);
 	
 	// считаем сумму по пикселям
-    double sum = cv::sum(result)[0];
+    
+    double sum = Sum(result);
     
 	return sum;
 }
@@ -56,7 +57,7 @@ double CImageComparator::CompareL2(const CImagePatch& patch1, const CImagePatch&
 	cv::absdiff(normPatch1, normPatch2, result);
 	result.convertTo(result, CV_32S);
 	result = result.mul(result);
-	double dist = sqrt(sum(result)[0]);
+	double dist = sqrt(Sum(result));
 	return dist;
 }
 
@@ -134,4 +135,26 @@ void CImageComparator::EqualizeBrightnessDynRange(CImage &img1, CImage &img2) co
     } else {
         img2 = I;
     }
+}
+
+double CImageComparator::Sum(const CImage &img) const
+{
+    double sum = 0;
+    switch (_compSum) {
+        case TCompSumStd:
+            sum = cv::sum(img)[0];
+            break;
+        case TCompSumBorder:
+            for (int i = 0; i < img.rows; i++) {
+                for (int j = 0; j < img.cols; j++) {
+                    bool isBorderPixel = i == 0 || j == 0 || i == img.rows - 1 || j == img.cols - 1;
+                    sum += isBorderPixel ? img.at<uchar>(i, j) : (_borderWeight * img.at<uchar>(i, j));
+                }
+            }
+            break;
+        default:
+            break;
+    }
+    
+    return sum;
 }

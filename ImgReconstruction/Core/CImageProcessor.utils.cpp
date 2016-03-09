@@ -160,10 +160,14 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
     
     TImageCompareMetric compMetric;
     TBrightnessEqualization brightnessEqualization;
+    TCompSum compSum;
+    double borderWeight;
     _config.GetParam(CompMetricConfigKey).GetValue(compMetric);
     _config.GetParam(BrightnessEqualizationConfigKey).GetValue(brightnessEqualization);
+    _config.GetParam(CompSumConfigKey).GetValue(compSum);
+    _config.GetParam(BorderSumWeightConfigKey).GetValue(borderWeight);
     
-    CImageComparator compare = CImageComparator(compMetric, brightnessEqualization);
+    CImageComparator compare = CImageComparator(compMetric, brightnessEqualization, compSum, borderWeight);
     int aClassIdx = 0;
     int eps = CompEpsForCompMetric(compMetric);
     for (int i = 0; i < aClassCopy.size(); i++) {

@@ -19,6 +19,8 @@ public:
         _configMap[CompMetricConfigKey] = DefaultCompMetric;
         _configMap[ComparisonEpsL1ConfigKey] = DefaultComparisonEpsL1;
         _configMap[ComparisonEpsL2ConfigKey] = DefaultComparisonEpsL2;
+        _configMap[CompSumConfigKey] = DefaultCompSum;
+        _configMap[BorderSumWeightConfigKey] = DefaultBorderSumWeight;
         _configMap[BlurMetricRadiusRatioConfigKey] = DefaultBlurMetricRadiusRatio;
         _configMap[BlurMeasureMethodConfigKey] = DefaultBlurMeasureMethod;
         _configMap[ClassifyingMethodConfigKey] = DefaultClassifyingMethod;

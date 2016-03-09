@@ -55,6 +55,15 @@ public:
         _ResetValues();
         SetValue(value);
     }
+    CParameter(TCompSum value) {
+        _ResetValues();
+        SetValue(value);
+    }
+    CParameter(TBrightnessEqualization value) {
+        _ResetValues();
+        SetValue(value);
+    }
+    
     
     void SetValue(cv::Size value) {
         assert(!_HasValue());
@@ -98,6 +107,9 @@ public:
     void SetValue(TBrightnessEqualization value) {
         SetValue((int)value);
     }
+    void SetValue(TCompSum value) {
+        SetValue((int)value);
+    }
     
     void GetValue(cv::Size& value) const {value = _sizeValue;};
     void GetValue(int& value) const {value = _intValue;}
@@ -111,6 +123,7 @@ public:
     void GetValue(TPatchFilteringCriteria& value) const {value = (TPatchFilteringCriteria)_intValue;}
     void GetValue(TAccImageSumMethod& value) const {value = (TAccImageSumMethod)_intValue;}
     void GetValue(TBrightnessEqualization& value) const {value = (TBrightnessEqualization)_intValue;};
+    void GetValue(TCompSum& value) const {value = (TCompSum)_intValue;}
     
     friend std::ostream& operator<<(std::ostream& os, const CParameter& param);
 private:
