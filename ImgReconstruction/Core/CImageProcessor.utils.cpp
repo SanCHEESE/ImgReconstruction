@@ -10,6 +10,27 @@
 #include "CTimeLogger.hpp"
 #include "CDocumentBinarizer.hpp"
 
+void CImageProcessor::BuildBinImage(const CImage &img)
+{
+    CTimeLogger::StartLogging();
+    
+    cv::Size binaryWindowSize;
+    TBinarizationMethod binMethod;
+    
+    _config.GetParam(BinMethodConfigKey).GetValue(binMethod);
+    _config.GetParam(BinaryWindowSizeConfigKey).GetValue(binaryWindowSize);
+    
+    CDocumentBinarizer binarizer(binaryWindowSize, binMethod, 2.f);
+    CImage blurredImage;
+    cv::bilateralFilter(img, blurredImage, 2, 1, 1);
+    CImage binarizedImage;
+    binarizedImage = binarizer.Binarize(img.GetExtentImage(binaryWindowSize));
+    
+    CTimeLogger::Print("Binarization: ");
+    
+    _mainImage.SetBinImage(binarizedImage);
+}
+
 CImagePatch CImageProcessor::FetchPatch(const cv::Rect &patchRect)
 {
     TBlurMeasureMethod blurMeasureMethod;
@@ -39,23 +60,19 @@ std::vector<CImagePatch> CImageProcessor::FetchPatches(const cv::Rect& patchRect
     cv::Size patchSize = cv::Size(patchRect.width, patchRect.height);
     _mainImage.SetGrayImage(_mainImage.GrayImage().GetExtentImage(patchSize));
     _mainImage.SetBinImage(_mainImage.BinImage().GetExtentImage(patchSize));
-    _mainImage.SetSdImage(_mainImage.SdImage().GetExtentImage(patchSize));
     CImage grayImage = _mainImage.GrayImage();
     CImage binImage = _mainImage.BinImage();
-    CImage sdImage = _mainImage.SdImage();
     
     cv::Point patchOffset;
     _config.GetParam(PatchOffsetConfigKey).GetValue(patchOffset);
     
     CImage::CPatchIterator patchIterator = grayImage.GetPatchIterator(patchSize, patchOffset);
     CImage::CPatchIterator binPatchIterator = binImage.GetPatchIterator(patchSize, patchOffset);
-    CImage::CPatchIterator sdPatchIterator = sdImage.GetPatchIterator(patchSize, patchOffset);
     
     while (patchIterator.HasNext()) {
         CImagePatch imgPatch;
         imgPatch.SetBinImage(binPatchIterator.GetNext());
         imgPatch.SetGrayImage(patchIterator.GetNext());
-        imgPatch.SetSdImage(sdPatchIterator.GetNext());
         patches.push_back(imgPatch);
     }
     
@@ -113,46 +130,6 @@ std::vector<CImagePatch> CImageProcessor::FilterPatches(std::vector<CImagePatch>
     return filteredPatches;
 }
 
-std::vector<CImagePatch> CImageProcessor::FindSimilarPatches(CImagePatch& targetPatch, std::vector<CImagePatch>& patches)
-{
-    CTimeLogger::StartLogging();
-    
-    TPatchClassifyingMethod classifyingMethod;
-    TImageCompareMetric compMetric;
-    TBlurMeasureMethod blurMeasureMethod;;
-    _config.GetParam(CompMetricConfigKey).GetValue(compMetric);
-    _config.GetParam(ClassifyingMethodConfigKey).GetValue(classifyingMethod);
-    _config.GetParam(BlurMeasureMethodConfigKey).GetValue(blurMeasureMethod);
-    
-    auto comparePatches = [&](CImagePatch& patch1, CImagePatch& patch2) {
-        if (classifyingMethod == TPatchClassifyingMethodPHash) {
-            return utils::hamming<uint64>(patch1.PHash(), patch2.PHash());
-        } else if (classifyingMethod == TPatchClassifyingMethodAvgHash) {
-            return utils::hamming<uint64>(patch1.AvgHash(), patch2.AvgHash());
-        }
-        return INT_MAX;
-    };
-    
-    std::vector<CImagePatch> similarPatches;
-    CImageComparator compare(compMetric);
-    int eps = CompEpsForCompMetric(compMetric);
-    for (CImagePatch& patch: patches) {
-        if (comparePatches(patch, targetPatch) == 0) {
-            int distance = compare(targetPatch, patch);
-            patch.distanceToTarget = distance;
-            if (distance < eps) {
-                patch.BlurValue(blurMeasureMethod);
-                similarPatches.push_back(patch);
-            }
-        }
-    }
-    
-    std::cout << "Similar patches found: " << similarPatches.size() << std::endl;
-    CTimeLogger::Print("Patch search: ");
-    
-    return similarPatches;
-}
-
 std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::vector<CImagePatch>& aClass)
 {
     std::map<int, std::vector<CImagePatch>> clusters;
@@ -196,8 +173,6 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
     
     return clusters;
 }
-
-
 
 std::map<uint64, std::vector<CImagePatch>> CImageProcessor::Classify(std::vector<CImagePatch>& patches)
 {

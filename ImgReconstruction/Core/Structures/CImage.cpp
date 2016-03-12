@@ -57,7 +57,6 @@ void CImage::Save(const std::string& name, int quality, const std::string& ext) 
     
     std::vector<int> compression_params;
     compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-//    compression_params.push_back(cv::IMWRITE_JPEG_PROGRESSIVE);
     compression_params.push_back(quality);
     cv::imwrite(nameBuffer.str(), *this, compression_params);
 }
@@ -96,8 +95,6 @@ CImage CImage::GetExtentImage(const cv::Size size) const
 		iterImageSize.height = this->rows;
 	}
 	
-	//		int extentedRows = iterImageSize.height - img.rows;
-	//		int extentedCols = iterImageSize.width - img.cols;
 	int avgColor = cv::mean(*this)[0] - 5;
 	CImage result = CImage(iterImageSize, cv::DataType<uchar>::type, avgColor);
 	CImage roi = result(cv::Rect(0, 0, this->cols, this->rows));
@@ -119,12 +116,8 @@ CImage CImage::GetFFTImage() const
 	// Add to the expanded another plane with zeros
 	merge(planes, 2, complexI);
 	
-//	std::cout << padded << std::endl << std::endl;
-	
 	// this way the result may fit in the source matrix
 	dft(complexI, complexI);
-	
-//	std::cout << complexI << std::endl << std::endl;
 	
 	// compute the magnitude and switch to logarithmic scale
 	// => log(1 + sqrt(Re(DFT(I))^2 + Im(DFT(I))^2))
@@ -134,18 +127,12 @@ CImage CImage::GetFFTImage() const
 	magnitude(planes[0], planes[1], planes[0]);
 	cv::Mat magI = planes[0];
 	
-//	std::cout << magI << std::endl << std::endl;
-	
 	// switch to logarithmic scale
 	magI += cv::Scalar::all(1);
 	log(magI, magI);
 	
-//	std::cout << magI << std::endl << std::endl;
-	
 	// crop the spectrum, if it has an odd number of rows or columns
 	magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
-	
-//	std::cout << magI << std::endl << std::endl;
 	
 	// rearrange the quadrants of Fourier image  so that the origin is at the image center
 	int cx = magI.cols/2;
@@ -170,12 +157,6 @@ CImage CImage::GetFFTImage() const
 	q1.copyTo(tmp);
 	q2.copyTo(q1);
 	tmp.copyTo(q2);
-	
-	// Transform the matrix with float values into a
-	// viewable image form (float between values 0 and 1).
-	// normalize(magI, magI, 0, 1, CV_MINMAX);
-	
-//	std::cout << magI << std::endl << std::endl;
 	
 	return magI;
 }
@@ -271,16 +252,16 @@ inline CImage CImage::CPatchIterator::GetNext()
 	int maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage->rows);
 	int maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage->cols);
 	
-	// делаем матрицу размера size с подматрицей
+	// fetching patch
 	cv::Rect patchFrame = cv::Rect(_pointingRect.x, _pointingRect.y, maxCol - _pointingRect.x, maxRow - _pointingRect.y);
 	CImage patch = (*_iterImage)(patchFrame);
 	patch._frame = patchFrame;
 	
 	if (_pointingRect.width + _pointingRect.x < _iterImage->cols - 1) {
-		// не у правого края
+		// not near the right border
 		_pointingRect.x += _offset.x;
 	} else if (_pointingRect.width + _pointingRect.x >= _iterImage->cols - 1) {
-		// сдвигаемся на след. строку
+		// moving to the next row
 		_pointingRect.y += _offset.y;
 		_pointingRect.x = 0;
 	}

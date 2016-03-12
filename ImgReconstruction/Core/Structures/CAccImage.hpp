@@ -13,10 +13,12 @@ public:
     CAccImage(const CImage& img);
     CAccImage(const cv::Size& size);
     
+    // main methods
     void SetImageRegion(const CImage& image);
     void SetImageRegion(const CImage& image, const cv::Rect& frame);
-    
     CImage GetResultImage(TAccImageSumMethod method) const;
+    
+    // debug
     CImage CreateHistImage() const;
     
 private:

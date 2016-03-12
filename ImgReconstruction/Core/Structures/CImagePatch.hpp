@@ -15,15 +15,13 @@ class CImagePatch
 {
 public:
 	CImagePatch() {Initialize();}
-	CImagePatch(const CImage& grayImage, const CImage& binImage, const CImage& sdImage) {
+	CImagePatch(const CImage& grayImage, const CImage& binImage) {
 		Initialize();
 		SetGrayImage(grayImage);
 		SetBinImage(binImage);
-		SetSdImage(sdImage);
 	};
 	CImagePatch(const CImagePatch& patch) {
 		_frame = patch._frame;
-		distanceToTarget = patch.distanceToTarget;
 		_avgHash = patch._avgHash;
 		_avgHashComputed = patch._avgHashComputed;
 		_pHash = patch._pHash;
@@ -32,7 +30,6 @@ public:
 		_standartDeviation = patch._standartDeviation;
 		SetGrayImage(patch.GrayImage());
 		SetBinImage(patch.BinImage());
-		SetSdImage(patch.SdImage());
 	}
 	
 	double BlurValue(TBlurMeasureMethod method);
@@ -44,7 +41,12 @@ public:
 	// accessors
 	CImage GrayImage() const {return _grayImage;}
 	CImage BinImage() const {return _binImage;}
-	CImage SdImage() const {return _sdImage;}
+    double GetBlurValue() const {return _blurValue;};
+    double GetStandartDeviation() const {return _standartDeviation;};
+    uint64 GetPHash() const {return _pHash;};
+    uint64 GetAvgHash() const {return _avgHash;};
+    cv::Rect GetFrame() const {return _frame;};
+    cv::Size GetSize() const {return _frame.size();};
 	
 	// setters
 	void SetGrayImage(const CImage& image) {
@@ -55,22 +57,10 @@ public:
 		image.copyTo(_binImage);
 		_frame = _binImage.GetFrame();
 	};
-	void SetSdImage(const CImage& image) {
-		image.copyTo(_sdImage);
-		_frame = _sdImage.GetFrame();
-	};
-	
-	double GetBlurValue() const {return _blurValue;};
-	double GetStandartDeviation() const {return _standartDeviation;};
-	uint64 GetPHash() const {return _pHash;};
-	uint64 GetAvgHash() const {return _avgHash;};
-	void SetFrame(const cv::Rect& frame) {_frame = frame;};
-	cv::Rect GetFrame() const {return _frame;};
-    cv::Size GetSize() const {return _frame.size();};
-	
+    void SetFrame(const cv::Rect& frame) {_frame = frame;};
+
 	friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
 	
-	double distanceToTarget;
     int aClass;
 private:
 	void Initialize();
@@ -80,7 +70,6 @@ private:
 	cv::Rect _frame;
 	CImage _grayImage;
 	CImage _binImage;
-	CImage _sdImage;
 	
 	double _blurValue;
 	double _standartDeviation;
@@ -105,13 +94,4 @@ struct LessBlur
     {
         return patch1.GetBlurValue() < patch2.GetBlurValue();
     }
-};
-
-
-struct LessSimilarity
-{
-	inline bool operator() (const CImagePatch& patch1, const CImagePatch& patch2)
-	{
-		return patch1.distanceToTarget < patch2.distanceToTarget;
-	}
 };

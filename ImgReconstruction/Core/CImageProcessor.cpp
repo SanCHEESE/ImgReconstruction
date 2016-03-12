@@ -10,40 +10,12 @@
 #include "CDocumentBinarizer.hpp"
 #include "CAccImage.hpp"
 
-void CImageProcessor::StartProcessingChain(const CImage& img, const std::string& resultImageName)
+void CImageProcessor::ProcessImage(const CImage& img, const std::string& resultImageName)
 {
     _resultImageName = resultImageName;
     
     GenerateHelperImages(img);
-    
-#if ENABLE_GUI
-    _binarizedWindow.ShowAndUpdate(_mainImage.BinImage());
-    _debugWindow.ShowAndUpdate(_mainImage.SdImage());
-#endif
-    
-#if TEST_BLUR_METRICS || PROCESS_IMAGE || SHOW_BLUR_MAP
-	WindowDidSelectPatch(_window.GetName(), {0, 0, 0, 0});
-#elif ENABLE_GUI
-    _binarizedWindow.ShowAndUpdate(binarizedImage);
-	ConfigureWindow(extentImage);
-#endif
-}
-
-void CImageProcessor::WindowDidSelectPatch(const std::string& windowName, const cv::Rect& patchRect)
-{
-#if HIGHLIGHT_SIMILAR_PATCHES
-	ProcessHighlightSimilarPatches(patchRect);
-#elif SHOW_SORTED_SIMILAR
-	ProcessShowSortedSimilar(patchRect);
-#elif REPLACE_SIMILAR_PATCHES
-	ProcessReplaceSimilarPatches(patchRect);
-#elif PROCESS_IMAGE
-    ProcessRecoverImageIteratively(_iterCount, _mainImage.GrayImage());
-#elif TEST_BLUR_METRICS
-    ProcessTestBlurMetrics();
-#elif SHOW_BLUR_MAP
-    ProcessShowBlurMap();
-#endif
+    RestoreImageIteratively(_iterCount, _mainImage.GrayImage());
 }
 
 #pragma mark - Private
@@ -58,14 +30,13 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
     _mainImage = CImagePatch();
     _mainImage.SetGrayImage(extentImage);
     BuildBinImage(extentImage);
-    BuildSdImage(extentImage);
 }
 
-CImage CImageProcessor::ProcessRecoverImageIteratively(int iterCount, const CImage& img)
+CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img)
 {
     CImage image = img;
     for (int iter = 0; iter < iterCount; iter++) {
-        image = ProcessRecoverImage();
+        image = RestoreImage();
         GenerateHelperImages(image);
     }
     
@@ -74,7 +45,7 @@ CImage CImageProcessor::ProcessRecoverImageIteratively(int iterCount, const CIma
     return image;
 }
 
-CImage CImageProcessor::ProcessRecoverImage()
+CImage CImageProcessor::RestoreImage()
 {
     int patchSideSize;
     TBlurMeasureMethod blurMethod;
@@ -84,14 +55,13 @@ CImage CImageProcessor::ProcessRecoverImage()
     _config.GetParam(BlurMeasureMethodConfigKey).GetValue(blurMethod);
     _config.GetParam(AccImageSumMethodConfigKey).GetValue(sumMethod);
     
-    
-    // извлечение всех патчей изображения
+    // get all image patches
     std::vector<CImagePatch> patches = FetchPatches({0, 0, patchSideSize, patchSideSize});
     
-    // фильтрация патчей
+    // filter patches
     patches = FilterPatches(patches);
     
-    // вычисляем значение размытия
+    // calculating
     for (CImagePatch& patch: patches) {
         if (blurMethod == TBlurMeasureMethodFFT) {
             patch.BlurValue(blurMethod, blurParam);
@@ -100,7 +70,7 @@ CImage CImageProcessor::ProcessRecoverImage()
         }
     }
     
-    // классификация
+    // classification by PHash/AvgHash
     std::map<uint64, std::vector<CImagePatch>> classes = Classify(patches);
     
     CAccImage accImage(_mainImage.GrayImage());
@@ -109,18 +79,18 @@ CImage CImageProcessor::ProcessRecoverImage()
     for (auto &it: classes) {
         std::vector<CImagePatch> aClass = it.second;
         if (aClass.size() < 2) {
-            // классы из 1 объекта не обрабатываются
+            // do not process classes with size of 1 object
             accImage.SetImageRegion(aClass[0].GrayImage());
             
             continue;
         } else {
-            // ранжировка по похожести внутри класса
+            // ranking by sharpness inside a class
             auto clusters = Clusterize(aClass);
 
             for (auto& cluster: clusters) {
                 auto clusterPatches = cluster.second;
                 
-                // сортировка по возрастанию размытия
+                // sorting by blur increase
                 std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
                 
 #if IMAGE_OUTPUT_ENABLED && VERBOSE
@@ -136,7 +106,7 @@ CImage CImageProcessor::ProcessRecoverImage()
 #endif
                 i++;
 
-                // копирование
+                // copying to summing image
                 CImagePatch bestPatch = clusterPatches[0];
                 for (auto& patch: clusterPatches) {
                     if (patch.GetFrame() != bestPatch.GetFrame()) {

@@ -66,7 +66,6 @@ std::ostream& operator<<(std::ostream& os, const CImagePatch& patch)
 	
 	os << "\tGrey image:\n" << patch.GrayImage() << std::endl;
 	os << "\tBin image:\n" << patch.BinImage() << std::endl;
-	os << "\tSd image:\n" << patch.SdImage() << std::endl;
 	
 	std::bitset<sizeof(uint64) * 8> phash(patch.GetPHash());
 	os << "\tPHash:\n\t\t" << phash << std::endl;

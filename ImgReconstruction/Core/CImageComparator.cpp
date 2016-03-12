@@ -31,12 +31,9 @@ double CImageComparator::CompareL1(const CImagePatch& patch1, const CImagePatch&
     
     EqualizeBrightness(normPatch1, normPatch2);
     
-	// вычитаем из одного другой
 	CImage result;
 	cv::absdiff(normPatch1, normPatch2, result);
 	
-	// считаем сумму по пикселям
-    
     double sum = Sum(result);
     
 	return sum;
@@ -44,7 +41,6 @@ double CImageComparator::CompareL1(const CImagePatch& patch1, const CImagePatch&
 
 double CImageComparator::CompareL2(const CImagePatch& patch1, const CImagePatch& patch2) const
 {
-	// нормализуем патчи
     CImage normPatch1;
     patch1.GrayImage().copyTo(normPatch1);
     
@@ -77,10 +73,7 @@ void CImageComparator::EqualizeBrightness(CImage &img1, CImage &img2) const
 
 void CImageComparator::EqualizeBrightnessMean(CImage &img1, CImage &img2) const
 {
-    // нормализуем первый патч
     img1.convertTo(img1, CV_16S);
-    
-    // нормализуем второй патч
     img2.convertTo(img2, CV_16S);
     
     double mean1 = cv::mean(img1)[0];
@@ -88,12 +81,11 @@ void CImageComparator::EqualizeBrightnessMean(CImage &img1, CImage &img2) const
     
     double delta = mean1 - mean2;
     CImage deltaMat(img1.rows, img1.cols, CV_16S, cv::Scalar(delta));
-    // уравнение изображений по яркости
     if (delta < 0) {
-        // вторая картинка ярче
+        // second image is brighter
         img1 += cv::Scalar::all(delta);
     } else {
-        // первая картинка ярче
+        // first image is brighter
         img2 += cv::Scalar::all(delta);
     }
 }
