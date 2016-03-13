@@ -35,9 +35,12 @@
 #define PRINT_BITS(num)  std::bitset<sizeof(uint64) * 8> b(num); \
 std::cout << b << std::endl;
 
-#include "CImage.hpp"
+#include "IImageSubprocessor.h"
+
+#include "CImage.h"
 #include "config.h"
-#include "utils.hpp"
-#include "CImagePatch.hpp"
+#include "utils.h"
+#include "CImagePatch.h"
+
 
 #endif /* PrefixHeader_pch */

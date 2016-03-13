@@ -1,5 +1,5 @@
 //
-//  IImageComparator.hpp
+//  IBinarizer.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 27.09.15.
@@ -7,9 +7,9 @@
 //
 #pragma once
 
-class IImageComparator
+class IBinarizer
 {
 public:
-    ~IImageComparator() {}
-    virtual double operator()(const CImagePatch& patch1, const CImagePatch& patch2) const = 0;
+	virtual ~IBinarizer() {}
+	virtual CImage Binarize(const CImage& img) const = 0;
 };

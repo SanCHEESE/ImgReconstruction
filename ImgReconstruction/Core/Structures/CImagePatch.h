@@ -1,5 +1,5 @@
 //
-//  CImagePatch.hpp
+//  CImagePatch.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 24.10.15.
@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "CBlurMeasurer.hpp"
-#include "utils.hpp"
+#include "CBlurMeasurer.h"
+#include "utils.h"
 
 class CImagePatch
 {

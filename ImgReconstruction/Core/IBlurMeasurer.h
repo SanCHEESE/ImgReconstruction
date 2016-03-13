@@ -8,9 +8,9 @@
 
 #pragma once
 
-class IMeasurer
+class IBlurMeasurer : public IImageSubprocessor
 {
 public:
-	virtual ~IMeasurer() {}
+	virtual ~IBlurMeasurer() {}
 	virtual double Measure(const CImage& img) const = 0;
 };

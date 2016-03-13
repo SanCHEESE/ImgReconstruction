@@ -6,7 +6,7 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CTimeLogger.hpp"
+#include "CTimeLogger.h"
 
 clock_t CTimeLogger::_time = 0;
 clock_t CTimeLogger::_totalTime = 0;

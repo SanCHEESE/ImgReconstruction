@@ -1,5 +1,5 @@
 //
-//  CImageProcessor.hpp
+//  CImageProcessor.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 27.09.15.
@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "CImagePatch.hpp"
-#include "CImageComparator.hpp"
-#include "CConfig.hpp"
+#include "CImagePatch.h"
+#include "CImageComparator.h"
+#include "CConfig.h"
 
 #define IMAGE_OUTPUT_ENABLED 0
 #define VERBOSE 0

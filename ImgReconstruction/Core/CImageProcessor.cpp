@@ -5,10 +5,10 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CImageProcessor.hpp"
-#include "CTimeLogger.hpp"
-#include "CDocumentBinarizer.hpp"
-#include "CAccImage.hpp"
+#include "CImageProcessor.h"
+#include "CTimeLogger.h"
+#include "CDocumentBinarizer.h"
+#include "CAccImage.h"
 
 void CImageProcessor::ProcessImage(const CImage& img, const std::string& resultImageName)
 {

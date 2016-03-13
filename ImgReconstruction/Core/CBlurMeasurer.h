@@ -1,5 +1,5 @@
 //
-//  CBlurMeasurer.hpp
+//  CBlurMeasurer.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 11.10.15.
@@ -8,11 +8,9 @@
 
 #pragma once
 
-#include "IMeasurer.hpp"
+#include "IBlurMeasurer.h"
 
-
-
-class CBlurMeasurer: public IMeasurer
+class CBlurMeasurer: public IBlurMeasurer
 {
 public:
 	CBlurMeasurer(){}

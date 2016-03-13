@@ -6,7 +6,7 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CImageComparator.hpp"
+#include "CImageComparator.h"
 
 double CImageComparator::operator()(const CImagePatch& patch1, const CImagePatch& patch2) const
 {

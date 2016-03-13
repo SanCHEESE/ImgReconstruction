@@ -1,5 +1,5 @@
 //
-//  config.hpp
+//  config.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 21.11.15.
@@ -11,8 +11,6 @@
 #include "typedefs.h"
 
 // сonfigs
-static const std::string DebugWindowName = "Debug";
-static const std::string BinarizedWindowName = "Binarized";
 static const std::string SaveImgPath = "../../out/";
 
 static const std::string PatchOffsetConfigKey = "PatchOffsetConfigKey";

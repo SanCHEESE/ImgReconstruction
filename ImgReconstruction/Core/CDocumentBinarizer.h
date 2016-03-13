@@ -1,5 +1,5 @@
 //
-//  CNiBlackBinarizer.hpp
+//  CNiBlackBinarizer.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 10.10.15.
@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "IBinarizer.hpp"
+#include "IBinarizer.h"
 
 class CDocumentBinarizer: public IBinarizer
 {

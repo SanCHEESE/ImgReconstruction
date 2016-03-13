@@ -6,8 +6,8 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CImagePatch.hpp"
-#include "CImageProcessor.hpp"
+#include "CImagePatch.h"
+#include "CImageProcessor.h"
 
 #pragma mark - Public
 

@@ -6,9 +6,9 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CImage.hpp"
-#include "CImageProcessor.hpp"
-#include "CBlurMeasurer.hpp"
+#include "CImage.h"
+#include "CImageProcessor.h"
+#include "CBlurMeasurer.h"
 
 #pragma mark - Overrides
 

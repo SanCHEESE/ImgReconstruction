@@ -6,7 +6,7 @@
 //  Copyright © 2016 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CParameter.hpp"
+#include "CParameter.h"
 
 std::ostream& operator<<(std::ostream& os, const CParameter& param)
 {

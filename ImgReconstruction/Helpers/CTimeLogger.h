@@ -1,5 +1,5 @@
 //
-//  CTimeLogger.hpp
+//  CTimeLogger.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 22.10.15.

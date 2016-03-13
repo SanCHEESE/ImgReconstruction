@@ -6,7 +6,7 @@
 //  Copyright © 2016 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CConfig.hpp"
+#include "CConfig.h"
 #include <fstream>
 #include <iostream>
 

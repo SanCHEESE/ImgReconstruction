@@ -1,5 +1,5 @@
 //
-//  CAccImage.hpp
+//  CAccImage.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 13.02.16.

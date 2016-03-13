@@ -1,5 +1,5 @@
 //
-//  CParameter.hpp
+//  CParameter.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 25.02.16.

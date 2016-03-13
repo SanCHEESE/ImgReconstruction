@@ -6,8 +6,8 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CBlurMeasurer.hpp"
-#include "CImageProcessor.hpp"
+#include "CBlurMeasurer.h"
+#include "CImageProcessor.h"
 
 double CBlurMeasurer::Measure(const CImage& img) const
 {

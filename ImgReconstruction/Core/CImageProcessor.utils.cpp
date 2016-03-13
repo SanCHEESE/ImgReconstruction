@@ -6,9 +6,9 @@
 //  Copyright © 2016 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CImageProcessor.hpp"
-#include "CTimeLogger.hpp"
-#include "CDocumentBinarizer.hpp"
+#include "CImageProcessor.h"
+#include "CTimeLogger.h"
+#include "CDocumentBinarizer.h"
 
 void CImageProcessor::BuildBinImage(const CImage &img)
 {
@@ -79,55 +79,6 @@ std::vector<CImagePatch> CImageProcessor::FetchPatches(const cv::Rect& patchRect
     CTimeLogger::Print("Patch fetching: ");
     
     return patches;
-}
-
-std::vector<CImagePatch> CImageProcessor::FilterPatches(std::vector<CImagePatch>& patches)
-{
-    CTimeLogger::StartLogging();
-
-    std::vector<CImagePatch> filteredPatches;
-    
-    cv::Size size2x2(2, 2);
-    TPatchFilteringCriteria filterCriteria;
-    TBinarizationMethod binMethod;
-    double minContrastValue;
-    _config.GetParam(MinPatchContrastValueConfigKey).GetValue(minContrastValue);
-    _config.GetParam(BinMethodConfigKey).GetValue(binMethod);
-    _config.GetParam(PatchFileringCriteriaConfigKey).GetValue(filterCriteria);
-    
-    bool filterBin = (TPatchFilteringCriteriaBin & filterCriteria) == TPatchFilteringCriteriaBin;
-    bool filterContrast = (TPatchFilteringCriteriaContrast & filterCriteria) == TPatchFilteringCriteriaContrast;
-    
-    CDocumentBinarizer b(size2x2, binMethod, 1.);
-    for (CImagePatch& patch: patches) {
-        bool passedBin = !filterBin;
-
-        CImage grey2x2 = patch.GrayImage().GetResizedImage(size2x2);
-        if (filterBin) {
-            CImage bin2x2 = b.Binarize(grey2x2);
-            for (int column = 0; column < bin2x2.GetSize().width; column++) {
-                for (int row = 0; row < bin2x2.GetSize().height; row++) {
-                    passedBin = bin2x2.at<uchar>(column, row) < 255;
-                }
-            }
-        }
-        
-        bool passedContrast = !filterContrast;
-        if (filterContrast) {
-            passedContrast = utils::StandartDeviation(grey2x2) >= minContrastValue;
-        }
-        
-        if (passedContrast && passedBin) {
-            filteredPatches.push_back(patch);
-        }
-    }
-    
-    
-    std::cout << "Before filter: " << patches.size() << std::endl;
-    std::cout << "After filter: " << filteredPatches.size() << std::endl;
-    CTimeLogger::Print("Patch filtering: ");
-    
-    return filteredPatches;
 }
 
 std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::vector<CImagePatch>& aClass)

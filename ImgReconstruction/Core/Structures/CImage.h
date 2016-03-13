@@ -1,5 +1,5 @@
 //
-//  CImage.hpp
+//  CImage.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 27.09.15.

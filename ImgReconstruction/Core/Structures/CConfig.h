@@ -1,5 +1,5 @@
 //
-//  CConfig.hpp
+//  CConfig.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 28.02.16.
@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "CParameter.hpp"
+#include "CParameter.h"
 
 class CConfig
 {

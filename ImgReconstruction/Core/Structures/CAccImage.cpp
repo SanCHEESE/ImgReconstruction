@@ -6,7 +6,7 @@
 //  Copyright © 2016 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CAccImage.hpp"
+#include "CAccImage.h"
 
 #include <numeric>
 

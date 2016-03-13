@@ -6,8 +6,8 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CDocumentBinarizer.hpp"
-#include "CImageProcessor.hpp"
+#include "CDocumentBinarizer.h"
+#include "CImageProcessor.h"
 
 static double const k = -0.2f;
 

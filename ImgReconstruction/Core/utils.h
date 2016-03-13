@@ -1,5 +1,5 @@
 //
-//  utils.hpp
+//  utils.h
 //  ImgReconstruction
 //
 //  Created by Alexander Bochkarev on 26.10.15.
@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "CImagePatch.hpp"
+#include "CImagePatch.h"
 
 namespace utils
 {

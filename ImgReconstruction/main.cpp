@@ -6,7 +6,7 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CImageProcessor.hpp"
+#include "CImageProcessor.h"
 
 using namespace cv;
 
