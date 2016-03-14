@@ -7,7 +7,7 @@
 //
 
 #include "IBlurMeasurer.h"
-#include "CImageComparator.hpp"
+#include "IImageComparator.h"
 #include "IBinarizer.h"
 #include "IPatchFilter.h"
 #include "IPatchClassifier.h"
@@ -20,16 +20,19 @@
 
 static const std::string BlurMeasurerKey = "BlurMeasurerKey";
 static const std::string ComparatorKey = "ComparatorKey";
+static const std::string CompImgSummatorKey = "CompareImgSummatorKey";
+static const std::string CompBrightnessEqualizerKey = "CompBrightnessEqualizerKey";
 static const std::string BinarizerKey = "BinarizerKey";
 static const std::string PatchFilterKey = "PatchFilterKey";
+static const std::string FilterBinarizerKey = "FilterBinarizerKey";
 static const std::string PatchClassifierKey = "PatchClassifierKey";
 static const std::string PatchFetcherKey = "PatchFetcherKey";
 static const std::string ImageExtenderKey = "ImageExtenderKey";
 
+// used to store not generalized classes
 struct CConfig
 {
     TAccImageSumMethod accImageSumMethod;
-    int compareEps;
 };
 
 class CImageSubprocessorHolder {
@@ -40,7 +43,7 @@ public:
     IImageSubprocessor* SubprocessorForKey(const std::string& key) {return _subprocessors[key];} ;
     
     IBlurMeasurer* BlurMeasurer() {return (IBlurMeasurer*)_subprocessors[BlurMeasurerKey];};
-    CImageComparator* ImageComparator() {return (CImageComparator*)_subprocessors[ComparatorKey];};
+    IImageComparator* ImageComparator() {return (IImageComparator*)_subprocessors[ComparatorKey];};
     IBinarizer* PatchBinarizer() {return (IBinarizer*)_subprocessors[BinarizerKey];};
     IPatchFilter* PatchFilter() {return (IPatchFilter*)_subprocessors[PatchFilterKey];};
     IPatchClassifier* PatchClassifier() {return (IPatchClassifier*)_subprocessors[PatchClassifierKey];}
@@ -50,8 +53,11 @@ public:
     CConfig GetConfig() const {return _config;};
 private:
     CImageSubprocessorHolder();
+    ~CImageSubprocessorHolder();
     CImageSubprocessorHolder(CImageSubprocessorHolder const&) = delete;
     void operator=(CImageSubprocessorHolder const&) = delete;
+    
+    void Reset();
     
     std::map<std::string, IImageSubprocessor*> _subprocessors;
     CConfig _config;

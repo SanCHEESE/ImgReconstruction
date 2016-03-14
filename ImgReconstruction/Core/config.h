@@ -35,25 +35,27 @@ static cv::Point DefaultPatchOffset = {1, 1};
 static int DefaultMaxPatchSideSize = 8;
 
 // comparison
-static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL2;
-static int DefaultComparisonEps = 500;
+static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL1;
+static int DefaultComparisonEps = 2000;
 static TBrightnessEqualization DefaultBrightnessEqualization = TBrightnessEqualizationDynRange;
 static TCompSum DefaultCompSum = TCompSumStd;
 static double DefaultBorderSumWeight = 1.5;
 
 // blur config
 static float DefaultBlurMetricRadiusRatio = 0.4f;
-static TBlurMeasureMethod DefaultBlurMeasureMethod = TBlurMeasureMethodFD;
+static TBlurMeasureMethod DefaultBlurMeasureMethod = TBlurMeasureMethodDynamicRange;
 
 // classification method
 static TPatchClassifyingMethod DefaultClassifyingMethod = TPatchClassifyingMethodPHash;
 
 // binarization
-static TBinarizationMethod DefaultBinMethod = TBinarizationMethodNICK;
-static cv::Size DefaultBinaryWindowSize = {25, 25};
+static TBinarizationMethod DefaultBinMethod = TBinarizationMethodNiBlack;
+static cv::Size DefaultBinPatchSize = {25, 25};
+static double DefautBinK = -0.2;
 
 // patch filtering
 static cv::Size DefaultFilteringPatchSize = {2, 2};
+static double DefaultFilteringBinK = 1.;
 static float DefaultMinPatchContrastValue = 40;
 
 // acc image

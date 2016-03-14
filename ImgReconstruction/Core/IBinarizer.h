@@ -7,7 +7,7 @@
 //
 #pragma once
 
-class IBinarizer
+class IBinarizer : public IImageSubprocessor
 {
 public:
 	virtual ~IBinarizer() {}

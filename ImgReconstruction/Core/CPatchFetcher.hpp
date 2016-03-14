@@ -13,6 +13,7 @@
 
 class CPatchFetcher: public IPatchFetcher
 {
+public:
     CPatchFetcher(const cv::Size& size, const cv::Point& offset) : _size(size), _offset(offset) {};
     
     virtual std::vector<CImagePatch> FetchPatches(const CImagePatch& imgPatch) const
@@ -37,7 +38,7 @@ class CPatchFetcher: public IPatchFetcher
         
         return patches;
     }
-public:
+private:
     cv::Size _size;
     cv::Point _offset;
 };

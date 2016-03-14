@@ -74,6 +74,7 @@
 		537A96531C96DA5D000F5B33 /* CNiBlackBinarizer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CNiBlackBinarizer.hpp; path = Core/CNiBlackBinarizer.hpp; sourceTree = "<group>"; };
 		537A96551C96DFC4000F5B33 /* IImageExtender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IImageExtender.h; path = Core/IImageExtender.h; sourceTree = "<group>"; };
 		537A96561C96E038000F5B33 /* CImageExtender.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = CImageExtender.hpp; path = Core/CImageExtender.hpp; sourceTree = "<group>"; };
+		537A96581C971A9F000F5B33 /* IImageComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IImageComparator.h; path = Core/IImageComparator.h; sourceTree = "<group>"; };
 		539319D71BCA3F560031292C /* IBlurMeasurer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IBlurMeasurer.h; path = Core/IBlurMeasurer.h; sourceTree = "<group>"; };
 		53A6930A1BB7D2F60097DFED /* IBinarizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IBinarizer.h; path = Core/IBinarizer.h; sourceTree = "<group>"; };
 		53A693101BB7D6100097DFED /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
@@ -257,6 +258,7 @@
 			children = (
 				537A963A1C95C61F000F5B33 /* Brightness equalization */,
 				537A96391C95C611000F5B33 /* Summator */,
+				537A96581C971A9F000F5B33 /* IImageComparator.h */,
 				53A693141BB7DA700097DFED /* CImageComparator.hpp */,
 				537A964F1C96B0BC000F5B33 /* CL1ImageComparator.hpp */,
 				537A964E1C96AFC9000F5B33 /* CL2ImageComparator.hpp */,

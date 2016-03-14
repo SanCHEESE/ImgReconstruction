@@ -10,11 +10,10 @@
 #include "IBrightnessEqualizer.h"
 #include "IImageSummator.h"
 
-class CImageComparator : public IImageSubprocessor
+class CImageComparator : public IImageComparator
 {
 public:
-    CImageComparator(IBrightnessEqualizer* equalizer, IImageSummator* summator, int eps) : _equalizer(equalizer), _summator(summator) {};
-    virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const = 0;
+    CImageComparator(IBrightnessEqualizer* equalizer, IImageSummator* summator, int eps) : _equalizer(equalizer), _summator(summator), _eps(eps) {};
 protected:
     IBrightnessEqualizer* _equalizer;
     IImageSummator* _summator;

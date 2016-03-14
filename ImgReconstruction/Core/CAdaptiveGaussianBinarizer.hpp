@@ -13,6 +13,8 @@
 class CAdaptiveGaussianBinarizer: public CBinarizer
 {
 public:
+    using CBinarizer::CBinarizer;
+    
     virtual CImage Binarize(const CImage& img) const
     {
         CImage resultImg;

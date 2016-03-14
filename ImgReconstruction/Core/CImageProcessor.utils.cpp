@@ -18,6 +18,8 @@ void CImageProcessor::BuildBinImage(const CImage &img)
     CImage binarizedImage;
     binarizedImage = _subprocHolder->PatchBinarizer()->Binarize(img);
     
+    binarizedImage.Save();
+    
     CTimeLogger::Print("Binarization: ");
     
     _mainImage.SetBinImage(binarizedImage);
@@ -28,7 +30,7 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::v
     std::map<int, std::vector<CImagePatch>> clusters;
     auto aClassCopy = std::vector<CImagePatch>(aClass);
     
-    CImageComparator* comparator = _subprocHolder->ImageComparator();
+    IImageComparator* comparator = _subprocHolder->ImageComparator();
     int aClassIdx = 0;
     for (int i = 0; i < aClassCopy.size(); i++) {
         

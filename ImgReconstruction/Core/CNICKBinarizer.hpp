@@ -13,6 +13,8 @@
 class CNICKBinarizer: public CBinarizer
 {
 public:
+    using CBinarizer::CBinarizer;
+    
     virtual CImage Binarize(const CImage& img) const
     {
         auto imgPatches = img.GetAllPatches(_patchSize, cv::Point(_patchSize.width, _patchSize.height));

@@ -13,8 +13,7 @@ void CImageProcessor::ProcessImage(const CImage& img, const std::string& resultI
 {
     _resultImageName = resultImageName;
     
-    GenerateHelperImages(img);
-    RestoreImageIteratively(_iterCount, _mainImage.GrayImage());
+    RestoreImageIteratively(_iterCount, img);
 }
 
 #pragma mark - Private
@@ -32,8 +31,8 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 {
     CImage image = img;
     for (int iter = 0; iter < iterCount; iter++) {
-        image = RestoreImage();
         GenerateHelperImages(image);
+        image = RestoreImage();
     }
     
     image.Save(_resultImageName, 100, "jpg");

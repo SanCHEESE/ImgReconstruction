@@ -11,7 +11,7 @@
 #import "IPatchClassifier.h"
 #import "CTimeLogger.h"
 
-class CAvgHashPatchClassifiers: public IPatchClassifier
+class CAvgHashPatchClassifier: public IPatchClassifier
 {
 public:
     virtual std::map<uint64, std::vector<CImagePatch>> Classify(std::vector<CImagePatch>& patches) const

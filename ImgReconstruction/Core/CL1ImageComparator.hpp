@@ -13,6 +13,8 @@
 class CL1ImageComparator: public CImageComparator
 {
 public:
+    using CImageComparator::CImageComparator;
+    
     virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const
     {
         CImage normPatch1;
