@@ -7,8 +7,7 @@
 //
 
 #include "CImage.h"
-#include "CImageProcessor.h"
-#include "CBlurMeasurer.h"
+#include "IBlurMeasurer.h"
 
 #pragma mark - Overrides
 
@@ -78,28 +77,6 @@ CImage CImage::GetSDImage(const cv::Size& filterSize) const
 	cv::sqrt(mu2 - mu.mul(mu), sigma);
 	
 	return CImage(sigma / 255.f);
-}
-
-CImage CImage::GetExtentImage(const cv::Size size) const
-{
-	cv::Size iterImageSize = {0, 0};
-	if (this->cols % size.width > 0) {
-		iterImageSize.width = (this->cols / size.width + 1) * size.width;
-	} else {
-		iterImageSize.width = this->cols;
-	}
-	
-	if (this->rows % size.height > 0) {
-		iterImageSize.height = (this->rows / size.height + 1) * size.height;
-	} else {
-		iterImageSize.height = this->rows;
-	}
-	
-	int avgColor = cv::mean(*this)[0] - 5;
-	CImage result = CImage(iterImageSize, cv::DataType<uchar>::type, avgColor);
-	CImage roi = result(cv::Rect(0, 0, this->cols, this->rows));
-	this->copyTo(roi);
-	return result;
 }
 
 CImage CImage::GetFFTImage() const

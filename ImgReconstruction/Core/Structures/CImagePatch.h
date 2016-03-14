@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "CBlurMeasurer.h"
+#include "IBlurMeasurer.h"
 #include "utils.h"
 
 class CImagePatch
@@ -32,8 +32,7 @@ public:
 		SetBinImage(patch.BinImage());
 	}
 	
-	double BlurValue(TBlurMeasureMethod method);
-    double BlurValue(TBlurMeasureMethod method, double addionalParam);
+    double BlurValue(const IBlurMeasurer* const measurer);
 	double StandartDeviation();
 	uint64 PHash();
 	uint64 AvgHash();
@@ -64,7 +63,6 @@ public:
     int aClass;
 private:
 	void Initialize();
-	double CalculateBlurValue(TBlurMeasureMethod method, double addionalParam) const;
 	double CalculateStandartDeviation() const;
 	
 	cv::Rect _frame;

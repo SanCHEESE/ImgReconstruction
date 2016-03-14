@@ -7,7 +7,6 @@
 
 #include "CImageProcessor.h"
 #include "CTimeLogger.h"
-#include "CDocumentBinarizer.h"
 #include "CAccImage.h"
 
 void CImageProcessor::ProcessImage(const CImage& img, const std::string& resultImageName)
@@ -22,10 +21,7 @@ void CImageProcessor::ProcessImage(const CImage& img, const std::string& resultI
 
 void CImageProcessor::GenerateHelperImages(const CImage& img)
 {
-    cv::Size binaryWindowSize;
-    _config.GetParam(BinaryWindowSizeConfigKey).GetValue(binaryWindowSize);
-    
-    CImage extentImage = img.GetExtentImage(binaryWindowSize);
+    CImage extentImage = _subprocHolder->ImageExtender()->Extent(img);
     
     _mainImage = CImagePatch();
     _mainImage.SetGrayImage(extentImage);
@@ -47,35 +43,22 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 
 CImage CImageProcessor::RestoreImage()
 {
-    int patchSideSize;
-    TBlurMeasureMethod blurMethod;
-    TAccImageSumMethod sumMethod;
-    double blurParam;
-    _config.GetParam(MaxPatchSideSizeConfigKey).GetValue(patchSideSize);
-    _config.GetParam(BlurMeasureMethodConfigKey).GetValue(blurMethod);
-    _config.GetParam(AccImageSumMethodConfigKey).GetValue(sumMethod);
-    
     // get all image patches
-    std::vector<CImagePatch> patches = FetchPatches({0, 0, patchSideSize, patchSideSize});
+    std::vector<CImagePatch> patches = _subprocHolder->PatchFetcher()->FetchPatches(_mainImage);
     
     // filter patches
-    patches = FilterPatches(patches);
+    patches = _subprocHolder->PatchFilter()->FilterPatches(patches);
     
     // calculating
     for (CImagePatch& patch: patches) {
-        if (blurMethod == TBlurMeasureMethodFFT) {
-            patch.BlurValue(blurMethod, blurParam);
-        } else {
-            patch.BlurValue(blurMethod);
-        }
+        patch.BlurValue(_subprocHolder->BlurMeasurer());
     }
     
     // classification by PHash/AvgHash
-    std::map<uint64, std::vector<CImagePatch>> classes = Classify(patches);
+    std::map<uint64, std::vector<CImagePatch>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
     
     CAccImage accImage(_mainImage.GrayImage());
     
-    int i = 0;
     for (auto &it: classes) {
         std::vector<CImagePatch> aClass = it.second;
         if (aClass.size() < 2) {
@@ -93,19 +76,6 @@ CImage CImageProcessor::RestoreImage()
                 // sorting by blur increase
                 std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
                 
-#if IMAGE_OUTPUT_ENABLED && VERBOSE
-                CImage result(1, MaxPatchSideSize, CV_8UC1, cv::Scalar(255));
-                for (int i = 0; i < clusterPatches.size(); i++) {
-                    CImage greyPatchImg = clusterPatches[i].GrayImage();
-                    cv::Mat horisontalSeparator(1, greyPatchImg.GetFrame().width, CV_8UC1, cv::Scalar(255));
-                    cv::vconcat(result, greyPatchImg, result);
-                    cv::vconcat(result, horisontalSeparator, result);
-                }
-                
-                result.Save(_resultImageName + "_" + std::to_string(i) + "_hist", 100, "jpg");
-#endif
-                i++;
-
                 // copying to summing image
                 CImagePatch bestPatch = clusterPatches[0];
                 for (auto& patch: clusterPatches) {
@@ -117,9 +87,5 @@ CImage CImageProcessor::RestoreImage()
         }
     }
     
-#if IMAGE_OUTPUT_ENABLED
-    accImage.CreateHistImage().Save(_resultImageName + "_hist_total", 100, "jpg");
-#endif
-
-    return accImage.GetResultImage(sumMethod);
+    return accImage.GetResultImage(_config.accImageSumMethod);
 }

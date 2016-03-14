@@ -8,6 +8,8 @@
 
 #pragma once
 
+class IBlurMeasurer;
+
 class CImage : public cv::Mat
 {
 public:
@@ -34,7 +36,6 @@ public:
 	// get calculated images
 	CImage GetFFTImage() const;
 	CImage GetResizedImage(const cv::Size& size) const;
-	CImage GetExtentImage(const cv::Size size) const;
 	CImage GetSDImage(const cv::Size& filterSize) const;
 	CImage GetPatch(const cv::Rect& rect) const;
     CImage GetRotatedImage(double angle) const;

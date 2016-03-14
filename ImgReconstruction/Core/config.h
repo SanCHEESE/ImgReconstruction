@@ -16,8 +16,7 @@ static const std::string SaveImgPath = "../../out/";
 static const std::string PatchOffsetConfigKey = "PatchOffsetConfigKey";
 static const std::string MaxPatchSideSizeConfigKey = "MaxPatchSideSizeConfigKey";
 static const std::string CompMetricConfigKey = "CompMetricConfigKey";
-static const std::string ComparisonEpsL1ConfigKey = "ComparisonEpsL1ConfigKey";
-static const std::string ComparisonEpsL2ConfigKey = "ComparisonEpsL2ConfigKey";
+static const std::string ComparisonEpsConfigKey = "ComparisonEpsL1ConfigKey";
 static const std::string CompSumConfigKey = "CompSumConfigKey";
 static const std::string BorderSumWeightConfigKey = "BorderSumWeightConfigKey";
 static const std::string BrightnessEqualizationConfigKey = "BrightnessEqualizationConfigKey";
@@ -37,9 +36,7 @@ static int DefaultMaxPatchSideSize = 8;
 
 // comparison
 static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL2;
-static int DefaultComparisonEpsL1 = 500;
-static int DefaultComparisonEpsStdL2 = 6000;
-static int DefaultComparisonEpsBorderL2 = 600;
+static int DefaultComparisonEps = 500;
 static TBrightnessEqualization DefaultBrightnessEqualization = TBrightnessEqualizationDynRange;
 static TCompSum DefaultCompSum = TCompSumStd;
 static double DefaultBorderSumWeight = 1.5;
@@ -58,7 +55,6 @@ static cv::Size DefaultBinaryWindowSize = {25, 25};
 // patch filtering
 static cv::Size DefaultFilteringPatchSize = {2, 2};
 static float DefaultMinPatchContrastValue = 40;
-static TPatchFilteringCriteria DefaultPatchFileringCriteria = TPatchFilteringCriteriaFull;
 
 // acc image
 static TAccImageSumMethod DefaultAccImageSumMethod = TAccImageSumMethodAvg;

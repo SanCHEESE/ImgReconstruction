@@ -7,28 +7,17 @@
 //
 
 #include "CImagePatch.h"
-#include "CImageProcessor.h"
 
 #pragma mark - Public
 
-double CImagePatch::BlurValue(TBlurMeasureMethod method)
-{
-	if (_blurValue < 0) {
-		_blurValue = CalculateBlurValue(method, 0);
-	}
-	
-	return _blurValue;
-}
-
-double CImagePatch::BlurValue(TBlurMeasureMethod method, double addionalParam)
+double CImagePatch::BlurValue(const IBlurMeasurer *const measurer)
 {
     if (_blurValue < 0) {
-        _blurValue = CalculateBlurValue(method, addionalParam);
+        _blurValue = measurer->Measure(_grayImage);
     }
     
     return _blurValue;
 }
-
 
 double CImagePatch::StandartDeviation()
 {
@@ -84,15 +73,6 @@ void CImagePatch::Initialize()
 	_standartDeviation = -1;
 	_pHashComputed = false;
 	_avgHashComputed = false;
-}
-
-double CImagePatch::CalculateBlurValue(TBlurMeasureMethod method, double addionalParam) const
-{
-	CBlurMeasurer measurer(method);
-    if (method == TBlurMeasureMethodFFT) {
-        return measurer.Measure(_grayImage, addionalParam);
-    }
-	return measurer.Measure(_grayImage);
 }
 
 double CImagePatch::CalculateStandartDeviation() const
