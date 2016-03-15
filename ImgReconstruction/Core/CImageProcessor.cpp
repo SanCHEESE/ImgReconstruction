@@ -9,9 +9,9 @@
 #include "CTimeLogger.h"
 #include "CAccImage.h"
 
-void CImageProcessor::ProcessImage(const CImage& img, const std::string& resultImageName)
+void CImageProcessor::ProcessImage(const CImage& img, const std::string& outImagePath)
 {
-    _resultImageName = resultImageName;
+    _outImagePath = outImagePath;
     
     RestoreImageIteratively(_iterCount, img);
 }
@@ -35,7 +35,7 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
         image = RestoreImage();
     }
     
-    image.Save(_resultImageName, 100, "jpg");
+    image.Save(_outImagePath, 100, "jpg");
     
     return image;
 }

@@ -7,13 +7,19 @@
 //
 
 #include "CImageProcessor.h"
+#include "CImageSubprocessorHolder.h"
 
 using namespace cv;
 
 int main(int argc, char** argv)
 {
-    if (argc <= 1) {
-        std::wcerr << "Too few arguments!" << std::endl;
+    if (argc <= 2 || std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help") {
+        std::wcerr << "Too few arguments! \n\
+        USAGE: imgReconstruction in_path out_path (opt)config_path\n \
+        in_path - path to input image\n \
+        out_path - path to output image\n \
+        config_path - path to json formatted config (optional)\n" << std::endl;
+        return 1;
     }
 	CImage image = CImage(argv[1], IMREAD_GRAYSCALE);
     
@@ -21,9 +27,11 @@ int main(int argc, char** argv)
         std::wcerr << "No such image!" << std::endl;
 		return 1;
 	}
+    
+    CImageSubprocessorHolder::GetInstance().Configure(argv[3]);
 	
     CImageProcessor imProc = CImageProcessor();
-    imProc.ProcessImage(image, "result");
+    imProc.ProcessImage(image, argv[2]);
 	
 	return 0;
 }

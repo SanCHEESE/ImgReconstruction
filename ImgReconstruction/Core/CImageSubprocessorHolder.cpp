@@ -6,6 +6,10 @@
 //  Copyright © 2016 Alexander Bochkarev. All rights reserved.
 //
 
+#include <fstream>
+
+#include "json.hpp"
+
 #include "CImageSubprocessorHolder.h"
 
 #include "CPatchFilter.hpp"
@@ -33,6 +37,9 @@
 #include "CNiBlackBinarizer.hpp"
 
 #include "CImageExtender.hpp"
+
+// for convenience
+using json = nlohmann::json;
 
 CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, double k)
 {
@@ -145,7 +152,7 @@ CImageSubprocessorHolder::CImageSubprocessorHolder()
     IPatchFetcher *patchFetcher = new CPatchFetcher(cv::Size(DefaultMaxPatchSideSize, DefaultMaxPatchSideSize), DefaultPatchOffset);
     _subprocessors[PatchFetcherKey] = patchFetcher;
     
-    IBinarizer *filterBinarizer = Binarizer(DefaultBinMethod, DefaultFilteringPatchSize, 1.0);
+    IBinarizer *filterBinarizer = Binarizer(DefaultBinMethod, DefaultFilteringPatchSize, DefaultFilteringBinK);
     _subprocessors[FilterBinarizerKey] = filterBinarizer;
     IPatchFilter *patchFilter = new CPatchFilter(filterBinarizer, DefaultMinPatchContrastValue, DefaultFilteringPatchSize);
     _subprocessors[PatchFilterKey] = patchFilter;
@@ -171,6 +178,59 @@ CImageSubprocessorHolder::CImageSubprocessorHolder()
     
     _config.accImageSumMethod = DefaultAccImageSumMethod;
 };
+
+void CImageSubprocessorHolder::Configure(const std::string &path)
+{
+    std::ifstream ifs(path);
+    std::string content((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+    
+    auto json = json::parse(content);
+    
+    auto patchFetchJson = json[PatchFetchJsonKey];
+    IPatchFetcher *patchFetcher = new CPatchFetcher({patchFetchJson[PatchSizeJsonKey][WidthJsonKey], patchFetchJson[PatchSizeJsonKey][HeightJsonKey]}, {patchFetchJson[PatchOffsetJsonKey][XJsonKey], patchFetchJson[PatchOffsetJsonKey][YJsonKey]});
+    _subprocessors[PatchFetcherKey] = patchFetcher;
+    
+    auto filterJson = json[PatchFilterJsonKey];
+    auto filterBinJson = filterJson[BinJsonKey];
+    cv::Size patchSize = {filterBinJson[PatchSizeJsonKey][WidthJsonKey], filterBinJson[PatchSizeJsonKey][HeightJsonKey]};
+    int binMethod = filterBinJson[MethodJsonKey];
+    IBinarizer *filterBinarizer = Binarizer((TBinarizationMethod)binMethod, patchSize, filterBinJson[KJsonKey]);
+    _subprocessors[FilterBinarizerKey] = filterBinarizer;
+    IPatchFilter *patchFilter = new CPatchFilter(filterBinarizer, filterJson[ContrastValueJsonKey], patchSize);
+    _subprocessors[PatchFilterKey] = patchFilter;
+
+    auto comparatorJson = json[ImageCompareJsonKey];
+    auto summatorJson = comparatorJson[ImageSumJsonKey];
+    int compSum = summatorJson[MethodJsonKey];
+    IImageSummator *summator = Summator((TCompSum)compSum, summatorJson[SummatorWeightJsonKey]);
+    _subprocessors[CompImgSummatorKey] = summator;
+    int brightnessEqualization = comparatorJson[BrightnessEqualizeJsonKey];
+    IBrightnessEqualizer *brightnessEqualizer = BrightnessEqualizer((TBrightnessEqualization)brightnessEqualization);
+    _subprocessors[CompBrightnessEqualizerKey] = brightnessEqualizer;
+    int compMetric = comparatorJson[MetricJsonKey];
+    IImageComparator* comparator = Comparator((TImageCompareMetric)compMetric, brightnessEqualizer, summator, comparatorJson[EpsJsonKey]);
+    _subprocessors[ComparatorKey] = comparator;
+    
+    auto binJson = json[BinJsonKey];
+    binMethod = binJson[MethodJsonKey];
+    IBinarizer *binarizer = Binarizer((TBinarizationMethod)binMethod, {binJson[PatchSizeJsonKey][WidthJsonKey], binJson[PatchSizeJsonKey][HeightJsonKey]}, binJson[KJsonKey]);
+    _subprocessors[BinarizerKey] = binarizer;
+    
+    auto blurJson = json[BlurMeasureJsonKey];
+    int blurMeasureMethod = blurJson[MethodJsonKey];
+    IBlurMeasurer* measurer = Measurer((TBlurMeasureMethod)blurMeasureMethod, blurJson[BlurRatioJsonKey]);
+    _subprocessors[BlurMeasurerKey] = measurer;
+    
+    IImageExtender* extender = new CImageExtender({json[ExtenderPatchSizeJsonKey][WidthJsonKey], json[ExtenderPatchSizeJsonKey][HeightJsonKey]});
+    _subprocessors[ImageExtenderKey] = extender;
+    
+    int classifyingMethod = json[ClassifierJsonKey];
+    IPatchClassifier* classifier = Classifier((TPatchClassifyingMethod)classifyingMethod);
+    _subprocessors[PatchClassifierKey] = classifier;
+    
+    int accSumMethod = json[AccSumJsonKey];
+    _config.accImageSumMethod = (TAccImageSumMethod)accSumMethod;
+}
 
 CImageSubprocessorHolder::~CImageSubprocessorHolder()
 {

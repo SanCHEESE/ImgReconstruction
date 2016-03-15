@@ -10,25 +10,32 @@
 
 #include "typedefs.h"
 
-// сonfigs
-static const std::string SaveImgPath = "../../out/";
+// common
+static const std::string XJsonKey = "x";
+static const std::string YJsonKey = "y";
+static const std::string WidthJsonKey = "width";
+static const std::string HeightJsonKey = "height";
+static const std::string KJsonKey = "k";
 
-static const std::string PatchOffsetConfigKey = "PatchOffsetConfigKey";
-static const std::string MaxPatchSideSizeConfigKey = "MaxPatchSideSizeConfigKey";
-static const std::string CompMetricConfigKey = "CompMetricConfigKey";
-static const std::string ComparisonEpsConfigKey = "ComparisonEpsL1ConfigKey";
-static const std::string CompSumConfigKey = "CompSumConfigKey";
-static const std::string BorderSumWeightConfigKey = "BorderSumWeightConfigKey";
-static const std::string BrightnessEqualizationConfigKey = "BrightnessEqualizationConfigKey";
-static const std::string BlurMetricRadiusRatioConfigKey = "BlurMetricRadiusRatioConfigKey";
-static const std::string BlurMeasureMethodConfigKey = "BlurMeasureMethodConfigKey";
-static const std::string ClassifyingMethodConfigKey = "ClassifyingMethodConfigKey";
-static const std::string BinMethodConfigKey = "BinMethodConfigKey";
-static const std::string BinaryWindowSizeConfigKey = "BinaryWindowSizeConfigKey";
-static const std::string FilteringPatchSizeConfigKey = "FilteringPatchSizeConfigKey";
-static const std::string MinPatchContrastValueConfigKey = "MinPatchContrastValueConfigKey";
-static const std::string PatchFileringCriteriaConfigKey = "PatchFileringCriteriaConfigKey";
-static const std::string AccImageSumMethodConfigKey = "AccImageSumMethodConfigKey";
+static const std::string BinJsonKey = "bin";
+static const std::string MethodJsonKey = "method";
+static const std::string MetricJsonKey = "metric";
+static const std::string EpsJsonKey = "eps";
+static const std::string PatchOffsetJsonKey = "offset";
+static const std::string PatchSizeJsonKey = "size";
+static const std::string SummatorWeightJsonKey = "weight";
+static const std::string ContrastValueJsonKey = "contrast";
+static const std::string BlurRatioJsonKey = "ratio";
+
+static const std::string BlurMeasureJsonKey = "blur";
+static const std::string ExtenderPatchSizeJsonKey = "extend";
+static const std::string AccSumJsonKey = "acc";
+static const std::string ClassifierJsonKey = "classifier";
+static const std::string PatchFilterJsonKey = "filter";
+static const std::string PatchFetchJsonKey = "fetch";
+static const std::string ImageSumJsonKey = "sum";
+static const std::string BrightnessEqualizeJsonKey = "equalize";
+static const std::string ImageCompareJsonKey = "compare";
 
 // patch fetching
 static cv::Point DefaultPatchOffset = {1, 1};
@@ -36,14 +43,14 @@ static int DefaultMaxPatchSideSize = 8;
 
 // comparison
 static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL1;
-static int DefaultComparisonEps = 2000;
+static int DefaultComparisonEps = 1000;
 static TBrightnessEqualization DefaultBrightnessEqualization = TBrightnessEqualizationDynRange;
 static TCompSum DefaultCompSum = TCompSumStd;
 static double DefaultBorderSumWeight = 1.5;
 
 // blur config
 static float DefaultBlurMetricRadiusRatio = 0.4f;
-static TBlurMeasureMethod DefaultBlurMeasureMethod = TBlurMeasureMethodDynamicRange;
+static TBlurMeasureMethod DefaultBlurMeasureMethod = TBlurMeasureMethodFD;
 
 // classification method
 static TPatchClassifyingMethod DefaultClassifyingMethod = TPatchClassifyingMethodPHash;

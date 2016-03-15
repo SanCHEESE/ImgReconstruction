@@ -31,7 +31,7 @@ public:
 	void CopyMetadataTo(CImage& image) const;
 	
 	// save
-    void Save(const std::string& name = "", int quality = 100, const std::string& ext = "png") const;
+    void Save(const std::string& path = "", int quality = 100, const std::string& ext = "png") const;
 	
 	// get calculated images
 	CImage GetFFTImage() const;

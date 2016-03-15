@@ -6,6 +6,8 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
+#include <sstream>
+
 #include "CImage.h"
 #include "IBlurMeasurer.h"
 
@@ -43,15 +45,27 @@ std::ostream& operator<<(std::ostream& os, const CImage& img)
 
 #pragma mark - Save
 
-void CImage::Save(const std::string& name, int quality, const std::string& ext) const
+void CImage::Save(const std::string& path, int quality, const std::string& ext) const
 {
     std::stringstream nameBuffer;
-    if (name == "") {
+    if (path == "") {
         auto start = std::chrono::high_resolution_clock::now();
         auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch());
-        nameBuffer << SaveImgPath + "tmp-" << nsec.count() << "." << ext;
+        nameBuffer << "tmp-" << nsec.count() << "." << ext;
     } else {
-        nameBuffer << SaveImgPath + name + "." + ext;
+        std::vector<std::string> pathComponents;
+        std::stringstream stream(path);
+        std::string pathComponent;
+        while(getline(stream, pathComponent, '.')) {
+            pathComponents.push_back(pathComponent);
+        }
+        
+        if (pathComponent == "jpg" || pathComponent == "tiff" || pathComponent == "bmp" || pathComponent == "jpeg") {
+            nameBuffer << path;
+        } else {
+            nameBuffer << path + "." + ext;
+            std::clog << "Saved to " << nameBuffer.str() << std::endl;
+        }
     }
     
     std::vector<int> compression_params;

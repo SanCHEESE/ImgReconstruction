@@ -19,7 +19,7 @@ public:
     };
 	
 	// Project specific
-    void ProcessImage(const CImage& img, const std::string& outputImageName);
+    void ProcessImage(const CImage& img, const std::string& outImagePath);
     void SetIterCount(int iterCount) {_iterCount = iterCount;};
     
 private:
@@ -33,7 +33,7 @@ private:
     std::map<int, std::vector<CImagePatch>> Clusterize(const std::vector<CImagePatch>& aClass);
 	
     // misc
-    std::string _resultImageName;
+    std::string _outImagePath;
     
 	CImagePatch _mainImage;
     int _iterCount;
