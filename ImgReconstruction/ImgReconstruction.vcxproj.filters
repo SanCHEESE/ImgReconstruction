@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8a17af0e-4234-42dd-a28e-15817c624ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Structures">
+      <UniqueIdentifier>{696be523-24ea-493c-a15b-8e900da9e0cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Common">
+      <UniqueIdentifier>{73d48931-1c2a-4a47-b26a-84dc389beea2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm">
+      <UniqueIdentifier>{daab8344-9e5c-4834-9851-f811c7cf149d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors">
+      <UniqueIdentifier>{6ab7171f-ce53-4e18-b681-fe363115bf8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Helpers">
+      <UniqueIdentifier>{129148cb-1e21-4572-999d-17301cee8c60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\BlurMeasurer">
+      <UniqueIdentifier>{20c33501-c121-4372-9a92-98dd5fab1a94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\Summator">
+      <UniqueIdentifier>{fb158cf8-5772-436c-8213-62f54f8a5d72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\Extender">
+      <UniqueIdentifier>{b78e2e03-850d-4a9c-9744-cced3fa029da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\Fetcher">
+      <UniqueIdentifier>{6ec74c1f-b2e2-43d0-ba96-40ae07eaab94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\Filter">
+      <UniqueIdentifier>{aaa8f1de-c874-4588-988b-93417496f503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\Comparator">
+      <UniqueIdentifier>{50e16521-e27b-4a07-a366-7da5e5879ad5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\Equalizer">
+      <UniqueIdentifier>{3847d10e-c76b-4ad0-a8a8-6310b1261187}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\Binarizer">
+      <UniqueIdentifier>{a8fb9f2a-3ce6-44bf-b81a-703c16197bcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\Classifier">
+      <UniqueIdentifier>{19c6e4f1-30cb-47b5-96fb-286df9e03b8b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Helpers\CTimeLogger.cpp">
+      <Filter>src\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Structures\CImage.cpp">
+      <Filter>src\Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\utils.cpp">
+      <Filter>src\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\CImageProcessor.cpp">
+      <Filter>src\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\CImageProcessor.utils.cpp">
+      <Filter>src\Algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Structures\CAccImage.cpp">
+      <Filter>src\Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Structures\CImagePatch.cpp">
+      <Filter>src\Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\CImageSubprocessorHolder.cpp">
+      <Filter>src\Algorithm\Suprocessors</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Helpers\CTimeLogger.h">
+      <Filter>src\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Structures\CImage.h">
+      <Filter>src\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Structures\CImagePatch.h">
+      <Filter>src\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\utils.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IBlurMeasurer.h">
+      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IImageSubprocessor.h">
+      <Filter>src\Algorithm\Suprocessors</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CDynamicRangeBlurMeasurer.hpp">
+      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CFDBlurMeasurer.hpp">
+      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CFFTBlurMeasurer.hpp">
+      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CStdDeviationBlurMeasurer.hpp">
+      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CBorderImageSummator.hpp">
+      <Filter>src\Algorithm\Suprocessors\Summator</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CStdImageSummator.hpp">
+      <Filter>src\Algorithm\Suprocessors\Summator</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IImageSummator.h">
+      <Filter>src\Algorithm\Suprocessors\Summator</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CImageProcessor.h">
+      <Filter>src\Algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Structures\CAccImage.h">
+      <Filter>src\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IImageExtender.h">
+      <Filter>src\Algorithm\Suprocessors\Extender</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CImageExtender.hpp">
+      <Filter>src\Algorithm\Suprocessors\Extender</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IPatchFetcher.h">
+      <Filter>src\Algorithm\Suprocessors\Fetcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPatchFetcher.hpp">
+      <Filter>src\Algorithm\Suprocessors\Fetcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPatchFilter.hpp">
+      <Filter>src\Algorithm\Suprocessors\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IPatchFilter.h">
+      <Filter>src\Algorithm\Suprocessors\Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CL1ImageComparator.hpp">
+      <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CL2ImageComparator.hpp">
+      <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IImageComparator.h">
+      <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IBrightnessEqualizer.h">
+      <Filter>src\Algorithm\Suprocessors\Equalizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CMeanBrightnessEqualizer.hpp">
+      <Filter>src\Algorithm\Suprocessors\Equalizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CDynRangeBrightnessEqualizer.hpp">
+      <Filter>src\Algorithm\Suprocessors\Equalizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CImageComparator.hpp">
+      <Filter>src\Algorithm\Suprocessors</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CImageSubprocessorHolder.h">
+      <Filter>src\Algorithm\Suprocessors</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CBinarizer.hpp">
+      <Filter>src\Algorithm\Suprocessors\Binarizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CAdaptiveGaussianBinarizer.hpp">
+      <Filter>src\Algorithm\Suprocessors\Binarizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CNiBlackBinarizer.hpp">
+      <Filter>src\Algorithm\Suprocessors\Binarizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CNICKBinarizer.hpp">
+      <Filter>src\Algorithm\Suprocessors\Binarizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IBinarizer.h">
+      <Filter>src\Algorithm\Suprocessors\Binarizer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\config.h">
+      <Filter>src\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IPatchClassifier.h">
+      <Filter>src\Algorithm\Suprocessors\Classifier</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CAvgHashPatchClassifier.hpp">
+      <Filter>src\Algorithm\Suprocessors\Classifier</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CPHashPatchClassifier.hpp">
+      <Filter>src\Algorithm\Suprocessors\Classifier</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

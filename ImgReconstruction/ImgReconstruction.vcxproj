@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{85186A01-CEA5-4124-93E0-445684B772AD}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ImgReconstruction</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Helpers;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core\Structures;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <ExecutablePath>C:\opencv\build\x64\vc14\bin;$(ExecutablePath)</ExecutablePath>
+    <LibraryPath>C:\opencv\build\x64\vc14\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core\Structures;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Helpers;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core;$(IncludePath)</IncludePath>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>C:\opencv\build\include;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <PrecompiledHeaderFile>stdafx.h common.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opencv_world310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>C:\opencv\build\include;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opencv_world310.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent />
+    <PostBuildEvent>
+      <Command>xcopy  "$(TargetPath)"  "C:\Diploma" /Y /R</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\CImageProcessor.cpp" />
+    <ClCompile Include="Core\CImageProcessor.utils.cpp" />
+    <ClCompile Include="Core\CImageSubprocessorHolder.cpp" />
+    <ClCompile Include="Core\Structures\CAccImage.cpp" />
+    <ClCompile Include="Core\Structures\CImage.cpp" />
+    <ClCompile Include="Core\Structures\CImagePatch.cpp" />
+    <ClCompile Include="Core\utils.cpp" />
+    <ClCompile Include="Helpers\CTimeLogger.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common.h" />
+    <ClInclude Include="Core\CAdaptiveGaussianBinarizer.hpp" />
+    <ClInclude Include="Core\CAvgHashPatchClassifier.hpp" />
+    <ClInclude Include="Core\CBinarizer.hpp" />
+    <ClInclude Include="Core\CBorderImageSummator.hpp" />
+    <ClInclude Include="Core\CDynamicRangeBlurMeasurer.hpp" />
+    <ClInclude Include="Core\CDynRangeBrightnessEqualizer.hpp" />
+    <ClInclude Include="Core\CFDBlurMeasurer.hpp" />
+    <ClInclude Include="Core\CFFTBlurMeasurer.hpp" />
+    <ClInclude Include="Core\CImageComparator.hpp" />
+    <ClInclude Include="Core\CImageExtender.hpp" />
+    <ClInclude Include="Core\CImageProcessor.h" />
+    <ClInclude Include="Core\CImageSubprocessorHolder.h" />
+    <ClInclude Include="Core\CL1ImageComparator.hpp" />
+    <ClInclude Include="Core\CL2ImageComparator.hpp" />
+    <ClInclude Include="Core\CMeanBrightnessEqualizer.hpp" />
+    <ClInclude Include="Core\CNiBlackBinarizer.hpp" />
+    <ClInclude Include="Core\CNICKBinarizer.hpp" />
+    <ClInclude Include="Core\config.h" />
+    <ClInclude Include="Core\CPatchFetcher.hpp" />
+    <ClInclude Include="Core\CPatchFilter.hpp" />
+    <ClInclude Include="Core\CPHashPatchClassifier.hpp" />
+    <ClInclude Include="Core\CStdDeviationBlurMeasurer.hpp" />
+    <ClInclude Include="Core\CStdImageSummator.hpp" />
+    <ClInclude Include="Core\IBinarizer.h" />
+    <ClInclude Include="Core\IBlurMeasurer.h" />
+    <ClInclude Include="Core\IBrightnessEqualizer.h" />
+    <ClInclude Include="Core\IImageComparator.h" />
+    <ClInclude Include="Core\IImageExtender.h" />
+    <ClInclude Include="Core\IImageSubprocessor.h" />
+    <ClInclude Include="Core\IImageSummator.h" />
+    <ClInclude Include="Core\IPatchClassifier.h" />
+    <ClInclude Include="Core\IPatchFetcher.h" />
+    <ClInclude Include="Core\IPatchFilter.h" />
+    <ClInclude Include="Core\Structures\CAccImage.h" />
+    <ClInclude Include="Core\Structures\CImage.h" />
+    <ClInclude Include="Core\Structures\CImagePatch.h" />
+    <ClInclude Include="Core\utils.h" />
+    <ClInclude Include="Helpers\CTimeLogger.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
