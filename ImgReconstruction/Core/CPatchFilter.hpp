@@ -15,10 +15,10 @@
 class CPatchFilter: public IPatchFilter
 {
 public:
-    CPatchFilter(IBinarizer *binarizer, double minContrastValue, const cv::Size& filterPatchSize = {2, 2}) :
-        _binarizer(binarizer),
-        _minContrastValue(minContrastValue),
-        _filterPatchSize(filterPatchSize) {};
+	CPatchFilter(IBinarizer *binarizer, double minContrastValue, const cv::Size& filterPatchSize = {2, 2}) :
+		_binarizer(binarizer),
+		_minContrastValue(minContrastValue),
+		_filterPatchSize(filterPatchSize) {};
 
 	virtual bool PatchPassesFilter(const CImagePatch& patch) const
 	{
@@ -26,11 +26,16 @@ public:
 
 		CImage grey2x2 = patch.GrayImage().GetResizedImage(_filterPatchSize);
 		CImage bin2x2 = _binarizer->Binarize(grey2x2);
+
+		int blackPixels = 0;
 		for (int column = 0; column < bin2x2.GetSize().width; column++) {
 			for (int row = 0; row < bin2x2.GetSize().height; row++) {
-				passedBin = bin2x2.at<uchar>(column, row) < 255;
+				blackPixels += bin2x2.at<uchar>(column, row) < 255;
 			}
 		}
+
+		/* black pixels takes more or eq than 25% */
+		passedBin = blackPixels / bin2x2.GetSize().area() >= 0.25;
 
 		bool passedContrast = false;
 		if (passedBin) {
@@ -39,29 +44,29 @@ public:
 
 		return passedContrast && passedBin;
 	}
-    
-    virtual std::vector<CImagePatch> FilterPatches(const std::vector<CImagePatch>& patches) const
-    {
-        CTimeLogger::StartLogging();
-        
-        std::vector<CImagePatch> filteredPatches;
-        
-        for (const CImagePatch& patch: patches) {
-            if (PatchPassesFilter(patch)) {
-                filteredPatches.push_back(patch);
-            }
-        }
-        
-        
-     /*   std::cout << "Before filter: " << patches.size() << std::endl;
-        std::cout << "After filter: " << filteredPatches.size() << std::endl;*/
-        CTimeLogger::Print("Patch filtering: ");
-        
-        return filteredPatches;
-    }
-    
+	
+	virtual std::vector<CImagePatch> FilterPatches(const std::vector<CImagePatch>& patches) const
+	{
+		CTimeLogger::StartLogging();
+		
+		std::vector<CImagePatch> filteredPatches;
+		
+		for (const CImagePatch& patch: patches) {
+			if (PatchPassesFilter(patch)) {
+				filteredPatches.push_back(patch);
+			}
+		}
+		
+		
+	 /*   std::cout << "Before filter: " << patches.size() << std::endl;
+		std::cout << "After filter: " << filteredPatches.size() << std::endl;*/
+		CTimeLogger::Print("Patch filtering: ");
+		
+		return filteredPatches;
+	}
+	
 private:
-    IBinarizer* _binarizer;
-    cv::Size _filterPatchSize;
-    double _minContrastValue;
+	IBinarizer* _binarizer;
+	cv::Size _filterPatchSize;
+	double _minContrastValue;
 };

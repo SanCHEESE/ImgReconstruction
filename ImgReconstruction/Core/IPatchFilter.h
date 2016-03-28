@@ -15,7 +15,7 @@
 class IPatchFilter: public IImageSubprocessor
 {
 public:
-    virtual ~IPatchFilter() {};
-    virtual std::vector<CImagePatch> FilterPatches(const std::vector<CImagePatch>& patches) const = 0;
+	virtual ~IPatchFilter() {};
+	virtual std::vector<CImagePatch> FilterPatches(const std::vector<CImagePatch>& patches) const = 0;
 	virtual bool PatchPassesFilter(const CImagePatch& patch) const = 0;
 };

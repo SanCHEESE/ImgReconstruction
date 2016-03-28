@@ -47,31 +47,31 @@ std::ostream& operator<<(std::ostream& os, const CImage& img)
 
 void CImage::Save(const std::string& path, int quality, const std::string& ext) const
 {
-    std::stringstream nameBuffer;
-    if (path == "") {
-        auto start = std::chrono::high_resolution_clock::now();
-        auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch());
-        nameBuffer << "tmp-" << nsec.count() << "." << ext;
-    } else {
-        std::vector<std::string> pathComponents;
-        std::stringstream stream(path);
-        std::string pathComponent;
-        while(getline(stream, pathComponent, '.')) {
-            pathComponents.push_back(pathComponent);
-        }
-        
-        if (pathComponent == "jpg" || pathComponent == "tiff" || pathComponent == "bmp" || pathComponent == "jpeg") {
-            nameBuffer << path;
-        } else {
-            nameBuffer << path + "." + ext;
+	std::stringstream nameBuffer;
+	if (path == "") {
+		auto start = std::chrono::high_resolution_clock::now();
+		auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(start.time_since_epoch());
+		nameBuffer << "tmp-" << nsec.count() << "." << ext;
+	} else {
+		std::vector<std::string> pathComponents;
+		std::stringstream stream(path);
+		std::string pathComponent;
+		while(getline(stream, pathComponent, '.')) {
+			pathComponents.push_back(pathComponent);
+		}
+		
+		if (pathComponent == "jpg" || pathComponent == "tiff" || pathComponent == "bmp" || pathComponent == "jpeg") {
+			nameBuffer << path;
+		} else {
+			nameBuffer << path + "." + ext;
 			//std::clog << "Saved to " << nameBuffer.str() << std::endl;
-        }
-    }
-    
-    std::vector<int> compression_params;
-    compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
-    compression_params.push_back(quality);
-    cv::imwrite(nameBuffer.str(), *this, compression_params);
+		}
+	}
+	
+	std::vector<int> compression_params;
+	compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+	compression_params.push_back(quality);
+	cv::imwrite(nameBuffer.str(), *this, compression_params);
 }
 
 #pragma mark - Get calculated images
@@ -156,7 +156,7 @@ CImage CImage::GetResizedImage(const cv::Size &size) const
 {
 	CImage result;
 	cv::resize(*this, result, size, cv::INTER_NEAREST);
-    result._frame = cv::Rect(0, 0, size.width, size.height);
+	result._frame = cv::Rect(0, 0, size.width, size.height);
 	return result;
 }
 
@@ -168,31 +168,31 @@ CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::
 
 CImage CImage::GetImageWithText(const std::string& text, const cv::Point& origin, const cv::Scalar& textColor, const cv::Scalar& bgColor, const cv::Size& imgSize)
 {
-    CImage textImg(imgSize.height, imgSize.width, CV_8UC1, bgColor);
-    putText(textImg, text, origin, cv::FONT_HERSHEY_SIMPLEX, 0.4, textColor, 1);
-    textImg._frame = cv::Rect(0, 0, imgSize.width, imgSize.height);
-    
-    return textImg;
+	CImage textImg(imgSize.height, imgSize.width, CV_8UC1, bgColor);
+	putText(textImg, text, origin, cv::FONT_HERSHEY_SIMPLEX, 0.4, textColor, 1);
+	textImg._frame = cv::Rect(0, 0, imgSize.width, imgSize.height);
+	
+	return textImg;
 }
 
 CImage CImage::GetRotatedImage(double angle) const
 {
-    int len = std::max(this->cols, this->rows);
-    cv::Point2f pt(len/2., len/2.);
-    cv::Mat r = cv::getRotationMatrix2D(pt, angle, 1.0);
-    
-    CImage rotated;
-    cv::warpAffine(*this, rotated, r, cv::Size(len, len));
-    
-    // cut the image
-    if (_frame.width > _frame.height) {
-        rotated._frame = cv::Rect(_frame.width - _frame.height + 1, 0, _frame.height - 1, _frame.width);
-    } else {
-        rotated._frame = cv::Rect(_frame.height - _frame.width + 1, 0, _frame.height - 1, _frame.width);
-    }
-    rotated = rotated(rotated._frame);
-    
-    return rotated;
+	int len = std::max(this->cols, this->rows);
+	cv::Point2f pt(len/2., len/2.);
+	cv::Mat r = cv::getRotationMatrix2D(pt, angle, 1.0);
+	
+	CImage rotated;
+	cv::warpAffine(*this, rotated, r, cv::Size(len, len));
+	
+	// cut the image
+	if (_frame.width > _frame.height) {
+		rotated._frame = cv::Rect(_frame.width - _frame.height + 1, 0, _frame.height - 1, _frame.width);
+	} else {
+		rotated._frame = cv::Rect(_frame.height - _frame.width + 1, 0, _frame.height - 1, _frame.width);
+	}
+	rotated = rotated(rotated._frame);
+	
+	return rotated;
 }
 
 CImage CImage::GetPatch(const cv::Rect &rect) const
@@ -217,7 +217,7 @@ cv::Rect CImage::GetFrame() const
 
 cv::Size CImage::GetSize() const
 {
-    return _frame.size();
+	return _frame.size();
 }
 
 void CImage::CopyMetadataTo(CImage &image) const

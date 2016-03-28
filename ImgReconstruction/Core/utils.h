@@ -36,5 +36,6 @@ namespace utils
 	
 	std::ostream& operator<<(std::ostream& os, const cv::Mat& mat);
 
-	CImage Stack(std::vector<CImage>& images, int cols, int rows);
+	CImage Stack(std::vector<CImage>& images, int cols);
+	int LevensteinDistance(const std::string &s1, const std::string &s2);
 }

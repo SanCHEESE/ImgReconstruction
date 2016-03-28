@@ -34,7 +34,7 @@ public:
 		SetBinImage(patch.BinImage());
 	}
 	
-    double BlurValue(const IBlurMeasurer* const measurer);
+	double BlurValue(const IBlurMeasurer* const measurer);
 	double StandartDeviation();
 	uint64 PHash();
 	uint64 AvgHash();
@@ -42,12 +42,12 @@ public:
 	// accessors
 	CImage GrayImage() const {return _grayImage;}
 	CImage BinImage() const {return _binImage;}
-    double GetBlurValue() const {return _blurValue;};
-    double GetStandartDeviation() const {return _standartDeviation;};
-    uint64 GetPHash() const {return _pHash;};
-    uint64 GetAvgHash() const {return _avgHash;};
-    cv::Rect GetFrame() const {return _frame;};
-    cv::Size GetSize() const {return _frame.size();};
+	double GetBlurValue() const {return _blurValue;};
+	double GetStandartDeviation() const {return _standartDeviation;};
+	uint64 GetPHash() const {return _pHash;};
+	uint64 GetAvgHash() const {return _avgHash;};
+	cv::Rect GetFrame() const {return _frame;};
+	cv::Size GetSize() const {return _frame.size();};
 	
 	// setters
 	void SetGrayImage(const CImage& image) {
@@ -58,11 +58,11 @@ public:
 		image.copyTo(_binImage);
 		_frame = _binImage.GetFrame();
 	};
-    void SetFrame(const cv::Rect& frame) {_frame = frame;};
+	void SetFrame(const cv::Rect& frame) {_frame = frame;};
 
 	friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
 	
-    int aClass;
+	int aClass;
 private:
 	void Initialize();
 	double CalculateStandartDeviation() const;
@@ -90,8 +90,8 @@ struct MoreBlur
 
 struct LessBlur
 {
-    inline bool operator() (const CImagePatch& patch1, const CImagePatch& patch2)
-    {
-        return patch1.GetBlurValue() < patch2.GetBlurValue();
-    }
+	inline bool operator() (const CImagePatch& patch1, const CImagePatch& patch2)
+	{
+		return patch1.GetBlurValue() < patch2.GetBlurValue();
+	}
 };

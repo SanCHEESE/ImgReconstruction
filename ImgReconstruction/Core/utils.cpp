@@ -9,6 +9,8 @@
 #include "utils.h"
 
 #include <chrono>
+#include <numeric>
+
 #include "CImage.h"
 #include "common.h"
 
@@ -83,7 +85,7 @@ namespace utils
 		
 		return result;
 	}
-    
+	
 	std::ostream& operator<<(std::ostream& os, const cv::Mat& mat)
 	{
 		os << "\n";
@@ -103,19 +105,59 @@ namespace utils
 		return os;
 	}
 
-	CImage Stack(std::vector<CImage>& images, int cols, int rows)
+	CImage Stack(std::vector<CImage>& images, int cols)
 	{
-		assert(images == (cols * rows - 1) || images == cols * rows);
-
 		cv::Size imageSize = images[0].GetSize();
 		if (images.size() > 2) {
 			assert(images[0].GetSize() == images[1].GetSize());
 		}
 
 		int width = images[0].GetSize().width;
-		int height = images[1].GetSize().height;
-		CImage img;
+		int height = images[0].GetSize().height;
+
+		int rows = images.size() / cols;
+
+		int resultWidth = (width + 1) * cols;
+		int resultHeight = (height + 1) * rows;
+		CImage img(resultHeight, resultWidth, CV_8UC1, cv::Scalar(255));
+		for (int i = 0; i < images.size(); i++) {
+			int col = i % cols;
+			int row = i / cols;
+			cv::Mat roi = img.colRange(col * (width + 1), (col + 1) * (width - 1)).rowRange(row * (height + 1), (row + 1) * (height - 1));
+			images[i].copyTo(roi);
+		}
 
 		return img;
+	}
+
+	int LevensteinDistance(const std::string &s1, const std::string &s2)
+	{
+		// To change the type this function manipulates and returns, change
+		// the return type and the types of the two variables below.
+		int s1len = s1.size();
+		int s2len = s2.size();
+
+		auto column_start = (decltype(s1len))1;
+
+		auto column = new decltype(s1len)[s1len + 1];
+		std::iota(column + column_start, column + s1len + 1, column_start);
+
+		for (auto x = column_start; x <= s2len; x++) {
+			column[0] = x;
+			auto last_diagonal = x - column_start;
+			for (auto y = column_start; y <= s1len; y++) {
+				auto old_diagonal = column[y];
+				auto possibilities = {
+					column[y] + 1,
+					column[y - 1] + 1,
+					last_diagonal + (s1[y - 1] == s2[x - 1] ? 0 : 1)
+				};
+				column[y] = std::min(possibilities);
+				last_diagonal = old_diagonal;
+			}
+		}
+		auto result = column[s1len];
+		delete[] column;
+		return result;
 	}
 }

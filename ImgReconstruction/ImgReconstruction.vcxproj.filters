@@ -50,6 +50,9 @@
     <Filter Include="src\Algorithm\Suprocessors\Classifier">
       <UniqueIdentifier>{19c6e4f1-30cb-47b5-96fb-286df9e03b8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Testers">
+      <UniqueIdentifier>{47e3fe84-247d-4fe3-a1f5-caac43612c8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Helpers\CTimeLogger.cpp">
@@ -78,6 +81,9 @@
     </ClCompile>
     <ClCompile Include="Core\CImageSubprocessorHolder.cpp">
       <Filter>src\Algorithm\Suprocessors</Filter>
+    </ClCompile>
+    <ClCompile Include="CBlurMetricsTester.cpp">
+      <Filter>src\Testers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +203,9 @@
     </ClInclude>
     <ClInclude Include="Core\CPHashPatchClassifier.hpp">
       <Filter>src\Algorithm\Suprocessors\Classifier</Filter>
+    </ClInclude>
+    <ClInclude Include="CBlurMetricsTester.h">
+      <Filter>src\Testers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,6 +15,7 @@
 class IPatchFetcher: public IImageSubprocessor
 {
 public:
-    virtual ~IPatchFetcher() {};
-    virtual std::vector<CImagePatch> FetchPatches(const CImagePatch& imgPatch) const = 0;
+	virtual ~IPatchFetcher() {};
+	virtual std::vector<CImage> FetchPatches(const CImage& img) const = 0;
+	virtual std::vector<CImagePatch> FetchPatches(const CImagePatch& imgPatch) const = 0;
 };

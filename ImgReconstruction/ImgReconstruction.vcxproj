@@ -71,6 +71,10 @@
       <AdditionalDependencies>opencv_world310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\opencv\build\x64\vc14\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <CustomBuildStep>
+      <Command>
+      </Command>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -99,6 +103,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CBlurMetricsTester.cpp" />
     <ClCompile Include="Core\CImageProcessor.cpp" />
     <ClCompile Include="Core\CImageProcessor.utils.cpp" />
     <ClCompile Include="Core\CImageSubprocessorHolder.cpp" />
@@ -110,6 +115,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CBlurMetricsTester.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="Core\CAdaptiveGaussianBinarizer.hpp" />
     <ClInclude Include="Core\CAvgHashPatchClassifier.hpp" />

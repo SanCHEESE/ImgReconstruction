@@ -16,11 +16,11 @@
 
 double CImagePatch::BlurValue(const IBlurMeasurer *const measurer)
 {
-    if (_blurValue < 0) {
-        _blurValue = measurer->Measure(_grayImage);
-    }
-    
-    return _blurValue;
+	if (_blurValue < 0) {
+		_blurValue = measurer->Measure(_grayImage);
+	}
+	
+	return _blurValue;
 }
 
 double CImagePatch::StandartDeviation()
