@@ -51,6 +51,8 @@ int main(int argc, char** argv)
 			CBlurMetricsTester tester(image);
 			tester.Test();
 
+			system("pause");
+
 		} else {
 			std::wcerr << "Unknown option" << std::endl;
 		}

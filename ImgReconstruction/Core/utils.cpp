@@ -107,10 +107,10 @@ namespace utils
 
 	CImage Stack(std::vector<CImage>& images, int cols)
 	{
-		cv::Size imageSize = images[0].GetSize();
-		if (images.size() > 2) {
-			assert(images[0].GetSize() == images[1].GetSize());
-		}
+		//cv::Size imageSize = images[0].GetSize();
+		//if (images.size() > 2) {
+		//	assert(images[0].GetSize() == images[1].GetSize());
+		//}
 
 		int width = images[0].GetSize().width;
 		int height = images[0].GetSize().height;
@@ -123,7 +123,7 @@ namespace utils
 		for (int i = 0; i < images.size(); i++) {
 			int col = i % cols;
 			int row = i / cols;
-			cv::Mat roi = img.colRange(col * (width + 1), (col + 1) * (width - 1)).rowRange(row * (height + 1), (row + 1) * (height - 1));
+			cv::Mat roi = img.colRange(col * width, (col + 1) * width).rowRange(row * height, (row + 1) * height);
 			images[i].copyTo(roi);
 		}
 

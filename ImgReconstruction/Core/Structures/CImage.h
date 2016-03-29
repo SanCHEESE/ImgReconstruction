@@ -72,6 +72,7 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& os, const CImage& img);
 
+	// wtf am I doing...
 	int tag;
 private:
 	cv::Rect _frame;

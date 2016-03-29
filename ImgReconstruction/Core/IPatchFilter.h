@@ -18,4 +18,5 @@ public:
 	virtual ~IPatchFilter() {};
 	virtual std::vector<CImagePatch> FilterPatches(const std::vector<CImagePatch>& patches) const = 0;
 	virtual bool PatchPassesFilter(const CImagePatch& patch) const = 0;
+	virtual bool PatchPassesFilter(const CImage& patch) const = 0;
 };

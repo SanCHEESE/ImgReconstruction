@@ -1,5 +1,8 @@
 #include "CBlurMetricsTester.h"
 
+#include <stdlib.h>    
+#include <time.h>      
+
 #include <CDynamicRangeBlurMeasurer.hpp>
 #include <CFDBlurMeasurer.hpp>
 #include <CFFTBlurMeasurer.hpp>
@@ -13,14 +16,15 @@
 
 #include <utils.h>
 
-
 void CBlurMetricsTester::Test()
 {
 	const int bigPatchSize = 300;
 	const int bigPatchOffset = 300;
-	const int minContrastValue = 40;
+	const int minContrastValue = 30;
 	const int minPatchSize = 8;
-	const int maxPatchSize = 25;
+	const int maxPatchSize = 26;
+
+	srand(time(NULL));
 
 	/* fetch big patches */
 	CImageExtender extender({bigPatchSize, bigPatchSize});
@@ -30,18 +34,18 @@ void CBlurMetricsTester::Test()
 
 	/* smooth images */
 	int tag = 0;
-	int kernelSize = 3;
+	int kernelSize = 1;
 	int maxKernelSize = 27;
-	for (CImage& bigImg : bigPatches) {
-		cv::GaussianBlur(bigImg, bigImg, cv::Size(kernelSize, kernelSize), 0, 0);
+	std::vector<CImage> temp;
 
-		bigImg.Save();
-
-		bigImg.tag = tag;
+	for (int kernelSize = 3, idx = 0; kernelSize <= maxKernelSize; kernelSize += 2, idx++) {
+		CImage img = bigPatches[idx];
+		cv::GaussianBlur(img, img, cv::Size(kernelSize, kernelSize), 0, 0);
+		img.tag = tag;
+		temp.push_back(img);
 		tag++;
-
-		kernelSize = kernelSize > maxKernelSize ? 3 : (kernelSize + 2);
 	}
+	bigPatches = temp;
 
 	/* iterate over patch sizes */
 	for (int patchSize = minPatchSize; patchSize < maxPatchSize; patchSize++) {
@@ -49,52 +53,60 @@ void CBlurMetricsTester::Test()
 
 		IBinarizer* binarizer = new CNiBlackBinarizer({patchSize, patchSize}, -0.2);
 		IPatchFilter* filter = new CPatchFilter(binarizer, minContrastValue, {patchSize / 4, patchSize / 4});
-		CPatchFetcher* patchFetcher = new CPatchFetcher({patchSize, patchSize}, {patchSize, patchSize}, filter);
+		IPatchFetcher* patchFetcher = new CPatchFetcher({patchSize, patchSize}, {patchSize, patchSize}, filter);
 
-		for (CImage &bigImage : bigPatches) {
+		for (CImage& bigImage : bigPatches) {
 			CImageExtender extender({patchSize, patchSize});
 			CImage extended = extender.Extent(bigImage);
 
 			auto patches = patchFetcher->FetchPatches(extended);
 
-			if (patches.size() > 1) {
-				patchesToTest.push_back(patches[0]);
+			if (patches.size() > 0) {
+				int randPatch = rand() % patches.size();
+				patchesToTest.push_back(patches[randPatch]);
 				patchesToTest[patchesToTest.size() - 1].tag = bigImage.tag;
 			}
 		}
 
-		auto buildTagSequence = [](const std::vector<CImage>& patches) -> std::string {
-			std::string s;
-			std::stringstream out;
-			for (const CImage& patch : patches) {
-				out << patch.tag;
-			}
-			return out.str();
-		};
-
-		std::string originalTagSequence = buildTagSequence(patchesToTest);
+		//utils::Stack(patchesToTest, 1).Save();
 
 		for (TBlurMeasureMethod method = TBlurMeasureMethodStandartDeviation; method <= TBlurMeasureMethodFD; method = (TBlurMeasureMethod)((int)method + 1)) {
 			IBlurMeasurer* blurMeasurer = BlurMeasurerForMethod(method);
 
-			auto patchesCopy(patchesToTest);
+			for (int i = 0; i < patchesToTest.size(); i++) {
+				std::cout << patchesToTest[i].tag << " " << blurMeasurer->Measure(patchesToTest[i]) << std::endl;
+			}
 
-			std::sort(patchesCopy.begin(), patchesCopy.end(), [&](const CImage& img1, const CImage& img2) -> bool {
-				return blurMeasurer->Measure(img1) > blurMeasurer->Measure(img2);
-			});
+			int errors = 0;
+			int correct = 0;
+			for (int i = 0; i < patchesToTest.size(); i++) {
+				for (int j = 0; j < patchesToTest.size(); j++) {
+					double blurValue1 = blurMeasurer->Measure(patchesToTest[i]);
+					double blurValue2 = blurMeasurer->Measure(patchesToTest[j]);
+					if (blurValue1 >= blurValue2 && patchesToTest[i].tag <= patchesToTest[j].tag) {
+						correct++;
+					} else {
+						errors++;
+					}
+				}
+			}
 
-			std::string tagSequence = buildTagSequence(patchesCopy);
+	/*		std::sort(patchesToTest.begin(), patchesToTest.end(), [&](const CImage& patch1, const CImage& patch2) -> bool {
+				return blurMeasurer->Measure(patch1) < blurMeasurer->Measure(patch2);
+			});*/
 
-			int distance = utils::LevensteinDistance(originalTagSequence, tagSequence);
+			//utils::Stack(patchesToTest, 1).Save();
 
 			std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
 				"Method " << MethodNameForMethod(method) << " "
-				"Errors: " << (float)distance / (float)patchesCopy.size() << "%" << std::endl;
+				"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
 
 			delete blurMeasurer;
 		}
 
-		delete patchFetcher;
+		std::cout << std::endl;
+
+		delete binarizer;
 		delete filter;
 		delete patchFetcher;
 	}

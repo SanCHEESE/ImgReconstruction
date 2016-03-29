@@ -223,6 +223,7 @@ cv::Size CImage::GetSize() const
 void CImage::CopyMetadataTo(CImage &image) const
 {
 	image._frame = this->_frame;
+	image.tag = this->tag;
 }
 
 #pragma mark - CPatchIterator

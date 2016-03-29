@@ -20,12 +20,12 @@ public:
 		_minContrastValue(minContrastValue),
 		_filterPatchSize(filterPatchSize) {};
 
-	virtual bool PatchPassesFilter(const CImagePatch& patch) const
+	virtual bool PatchPassesFilter(const CImage& patch) const
 	{
 		bool passedBin = false;
-
-		CImage grey2x2 = patch.GrayImage().GetResizedImage(_filterPatchSize);
+		CImage grey2x2 = patch.GetResizedImage(_filterPatchSize);
 		CImage bin2x2 = _binarizer->Binarize(grey2x2);
+
 
 		int blackPixels = 0;
 		for (int column = 0; column < bin2x2.GetSize().width; column++) {
@@ -35,7 +35,7 @@ public:
 		}
 
 		/* black pixels takes more or eq than 25% */
-		passedBin = blackPixels / bin2x2.GetSize().area() >= 0.25;
+		passedBin = (blackPixels / bin2x2.GetSize().area()) >= 0.25;
 
 		bool passedContrast = false;
 		if (passedBin) {
@@ -43,6 +43,11 @@ public:
 		}
 
 		return passedContrast && passedBin;
+	}
+
+	virtual bool PatchPassesFilter(const CImagePatch& patch) const
+	{
+		return PatchPassesFilter(patch.GrayImage());
 	}
 	
 	virtual std::vector<CImagePatch> FilterPatches(const std::vector<CImagePatch>& patches) const

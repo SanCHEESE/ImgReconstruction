@@ -26,7 +26,17 @@ public:
 		CImage::CPatchIterator patchIterator = img.GetPatchIterator(_size, _offset);
 		std::vector<CImage> patches;
 		while (patchIterator.HasNext()) {
-			patches.push_back(patchIterator.GetNext());
+			CImage patch = patchIterator.GetNext();
+			if (patch.GetSize().width == 0 || patch.GetSize().height == 0) {
+				continue;
+			}
+			if (_filter != 0) {
+				if (_filter->PatchPassesFilter(patch)) {
+					patches.push_back(patch);
+				}
+			} else {
+				patches.push_back(patch);
+			}
 		}
 
 		CTimeLogger::Print("Patch fetching: ");
