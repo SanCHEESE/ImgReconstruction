@@ -74,8 +74,6 @@ void CImage::Save(const std::string& path, int quality, const std::string& ext) 
 	cv::imwrite(nameBuffer.str(), *this, compression_params);
 }
 
-#pragma mark - Get calculated images
-
 CImage CImage::GetSDImage(const cv::Size& filterSize) const
 {
 	CImage image32f;
@@ -223,7 +221,6 @@ cv::Size CImage::GetSize() const
 void CImage::CopyMetadataTo(CImage &image) const
 {
 	image._frame = this->_frame;
-	image.tag = this->tag;
 }
 
 #pragma mark - CPatchIterator

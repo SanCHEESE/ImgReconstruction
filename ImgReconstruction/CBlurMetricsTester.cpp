@@ -1,8 +1,5 @@
 #include "CBlurMetricsTester.h"
 
-#include <stdlib.h>    
-#include <time.h>      
-
 #include <CDynamicRangeBlurMeasurer.hpp>
 #include <CFDBlurMeasurer.hpp>
 #include <CFFTBlurMeasurer.hpp>
@@ -16,66 +13,59 @@
 
 #include <utils.h>
 
+#include <locale>
+
 void CBlurMetricsTester::Test()
 {
+	std::cout.imbue(std::locale(""));
+
 	const int bigPatchSize = 300;
 	const int bigPatchOffset = 300;
 	const int minContrastValue = 30;
 	const int minPatchSize = 8;
 	const int maxPatchSize = 26;
 
-	srand(time(NULL));
-
-	/* fetch big patches */
-	CImageExtender extender({bigPatchSize, bigPatchSize});
-	CImage extentImage = extender.Extent(_image);
-	CPatchFetcher patchFetcher({bigPatchSize, bigPatchSize}, {bigPatchOffset , bigPatchOffset}, 0);
-	auto bigPatches = patchFetcher.FetchPatches(extentImage);
+	CImage img = _image({0, 0, bigPatchSize, bigPatchSize});
 
 	/* smooth images */
 	int tag = 0;
 	int kernelSize = 1;
 	int maxKernelSize = 27;
-	std::vector<CImage> temp;
+	std::vector<CImage> bigPatches;
 
-	for (int kernelSize = 3, idx = 0; kernelSize <= maxKernelSize; kernelSize += 2, idx++) {
-		CImage img = bigPatches[idx];
-		cv::GaussianBlur(img, img, cv::Size(kernelSize, kernelSize), 0, 0);
-		img.tag = tag;
-		temp.push_back(img);
+	for (int idx = 0; kernelSize <= maxKernelSize; kernelSize += 2, idx++) {
+		CImage tempImage;
+		cv::GaussianBlur(img, tempImage, cv::Size(kernelSize, kernelSize), 0, 0);
+		bigPatches.push_back(tempImage);
 		tag++;
 	}
-	bigPatches = temp;
+
+	cv::Rect patchRect = {204, 200, minPatchSize, minPatchSize};
 
 	/* iterate over patch sizes */
 	for (int patchSize = minPatchSize; patchSize < maxPatchSize; patchSize++) {
+
+		patchRect = {204, 200, patchSize, patchSize};
 		std::vector<CImage> patchesToTest;
 
-		IBinarizer* binarizer = new CNiBlackBinarizer({patchSize, patchSize}, -0.2);
-		IPatchFilter* filter = new CPatchFilter(binarizer, minContrastValue, {patchSize / 4, patchSize / 4});
-		IPatchFetcher* patchFetcher = new CPatchFetcher({patchSize, patchSize}, {patchSize, patchSize}, filter);
+		//IBinarizer* binarizer = new CNiBlackBinarizer({patchSize, patchSize}, -0.2);
+		//IPatchFilter* filter = new CPatchFilter(binarizer, minContrastValue, {patchSize / 4, patchSize / 4}, 0.5);
+		//IPatchFetcher* patchFetcher = new CPatchFetcher({patchSize, patchSize}, {patchSize, patchSize}, filter);
+
+		//CImageExtender extender({patchSize, patchSize});
+		//CImage extended = extender.Extent(bigPatches[0]);
+		//auto patches = patchFetcher->FetchPatches(extended);
+
+		//patchRect = patches[7].GetFrame();
 
 		for (CImage& bigImage : bigPatches) {
-			CImageExtender extender({patchSize, patchSize});
-			CImage extended = extender.Extent(bigImage);
-
-			auto patches = patchFetcher->FetchPatches(extended);
-
-			if (patches.size() > 0) {
-				int randPatch = rand() % patches.size();
-				patchesToTest.push_back(patches[randPatch]);
-				patchesToTest[patchesToTest.size() - 1].tag = bigImage.tag;
-			}
+			patchesToTest.push_back(bigImage(patchRect));
 		}
 
-		//utils::Stack(patchesToTest, 1).Save();
+		utils::Stack(patchesToTest, 1).Save("orig {" + std::to_string(patchSize) + ", " + std::to_string(patchSize) + "}");
 
-		for (TBlurMeasureMethod method = TBlurMeasureMethodStandartDeviation; method <= TBlurMeasureMethodFD; method = (TBlurMeasureMethod)((int)method + 1)) {
+		for (TBlurMeasureMethod method = TBlurMeasureMethodFD; method <= TBlurMeasureMethodFD; method = (TBlurMeasureMethod)((int)method + 1)) {
 			IBlurMeasurer* blurMeasurer = BlurMeasurerForMethod(method);
-
-			for (int i = 0; i < patchesToTest.size(); i++) {
-				std::cout << patchesToTest[i].tag << " " << blurMeasurer->Measure(patchesToTest[i]) << std::endl;
-			}
 
 			int errors = 0;
 			int correct = 0;
@@ -83,7 +73,7 @@ void CBlurMetricsTester::Test()
 				for (int j = 0; j < patchesToTest.size(); j++) {
 					double blurValue1 = blurMeasurer->Measure(patchesToTest[i]);
 					double blurValue2 = blurMeasurer->Measure(patchesToTest[j]);
-					if (blurValue1 >= blurValue2 && patchesToTest[i].tag <= patchesToTest[j].tag) {
+					if (blurValue1 >= blurValue2 && i <= j || i >= j && blurValue1 <= blurValue2) {
 						correct++;
 					} else {
 						errors++;
@@ -91,11 +81,16 @@ void CBlurMetricsTester::Test()
 				}
 			}
 
-	/*		std::sort(patchesToTest.begin(), patchesToTest.end(), [&](const CImage& patch1, const CImage& patch2) -> bool {
-				return blurMeasurer->Measure(patch1) < blurMeasurer->Measure(patch2);
-			});*/
+			errors /= 2;
+			correct /= 2;
 
-			//utils::Stack(patchesToTest, 1).Save();
+			std::sort(patchesToTest.begin(), patchesToTest.end(), [&](const CImage& patch1, const CImage& patch2) -> bool {
+				return blurMeasurer->Measure(patch1) > blurMeasurer->Measure(patch2);
+			});
+
+			utils::Stack(patchesToTest, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSize) + ", " + std::to_string(patchSize) + "}");
+
+			std::cout << (float)errors / (float)(errors + correct) * 100 << std::endl;
 
 			std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
 				"Method " << MethodNameForMethod(method) << " "
@@ -106,9 +101,9 @@ void CBlurMetricsTester::Test()
 
 		std::cout << std::endl;
 
-		delete binarizer;
-		delete filter;
-		delete patchFetcher;
+		//delete binarizer;
+		//delete filter;
+		//delete patchFetcher;
 	}
 }
 

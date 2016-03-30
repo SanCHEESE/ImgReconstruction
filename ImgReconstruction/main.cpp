@@ -30,9 +30,9 @@ int main(int argc, char** argv)
 	}
 
 #ifdef _DEBUG
-	for (int i = 0; i < argc; i++) {
-		std::cout << argv[i] << std::endl;
-	}
+	//for (int i = 0; i < argc; i++) {
+	//	std::cout << argv[i] << std::endl;
+	//}
 #endif
 
 

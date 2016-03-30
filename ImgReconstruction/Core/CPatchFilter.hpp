@@ -15,10 +15,11 @@
 class CPatchFilter: public IPatchFilter
 {
 public:
-	CPatchFilter(IBinarizer *binarizer, double minContrastValue, const cv::Size& filterPatchSize = {2, 2}) :
+	CPatchFilter(IBinarizer *binarizer, double minContrastValue, const cv::Size& filterPatchSize = {2, 2}, double blackPixelsRatio = 0.25) :
 		_binarizer(binarizer),
 		_minContrastValue(minContrastValue),
-		_filterPatchSize(filterPatchSize) {};
+		_filterPatchSize(filterPatchSize), 
+		_blackPixelsRatio(blackPixelsRatio) {};
 
 	virtual bool PatchPassesFilter(const CImage& patch) const
 	{
@@ -35,7 +36,7 @@ public:
 		}
 
 		/* black pixels takes more or eq than 25% */
-		passedBin = (blackPixels / bin2x2.GetSize().area()) >= 0.25;
+		passedBin = (blackPixels / bin2x2.GetSize().area()) >= _blackPixelsRatio;
 
 		bool passedContrast = false;
 		if (passedBin) {
@@ -74,4 +75,6 @@ private:
 	IBinarizer* _binarizer;
 	cv::Size _filterPatchSize;
 	double _minContrastValue;
+	double _blackPixelsRatio;
+
 };

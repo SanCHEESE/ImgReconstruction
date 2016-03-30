@@ -1,0 +1,57 @@
+{
+    "fetch": {
+        "size": {
+            "width": 8,
+            "height": 8
+        },
+        "offset": {
+            "x": 1,
+            "y": 1
+        }
+    },
+
+    "filter": {
+        "bin": {
+            "size": {
+                "width": 2,
+                "height": 2
+            },
+            "method": 0,
+            "k": -0.2
+        },
+        "contrast": 30
+    },
+
+    "compare": {
+        "sum": {
+            "weight": 1.5,
+            "method": 0
+        },
+
+        "equalize": 1,
+        "metric": 1,
+        "eps": 1000
+    },
+
+    "bin": {
+        "method": 0,
+        "size": {
+            "width": 25,
+            "height": 25
+        },
+        "k": -0.2
+    },
+
+    "blur": {
+        "method": 0,
+        "ratio": 0.4
+    },
+
+    "extend": {
+        "width": 25,
+        "height": 25
+    },
+
+    "classifier": 0,
+    "acc": 0
+}

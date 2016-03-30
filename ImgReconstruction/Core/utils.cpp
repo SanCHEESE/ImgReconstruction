@@ -106,7 +106,7 @@ namespace utils
 	}
 
 	CImage Stack(std::vector<CImage>& images, int cols)
-	{
+	{ 
 		//cv::Size imageSize = images[0].GetSize();
 		//if (images.size() > 2) {
 		//	assert(images[0].GetSize() == images[1].GetSize());
@@ -117,13 +117,16 @@ namespace utils
 
 		int rows = images.size() / cols;
 
-		int resultWidth = (width + 1) * cols;
-		int resultHeight = (height + 1) * rows;
+		int resultWidth = width * cols + cols - 1;
+		int resultHeight = height * rows + rows - 1;
 		CImage img(resultHeight, resultWidth, CV_8UC1, cv::Scalar(255));
+		int maxY = 0;
 		for (int i = 0; i < images.size(); i++) {
 			int col = i % cols;
 			int row = i / cols;
-			cv::Mat roi = img.colRange(col * width, (col + 1) * width).rowRange(row * height, (row + 1) * height);
+			maxY = row * (height + 1);
+			cv::Mat roi = img.colRange(col * width, (col + 1) * width).rowRange(maxY, maxY + height);
+			maxY += height + 1;
 			images[i].copyTo(roi);
 		}
 

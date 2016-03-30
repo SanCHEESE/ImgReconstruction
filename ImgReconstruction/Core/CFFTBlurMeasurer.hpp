@@ -30,7 +30,7 @@ public:
         CImage roi = imageCopy(submatrixRect);
         roi.setTo(0);
         
-        return cv::sum(imageCopy)[0];
+        return -cv::sum(imageCopy)[0];
     }
     
 private:

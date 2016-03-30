@@ -71,9 +71,6 @@ public:
 	CPatchIterator GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect = cv::Rect()) const;
 
 	friend std::ostream& operator<<(std::ostream& os, const CImage& img);
-
-	// wtf am I doing...
-	int tag;
 private:
 	cv::Rect _frame;
 };
