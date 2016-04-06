@@ -64,7 +64,7 @@ void CBlurMetricsTester::Test()
 
 		utils::Stack(patchesToTest, 1).Save("orig {" + std::to_string(patchSize) + ", " + std::to_string(patchSize) + "}");
 
-		for (TBlurMeasureMethod method = TBlurMeasureMethodFD; method <= TBlurMeasureMethodFD; method = (TBlurMeasureMethod)((int)method + 1)) {
+		for (TBlurMeasureMethod method = TBlurMeasureMethodStandartDeviation; method <= TBlurMeasureMethodDynamicRange; method = (TBlurMeasureMethod)((int)method + 1)) {
 			IBlurMeasurer* blurMeasurer = BlurMeasurerForMethod(method);
 
 			int errors = 0;
@@ -110,12 +110,12 @@ void CBlurMetricsTester::Test()
 std::string CBlurMetricsTester::MethodNameForMethod(TBlurMeasureMethod method) const
 {
 	switch (method) {
-		case TBlurMeasureMethodFFT:
-			return "TBlurMeasureMethodFFT";
+		//case TBlurMeasureMethodFFT:
+		//	return "TBlurMeasureMethodFFT";
 		case TBlurMeasureMethodDynamicRange:
 			return "TBlurMeasureMethodDynamicRange";
-		case TBlurMeasureMethodFD:
-			return "TBlurMeasureMethodFD";
+			//case TBlurMeasureMethodFD:
+			//	return "TBlurMeasureMethodFD";
 		case TBlurMeasureMethodStandartDeviation:
 			return "TBlurMeasureMethodStandartDeviation";
 		default:
@@ -127,12 +127,12 @@ std::string CBlurMetricsTester::MethodNameForMethod(TBlurMeasureMethod method) c
 IBlurMeasurer* CBlurMetricsTester::BlurMeasurerForMethod(TBlurMeasureMethod method) const
 {
 	switch (method) {
-		case TBlurMeasureMethodFFT:
-			return new CFFTBlurMeasurer(0.3);
+		//case TBlurMeasureMethodFFT:
+		//	return new CFFTBlurMeasurer(0.3);
 		case TBlurMeasureMethodDynamicRange:
 			return new CDynamicRangeBlurMeasurer();
-		case TBlurMeasureMethodFD:
-			return new CFDBlurMeasurer();
+			//case TBlurMeasureMethodFD:
+			//	return new CFDBlurMeasurer();
 		case TBlurMeasureMethodStandartDeviation:
 			return new CStdDeviationBlurMeasurer();
 		default:

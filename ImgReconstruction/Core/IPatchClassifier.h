@@ -12,8 +12,9 @@
 #include "IImageSubprocessor.h"
 #include "CImagePatch.h"
 
-class IPatchClassifier: public IImageSubprocessor {
+class IPatchClassifier : public IImageSubprocessor
+{
 public:
-    virtual ~IPatchClassifier() {};
-    virtual std::map<uint64, std::vector<CImagePatch>> Classify(std::vector<CImagePatch>& patches) const = 0;
+	virtual ~IPatchClassifier() {};
+	virtual std::map<uint64, std::vector<CImagePatch>> Classify(std::vector<CImagePatch>& patches) const = 0;
 };

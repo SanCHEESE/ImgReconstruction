@@ -22,22 +22,22 @@ namespace utils
 		cv::meanStdDev(img, mean, stddev);
 		return stddev[0];
 	}
-	
+
 	uint64 PHash(const CImage &image, const cv::Size& size)
 	{
 		assert(image.cols <= 8 && image.rows <= 8);
 		assert(size.width % 2 == 0 && size.height % 2 == 0);
-		
+
 		cv::Mat resized;
 		resize(image, resized, size);
-		
+
 		resized.convertTo(resized, CV_64F);
-		
+
 		cv::Mat dst;
 		cv::dct(resized, dst);
-		
+
 		int bitsCount = size.width * size.height;
-		
+
 		std::vector<double> dIdex(bitsCount, 0);
 		double mean = 0.0;
 		int k = 0;
@@ -48,7 +48,7 @@ namespace utils
 				++k;
 			}
 		}
-		
+
 		uint64 result = 0;
 		for (int i = 0; i < bitsCount; ++i) {
 			if (dIdex[i] >= mean) {
@@ -57,21 +57,21 @@ namespace utils
 				result = result << 1;
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	uint64 AvgHash(const CImage& image, const cv::Size& size)
 	{
 		assert(image.cols <= 8 && image.rows <= 8);
-		
+
 		cv::Mat resized;
 		resize(image, resized, size);
-		
+
 		double average = cv::mean(resized)[0];
-		
+
 		cv::Mat mask = (resized > average);
-		
+
 		uint64 result = 0;
 		for (int i = 0; i < mask.rows; i++) {
 			for (int j = 0; j < mask.cols; j++) {
@@ -82,10 +82,10 @@ namespace utils
 				}
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	std::ostream& operator<<(std::ostream& os, const cv::Mat& mat)
 	{
 		os << "\n";
@@ -100,13 +100,13 @@ namespace utils
 			} else {
 				os << "\n\n";
 			}
-			
+
 		}
 		return os;
 	}
 
 	CImage Stack(std::vector<CImage>& images, int cols)
-	{ 
+	{
 		//cv::Size imageSize = images[0].GetSize();
 		//if (images.size() > 2) {
 		//	assert(images[0].GetSize() == images[1].GetSize());

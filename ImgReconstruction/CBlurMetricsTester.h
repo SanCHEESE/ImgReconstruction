@@ -8,8 +8,7 @@ class CBlurMetricsTester
 {
 public:
 	CBlurMetricsTester(const CImage& image) : _image(image)
-	{
-	};
+	{};
 
 	void Test();
 

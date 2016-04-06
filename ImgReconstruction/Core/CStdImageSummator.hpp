@@ -10,11 +10,11 @@
 
 #include "IImageSummator.h"
 
-class CStdImageSummator: public IImageSummator
+class CStdImageSummator : public IImageSummator
 {
 public:
-    virtual double Sum(const CImage& img) const
-    {
-        return cv::sum(img)[0];
-    }
+	virtual double Sum(const CImage& img) const
+	{
+		return cv::sum(img)[0];
+	}
 };

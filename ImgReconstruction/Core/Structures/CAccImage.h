@@ -12,22 +12,23 @@
 
 #include "CImage.h"
 
-class CAccImage {
+class CAccImage
+{
 public:
-    CAccImage(const CImage& img);
-    CAccImage(const cv::Size& size);
-    
-    // main methods
-    void SetImageRegion(const CImage& image);
-    void SetImageRegion(const CImage& image, const cv::Rect& frame);
-    CImage GetResultImage(TAccImageSumMethod method) const;
-    
-    // debug
-    CImage CreateHistImage() const;
-    
+	CAccImage(const CImage& img);
+	CAccImage(const cv::Size& size);
+
+	// main methods
+	void SetImageRegion(const CImage& image);
+	void SetImageRegion(const CImage& image, const cv::Rect& frame);
+	CImage GetResultImage(TAccImageSumMethod method) const;
+
+	// debug
+	CImage CreateHistImage() const;
+
 private:
-    static uchar Sum(TAccImageSumMethod method, std::vector<uchar> colors);
-    
-    std::vector<std::vector<std::vector<uchar>>> _accImg;
-    cv::Size _size;
+	static uchar Sum(TAccImageSumMethod method, std::vector<uchar> colors);
+
+	std::vector<std::vector<std::vector<uchar>>> _accImg;
+	cv::Size _size;
 };

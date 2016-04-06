@@ -16,8 +16,7 @@ class CPatchFetcher : public IPatchFetcher
 {
 public:
 	CPatchFetcher(const cv::Size& size, const cv::Point& offset, IPatchFilter* filter) : _size(size), _offset(offset), _filter(filter)
-	{
-	};
+	{};
 
 	virtual std::vector<CImage> FetchPatches(const CImage& img) const
 	{

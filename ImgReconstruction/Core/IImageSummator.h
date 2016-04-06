@@ -14,6 +14,6 @@
 class IImageSummator : public IImageSubprocessor
 {
 public:
-    virtual ~IImageSummator() {}
-    virtual double Sum(const CImage& img) const = 0;
+	virtual ~IImageSummator() {}
+	virtual double Sum(const CImage& img) const = 0;
 };

@@ -19,7 +19,7 @@ double CImagePatch::BlurValue(const IBlurMeasurer *const measurer)
 	if (_blurValue < 0) {
 		_blurValue = measurer->Measure(_grayImage);
 	}
-	
+
 	return _blurValue;
 }
 
@@ -28,7 +28,7 @@ double CImagePatch::StandartDeviation()
 	if (_standartDeviation < 0) {
 		_standartDeviation = CalculateStandartDeviation();
 	}
-	
+
 	return _standartDeviation;
 }
 
@@ -56,16 +56,16 @@ std::ostream& operator<<(std::ostream& os, const CImagePatch& patch)
 	os << "\tFrame:\n\t\t" << patch.GetFrame() << std::endl;
 	os << "\tBlur value:\n\t\t" << patch.GetBlurValue() << std::endl;
 	os << "\tStandart deviation:\n\t\t" << patch.GetStandartDeviation() << std::endl;
-	
+
 	os << "\tGrey image:\n" << patch.GrayImage() << std::endl;
 	os << "\tBin image:\n" << patch.BinImage() << std::endl;
-	
+
 	std::bitset<sizeof(uint64) * 8> phash(patch.GetPHash());
 	os << "\tPHash:\n\t\t" << phash << std::endl;
-	
+
 	std::bitset<sizeof(uint64) * 8> avgHash(patch.GetAvgHash());
 	os << "\tAvgHash:\n\t\t" << avgHash << std::endl;
-	
+
 	return os;
 }
 

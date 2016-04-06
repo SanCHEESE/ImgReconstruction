@@ -8,7 +8,8 @@
 
 #pragma once
 
-class IImageSubprocessor {
+class IImageSubprocessor
+{
 public:
-    virtual ~IImageSubprocessor() {}
+	virtual ~IImageSubprocessor() {}
 };

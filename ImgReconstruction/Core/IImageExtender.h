@@ -10,9 +10,9 @@
 
 #include "CImage.h"
 
-class IImageExtender: public IImageSubprocessor
+class IImageExtender : public IImageSubprocessor
 {
 public:
-    virtual ~IImageExtender() {}
-    virtual CImage Extent(const CImage& img) const = 0;
+	virtual ~IImageExtender() {}
+	virtual CImage Extent(const CImage& img) const = 0;
 };

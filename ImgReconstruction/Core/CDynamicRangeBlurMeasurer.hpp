@@ -10,7 +10,7 @@
 
 #include "IBlurMeasurer.h"
 
-class CDynamicRangeBlurMeasurer: public IBlurMeasurer
+class CDynamicRangeBlurMeasurer : public IBlurMeasurer
 {
 public:
 	virtual double Measure(const CImage& img) const
@@ -30,7 +30,7 @@ public:
 
 		double min, max;
 		cv::minMaxLoc(img, &min, &max);
-		
+
 		//return std::abs(*(minMaxElem.first) - *(minMaxElem.second));
 		return std::abs(min - max);
 	}

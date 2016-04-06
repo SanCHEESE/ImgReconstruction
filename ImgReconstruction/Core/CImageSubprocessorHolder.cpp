@@ -47,17 +47,17 @@ CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, dou
 {
 	CBinarizer *binarizer = 0;
 	switch (method) {
-	case TBinarizationMethodNICK:
-		binarizer = new CNICKBinarizer(patchSize, k);
-		break;
-	case TBinarizationMethodNiBlack:
-		binarizer = new CNiBlackBinarizer(patchSize, k);
-		break;
-	case TBinarizationMethodAdaptiveGaussian:
-		binarizer = new CAdaptiveGaussianBinarizer(patchSize, k);
-		break;
-	default:
-		break;
+		case TBinarizationMethodNICK:
+			binarizer = new CNICKBinarizer(patchSize, k);
+			break;
+		case TBinarizationMethodNiBlack:
+			binarizer = new CNiBlackBinarizer(patchSize, k);
+			break;
+		case TBinarizationMethodAdaptiveGaussian:
+			binarizer = new CAdaptiveGaussianBinarizer(patchSize, k);
+			break;
+		default:
+			break;
 	}
 	return binarizer;
 }
@@ -66,14 +66,14 @@ IImageSummator* Summator(TCompSum method, double weight)
 {
 	IImageSummator *summator = 0;
 	switch (method) {
-	case TCompSumStd:
-		summator = new CStdImageSummator();
-		break;
-	case TCompSumBorder:
-		summator = new CBorderImageSummator(weight);
-		break;
-	default:
-		break;
+		case TCompSumStd:
+			summator = new CStdImageSummator();
+			break;
+		case TCompSumBorder:
+			summator = new CBorderImageSummator(weight);
+			break;
+		default:
+			break;
 	}
 	return summator;
 }
@@ -82,14 +82,14 @@ IBrightnessEqualizer* BrightnessEqualizer(TBrightnessEqualization equalizationTy
 {
 	IBrightnessEqualizer* equalizer = 0;
 	switch (equalizationType) {
-	case TBrightnessEqualizationDynRange:
-		equalizer = new CDynRangeBrightnessEqualizer();
-		break;
-	case TBrightnessEqualizationMean:
-		equalizer = new CMeanBrightnessEqualizer();
-		break;
-	default:
-		break;
+		case TBrightnessEqualizationDynRange:
+			equalizer = new CDynRangeBrightnessEqualizer();
+			break;
+		case TBrightnessEqualizationMean:
+			equalizer = new CMeanBrightnessEqualizer();
+			break;
+		default:
+			break;
 	}
 
 	return equalizer;
@@ -99,14 +99,14 @@ IImageComparator* Comparator(TImageCompareMetric metric, IBrightnessEqualizer* e
 {
 	IImageComparator* comparator = 0;
 	switch (metric) {
-	case TImageCompareMetricL1:
-		comparator = new CL1ImageComparator(equalizer, summator, eps);
-		break;
-	case TImageCompareMetricL2:
-		comparator = new CL2ImageComparator(equalizer, summator, eps);
-		break;
-	default:
-		break;
+		case TImageCompareMetricL1:
+			comparator = new CL1ImageComparator(equalizer, summator, eps);
+			break;
+		case TImageCompareMetricL2:
+			comparator = new CL2ImageComparator(equalizer, summator, eps);
+			break;
+		default:
+			break;
 	}
 	return comparator;
 }
@@ -115,14 +115,14 @@ IPatchClassifier* Classifier(TPatchClassifyingMethod method)
 {
 	IPatchClassifier* classifier = 0;
 	switch (method) {
-	case TPatchClassifyingMethodPHash:
-		classifier = new CPHashPatchClassifier();
-		break;
-	case TPatchClassifyingMethodAvgHash:
-		classifier = new CAvgHashPatchClassifier();
-		break;
-	default:
-		break;
+		case TPatchClassifyingMethodPHash:
+			classifier = new CPHashPatchClassifier();
+			break;
+		case TPatchClassifyingMethodAvgHash:
+			classifier = new CAvgHashPatchClassifier();
+			break;
+		default:
+			break;
 	}
 	return classifier;
 }
@@ -131,20 +131,20 @@ IBlurMeasurer* Measurer(TBlurMeasureMethod method, double param)
 {
 	IBlurMeasurer* measurer = 0;
 	switch (method) {
-	case TBlurMeasureMethodFD:
-		measurer = new CFDBlurMeasurer();
-		break;
-	case TBlurMeasureMethodFFT:
-		measurer = new CFFTBlurMeasurer(param);
-		break;
-	case TBlurMeasureMethodDynamicRange:
-		measurer = new CDynamicRangeBlurMeasurer();
-		break;
-	case TBlurMeasureMethodStandartDeviation:
-		measurer = new CStdDeviationBlurMeasurer();
-		break;
-	default:
-		break;
+		//case TBlurMeasureMethodFD:
+		//	measurer = new CFDBlurMeasurer();
+		//	break;
+		//case TBlurMeasureMethodFFT:
+		//	measurer = new CFFTBlurMeasurer(param);
+		//	break;
+		case TBlurMeasureMethodDynamicRange:
+			measurer = new CDynamicRangeBlurMeasurer();
+			break;
+		case TBlurMeasureMethodStandartDeviation:
+			measurer = new CStdDeviationBlurMeasurer();
+			break;
+		default:
+			break;
 	}
 	return measurer;
 }
@@ -190,7 +190,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 
 	auto filterJson = json[PatchFilterJsonKey];
 	auto filterBinJson = filterJson[BinJsonKey];
-	cv::Size patchSize = { filterBinJson[PatchSizeJsonKey][WidthJsonKey], filterBinJson[PatchSizeJsonKey][HeightJsonKey] };
+	cv::Size patchSize = {filterBinJson[PatchSizeJsonKey][WidthJsonKey], filterBinJson[PatchSizeJsonKey][HeightJsonKey]};
 	int binMethod = filterBinJson[MethodJsonKey];
 	IBinarizer *filterBinarizer = Binarizer((TBinarizationMethod)binMethod, patchSize, filterBinJson[KJsonKey]);
 	_subprocessors[FilterBinarizerKey] = (IImageSubprocessor *)filterBinarizer;
@@ -198,8 +198,8 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	_subprocessors[PatchFilterKey] = (IImageSubprocessor *)patchFilter;
 
 	auto patchFetchJson = json[PatchFetchJsonKey];
-	IPatchFetcher *patchFetcher = new CPatchFetcher({ patchFetchJson[PatchSizeJsonKey][WidthJsonKey], patchFetchJson[PatchSizeJsonKey][HeightJsonKey] },
-	{ patchFetchJson[PatchOffsetJsonKey][XJsonKey], patchFetchJson[PatchOffsetJsonKey][YJsonKey] },
+	IPatchFetcher *patchFetcher = new CPatchFetcher({patchFetchJson[PatchSizeJsonKey][WidthJsonKey], patchFetchJson[PatchSizeJsonKey][HeightJsonKey]},
+	{patchFetchJson[PatchOffsetJsonKey][XJsonKey], patchFetchJson[PatchOffsetJsonKey][YJsonKey]},
 		patchFilter);
 	_subprocessors[PatchFetcherKey] = (IImageSubprocessor *)patchFetcher;
 
@@ -218,7 +218,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	auto binJson = json[BinJsonKey];
 	binMethod = binJson[MethodJsonKey];
 	IBinarizer *binarizer = Binarizer((TBinarizationMethod)binMethod,
-	{ binJson[PatchSizeJsonKey][WidthJsonKey], binJson[PatchSizeJsonKey][HeightJsonKey] },
+	{binJson[PatchSizeJsonKey][WidthJsonKey], binJson[PatchSizeJsonKey][HeightJsonKey]},
 		binJson[KJsonKey]);
 	_subprocessors[BinarizerKey] = (IImageSubprocessor *)binarizer;
 
@@ -227,7 +227,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	IBlurMeasurer* measurer = Measurer((TBlurMeasureMethod)blurMeasureMethod, blurJson[BlurRatioJsonKey]);
 	_subprocessors[BlurMeasurerKey] = (IImageSubprocessor *)measurer;
 
-	IImageExtender* extender = new CImageExtender({ json[ExtenderPatchSizeJsonKey][WidthJsonKey], json[ExtenderPatchSizeJsonKey][HeightJsonKey] });
+	IImageExtender* extender = new CImageExtender({json[ExtenderPatchSizeJsonKey][WidthJsonKey], json[ExtenderPatchSizeJsonKey][HeightJsonKey]});
 	_subprocessors[ImageExtenderKey] = (IImageSubprocessor *)extender;
 
 	int classifyingMethod = json[ClassifierJsonKey];

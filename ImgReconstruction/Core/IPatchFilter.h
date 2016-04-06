@@ -12,7 +12,7 @@
 #include "IImageSubprocessor.h"
 #include "CImagePatch.h"
 
-class IPatchFilter: public IImageSubprocessor
+class IPatchFilter : public IImageSubprocessor
 {
 public:
 	virtual ~IPatchFilter() {};

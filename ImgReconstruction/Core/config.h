@@ -50,7 +50,7 @@ static double DefaultBorderSumWeight = 1.5;
 
 // blur config
 static float DefaultBlurMetricRadiusRatio = 0.4f;
-static TBlurMeasureMethod DefaultBlurMeasureMethod = TBlurMeasureMethodFD;
+static TBlurMeasureMethod DefaultBlurMeasureMethod = TBlurMeasureMethodDynamicRange;
 
 // classification method
 static TPatchClassifyingMethod DefaultClassifyingMethod = TPatchClassifyingMethodPHash;

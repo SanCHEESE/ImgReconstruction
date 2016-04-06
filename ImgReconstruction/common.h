@@ -23,37 +23,42 @@
 #define PRINT_BITS(num)  std::bitset<sizeof(uint64) * 8> b(num); \
 	std::cout << b << std::endl;
 
-typedef enum : int {
+typedef enum : int
+{
 	TImageCompareMetricL1,
 	TImageCompareMetricL2,
 
 	TImageCompareMetricNone
 } TImageCompareMetric;
 
-typedef enum : int {
+typedef enum : int
+{
 	TBlurMeasureMethodStandartDeviation,
 	TBlurMeasureMethodDynamicRange,
-	TBlurMeasureMethodFFT,
-	TBlurMeasureMethodFD,
+	//TBlurMeasureMethodFFT,
+	//TBlurMeasureMethodFD,
 
 	TBlurMeasureMethodNone
 } TBlurMeasureMethod;
 
-typedef enum : int {
+typedef enum : int
+{
 	TBrightnessEqualizationMean,
 	TBrightnessEqualizationDynRange,
 
 	TBrightnessEqualizationNone
 } TBrightnessEqualization;
 
-typedef enum : int {
+typedef enum : int
+{
 	TCompSumStd,
 	TCompSumBorder,
 
 	TCompSumNone
 } TCompSum;
 
-typedef enum : int {
+typedef enum : int
+{
 	TBinarizationMethodNICK,
 	TBinarizationMethodNiBlack,
 	TBinarizationMethodAdaptiveGaussian,
@@ -61,14 +66,16 @@ typedef enum : int {
 	TBinarizationMethodNone
 } TBinarizationMethod;
 
-typedef enum : int {
+typedef enum : int
+{
 	TPatchClassifyingMethodAvgHash,
 	TPatchClassifyingMethodPHash,
 
 	TPatchClassifyingMethodNone
 } TPatchClassifyingMethod;
 
-typedef enum : int {
+typedef enum : int
+{
 	TAccImageSumMethodAvg,
 	TAccImageSumMethodMedian,
 

@@ -12,7 +12,7 @@
 #include "IImageSubprocessor.h"
 #include "CImagePatch.h"
 
-class IPatchFetcher: public IImageSubprocessor
+class IPatchFetcher : public IImageSubprocessor
 {
 public:
 	virtual ~IPatchFetcher() {};

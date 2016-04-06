@@ -12,7 +12,7 @@
 void CImageProcessor::ProcessImage(const CImage& img, const std::string& outImagePath)
 {
 	_outImagePath = outImagePath;
-	
+
 	RestoreImageIteratively(_iterCount, img);
 }
 
@@ -25,7 +25,7 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
 	_origImageSize = img.GetSize();
 
 	CImage extentImage = _subprocHolder->ImageExtender()->Extent(img);
-	
+
 	_mainImage = CImagePatch();
 	_mainImage.SetGrayImage(extentImage);
 	BuildBinImage(extentImage);
@@ -37,11 +37,11 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 	for (int iter = 0; iter < iterCount; iter++) {
 		GenerateHelperImages(image);
 		image = RestoreImage();
-		image = image({ 0, 0, _origImageSize.width, _origImageSize.height });
+		image = image({0, 0, _origImageSize.width, _origImageSize.height});
 	}
-	
+
 	image.Save(_outImagePath, 100, "jpg");
-	
+
 	return image;
 }
 
@@ -51,37 +51,37 @@ CImage CImageProcessor::RestoreImage()
 	std::vector<CImagePatch> patches = _subprocHolder->PatchFetcher()->FetchPatches(_mainImage);
 
 	std::cout << "Total patches: " << patches.size() << std::endl;
-	
+
 	// calculating
-	for (CImagePatch& patch: patches) {
+	for (CImagePatch& patch : patches) {
 		patch.BlurValue(_subprocHolder->BlurMeasurer());
 	}
-	
+
 	// classification by PHash/AvgHash
 	std::map<uint64, std::vector<CImagePatch>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
-	
+
 	CAccImage accImage(_mainImage.GrayImage());
-	
-	for (auto &it: classes) {
+
+	for (auto &it : classes) {
 		std::vector<CImagePatch> aClass = it.second;
 		if (aClass.size() < 2) {
 			// do not process classes with size of 1 object
 			accImage.SetImageRegion(aClass[0].GrayImage());
-			
+
 			continue;
 		} else {
 			// ranking by sharpness inside a class
 			auto clusters = Clusterize(aClass);
 
-			for (auto& cluster: clusters) {
+			for (auto& cluster : clusters) {
 				auto clusterPatches = cluster.second;
-				
+
 				// sorting by blur increase
 				std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
-				
+
 				// copying to summing image
 				CImagePatch bestPatch = clusterPatches[0];
-				for (auto& patch: clusterPatches) {
+				for (auto& patch : clusterPatches) {
 					if (patch.GetFrame() != bestPatch.GetFrame()) {
 						accImage.SetImageRegion(bestPatch.GrayImage(), patch.GetFrame());
 					}
@@ -89,6 +89,6 @@ CImage CImageProcessor::RestoreImage()
 			}
 		}
 	}
-	
+
 	return accImage.GetResultImage(_config.accImageSumMethod);
 }

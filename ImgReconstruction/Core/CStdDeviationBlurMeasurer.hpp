@@ -10,11 +10,11 @@
 
 #include "utils.h"
 
-class CStdDeviationBlurMeasurer: public IBlurMeasurer
+class CStdDeviationBlurMeasurer : public IBlurMeasurer
 {
 public:
-    virtual double Measure(const CImage& img) const
-    {
-        return utils::StandartDeviation(img);
-    }
+	virtual double Measure(const CImage& img) const
+	{
+		return utils::StandartDeviation(img);
+	}
 };

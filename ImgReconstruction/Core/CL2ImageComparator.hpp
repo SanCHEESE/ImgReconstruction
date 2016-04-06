@@ -10,26 +10,26 @@
 
 #include "CImageComparator.hpp"
 
-class CL2ImageComparator: public CImageComparator
+class CL2ImageComparator : public CImageComparator
 {
 public:
-    using CImageComparator::CImageComparator;
-    
-    virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const
-    {
-        CImage normPatch1;
-        patch1.GrayImage().copyTo(normPatch1);
-        
-        CImage normPatch2;
-        patch2.GrayImage().copyTo(normPatch2);
-        
-        _equalizer->EqualizeBrightness(normPatch1, normPatch2);
-        
-        cv::Mat result;
-        cv::absdiff(normPatch1, normPatch2, result);
-        result.convertTo(result, CV_32S);
-        result = result.mul(result);
-        double dist = sqrt(_summator->Sum(result));
-        return dist < _eps;
-    }
+	using CImageComparator::CImageComparator;
+
+	virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const
+	{
+		CImage normPatch1;
+		patch1.GrayImage().copyTo(normPatch1);
+
+		CImage normPatch2;
+		patch2.GrayImage().copyTo(normPatch2);
+
+		_equalizer->EqualizeBrightness(normPatch1, normPatch2);
+
+		cv::Mat result;
+		cv::absdiff(normPatch1, normPatch2, result);
+		result.convertTo(result, CV_32S);
+		result = result.mul(result);
+		double dist = sqrt(_summator->Sum(result));
+		return dist < _eps;
+	}
 };

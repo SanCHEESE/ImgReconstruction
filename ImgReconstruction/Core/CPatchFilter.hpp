@@ -12,14 +12,15 @@
 #include "IBinarizer.h"
 #include "CTimeLogger.h"
 
-class CPatchFilter: public IPatchFilter
+class CPatchFilter : public IPatchFilter
 {
 public:
 	CPatchFilter(IBinarizer *binarizer, double minContrastValue, const cv::Size& filterPatchSize = {2, 2}, double blackPixelsRatio = 0.25) :
 		_binarizer(binarizer),
 		_minContrastValue(minContrastValue),
-		_filterPatchSize(filterPatchSize), 
-		_blackPixelsRatio(blackPixelsRatio) {};
+		_filterPatchSize(filterPatchSize),
+		_blackPixelsRatio(blackPixelsRatio)
+	{};
 
 	virtual bool PatchPassesFilter(const CImage& patch) const
 	{
@@ -50,27 +51,27 @@ public:
 	{
 		return PatchPassesFilter(patch.GrayImage());
 	}
-	
+
 	virtual std::vector<CImagePatch> FilterPatches(const std::vector<CImagePatch>& patches) const
 	{
 		CTimeLogger::StartLogging();
-		
+
 		std::vector<CImagePatch> filteredPatches;
-		
-		for (const CImagePatch& patch: patches) {
+
+		for (const CImagePatch& patch : patches) {
 			if (PatchPassesFilter(patch)) {
 				filteredPatches.push_back(patch);
 			}
 		}
-		
-		
-	 /*   std::cout << "Before filter: " << patches.size() << std::endl;
-		std::cout << "After filter: " << filteredPatches.size() << std::endl;*/
+
+
+		/*   std::cout << "Before filter: " << patches.size() << std::endl;
+		   std::cout << "After filter: " << filteredPatches.size() << std::endl;*/
 		CTimeLogger::Print("Patch filtering: ");
-		
+
 		return filteredPatches;
 	}
-	
+
 private:
 	IBinarizer* _binarizer;
 	cv::Size _filterPatchSize;

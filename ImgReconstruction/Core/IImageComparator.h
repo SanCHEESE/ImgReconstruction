@@ -15,6 +15,6 @@
 class IImageComparator : public IImageSubprocessor
 {
 public:
-    virtual ~IImageComparator() {};
-    virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const = 0;
+	virtual ~IImageComparator() {};
+	virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const = 0;
 };

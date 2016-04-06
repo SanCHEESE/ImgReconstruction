@@ -32,33 +32,34 @@ static const std::string ImageExtenderKey = "ImageExtenderKey";
 // used to store not generalized classes
 struct CConfig
 {
-    TAccImageSumMethod accImageSumMethod;
+	TAccImageSumMethod accImageSumMethod;
 };
 
-class CImageSubprocessorHolder {
+class CImageSubprocessorHolder
+{
 public:
-    static CImageSubprocessorHolder& GetInstance() {static CImageSubprocessorHolder instance; return instance;};
-    void Configure(const std::string& path);
-    
-    IImageSubprocessor* SubprocessorForKey(const std::string& key) {return _subprocessors[key];} ;
-    
-    IBlurMeasurer* BlurMeasurer() {return (IBlurMeasurer*)_subprocessors[BlurMeasurerKey];};
-    IImageComparator* ImageComparator() {return (IImageComparator*)_subprocessors[ComparatorKey];};
-    IBinarizer* PatchBinarizer() {return (IBinarizer*)_subprocessors[BinarizerKey];};
-    IPatchFilter* PatchFilter() {return (IPatchFilter*)_subprocessors[PatchFilterKey];};
-    IPatchClassifier* PatchClassifier() {return (IPatchClassifier*)_subprocessors[PatchClassifierKey];}
-    IPatchFetcher* PatchFetcher() {return (IPatchFetcher*)_subprocessors[PatchFetcherKey];}
-    IImageExtender* ImageExtender() {return (IImageExtender*)_subprocessors[ImageExtenderKey];}
-    
-    CConfig GetConfig() const {return _config;};
+	static CImageSubprocessorHolder& GetInstance() { static CImageSubprocessorHolder instance; return instance; };
+	void Configure(const std::string& path);
+
+	IImageSubprocessor* SubprocessorForKey(const std::string& key) { return _subprocessors[key]; };
+
+	IBlurMeasurer* BlurMeasurer() { return (IBlurMeasurer*)_subprocessors[BlurMeasurerKey]; };
+	IImageComparator* ImageComparator() { return (IImageComparator*)_subprocessors[ComparatorKey]; };
+	IBinarizer* PatchBinarizer() { return (IBinarizer*)_subprocessors[BinarizerKey]; };
+	IPatchFilter* PatchFilter() { return (IPatchFilter*)_subprocessors[PatchFilterKey]; };
+	IPatchClassifier* PatchClassifier() { return (IPatchClassifier*)_subprocessors[PatchClassifierKey]; }
+	IPatchFetcher* PatchFetcher() { return (IPatchFetcher*)_subprocessors[PatchFetcherKey]; }
+	IImageExtender* ImageExtender() { return (IImageExtender*)_subprocessors[ImageExtenderKey]; }
+
+	CConfig GetConfig() const { return _config; };
 private:
-    CImageSubprocessorHolder();
-    ~CImageSubprocessorHolder();
-    CImageSubprocessorHolder(CImageSubprocessorHolder const&) = delete;
-    void operator=(CImageSubprocessorHolder const&) = delete;
-    
-    void Reset();
-    
-    std::map<std::string, IImageSubprocessor*> _subprocessors;
-    CConfig _config;
+	CImageSubprocessorHolder();
+	~CImageSubprocessorHolder();
+	CImageSubprocessorHolder(CImageSubprocessorHolder const&) = delete;
+	void operator=(CImageSubprocessorHolder const&) = delete;
+
+	void Reset();
+
+	std::map<std::string, IImageSubprocessor*> _subprocessors;
+	CConfig _config;
 };

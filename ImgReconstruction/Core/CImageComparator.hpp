@@ -13,9 +13,9 @@
 class CImageComparator : public IImageComparator
 {
 public:
-    CImageComparator(IBrightnessEqualizer* equalizer, IImageSummator* summator, int eps) : _equalizer(equalizer), _summator(summator), _eps(eps) {};
+	CImageComparator(IBrightnessEqualizer* equalizer, IImageSummator* summator, int eps) : _equalizer(equalizer), _summator(summator), _eps(eps) {};
 protected:
-    IBrightnessEqualizer* _equalizer;
-    IImageSummator* _summator;
-    int _eps;
+	IBrightnessEqualizer* _equalizer;
+	IImageSummator* _summator;
+	int _eps;
 };
