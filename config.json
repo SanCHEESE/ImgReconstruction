@@ -1,57 +1,50 @@
 {
-    "fetch": {
-        "size": {
-            "width": 8,
-            "height": 8
-        },
-        "offset": {
-            "x": 1,
-            "y": 1
-        }
+  "acc": 0,
+  "fetch": {
+    "offset": {
+      "y": 1,
+      "x": 1
     },
-
-    "filter": {
-        "bin": {
-            "size": {
-                "width": 2,
-                "height": 2
-            },
-            "method": 0,
-            "k": -0.2
-        },
-        "contrast": 30
+    "size": {
+      "width": 8,
+      "height": 8
+    }
+  },
+  "classifier": 0,
+  "compare": {
+    "sum": {
+      "method": 0,
+      "weight": 1.5
     },
-
-    "compare": {
-        "sum": {
-            "weight": 1.5,
-            "method": 0
-        },
-
-        "equalize": 1,
-        "metric": 1,
-        "eps": 1000
-    },
-
+    "eps": 500,
+    "equalize": 0,
+    "metric": 0
+  },
+  "filter": {
     "bin": {
-        "method": 0,
-        "size": {
-            "width": 25,
-            "height": 25
-        },
-        "k": -0.2
+      "method": 0,
+      "k": -0.2,
+      "size": {
+        "width": 2,
+        "height": 2
+      }
     },
-
-    "blur": {
-        "method": 0,
-        "ratio": 0.4
-    },
-
-    "extend": {
-        "width": 25,
-        "height": 25
-    },
-
-    "classifier": 0,
-    "acc": 0
+    "contrast": 30
+  },
+  "extend": {
+    "width": 25,
+    "height": 25
+  },
+  "blur": {
+    "method": 0,
+    "ratio": 0.4
+  },
+  "bin": {
+    "method": 0,
+    "k": -0.2,
+    "size": {
+      "width": 25,
+      "height": 25
+    }
+  }
 }

@@ -60,7 +60,7 @@ void CImage::Save(const std::string& path, int quality, const std::string& ext) 
 			pathComponents.push_back(pathComponent);
 		}
 
-		if (pathComponent == "jpg" || pathComponent == "tiff" || pathComponent == "bmp" || pathComponent == "jpeg") {
+		if (pathComponent == "jpg" || pathComponent == "tiff" || pathComponent == "bmp" || pathComponent == "jpeg" || pathComponent == "png") {
 			nameBuffer << path;
 		} else {
 			nameBuffer << path + "." + ext;

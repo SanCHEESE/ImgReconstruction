@@ -40,7 +40,7 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 		image = image({0, 0, _origImageSize.width, _origImageSize.height});
 	}
 
-	image.Save(_outImagePath, 100, "jpg");
+	image.Save(_outImagePath, 100, "");
 
 	return image;
 }
@@ -50,7 +50,7 @@ CImage CImageProcessor::RestoreImage()
 	// get all image patches
 	std::vector<CImagePatch> patches = _subprocHolder->PatchFetcher()->FetchPatches(_mainImage);
 
-	std::cout << "Total patches: " << patches.size() << std::endl;
+	//std::cout << "Total patches: " << patches.size() << std::endl;
 
 	// calculating
 	for (CImagePatch& patch : patches) {

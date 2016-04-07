@@ -42,8 +42,8 @@ public:
 	uint64 AvgHash();
 
 	// accessors
-	CImage GrayImage() const { return _grayImage; }
-	CImage BinImage() const { return _binImage; }
+	const CImage& GrayImage() const { return _grayImage; }
+	const CImage& BinImage() const { return _binImage; }
 	double GetBlurValue() const { return _blurValue; };
 	double GetStandartDeviation() const { return _standartDeviation; };
 	uint64 GetPHash() const { return _pHash; };

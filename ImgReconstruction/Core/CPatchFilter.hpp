@@ -37,7 +37,7 @@ public:
 		}
 
 		/* black pixels takes more or eq than 25% */
-		passedBin = (blackPixels / bin2x2.GetSize().area()) >= _blackPixelsRatio;
+		passedBin = ((float)blackPixels / (float)bin2x2.GetSize().area()) >= _blackPixelsRatio;
 
 		bool passedContrast = false;
 		if (passedBin) {
