@@ -33,6 +33,7 @@ static const std::string ImageExtenderKey = "ImageExtenderKey";
 struct CConfig
 {
 	TAccImageSumMethod accImageSumMethod;
+	float blurThresh;
 };
 
 class CImageSubprocessorHolder

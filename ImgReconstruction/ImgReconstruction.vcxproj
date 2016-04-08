@@ -51,7 +51,7 @@
     <ExecutablePath>C:\opencv\build\x64\vc14\bin;$(ExecutablePath)</ExecutablePath>
     <LibraryPath>C:\opencv\build\x64\vc14\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core\Structures;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Helpers;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core;$(IncludePath)</IncludePath>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

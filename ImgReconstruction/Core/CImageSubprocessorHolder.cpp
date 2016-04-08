@@ -236,6 +236,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 
 	int accSumMethod = json[AccSumJsonKey];
 	_config.accImageSumMethod = (TAccImageSumMethod)accSumMethod;
+	_config.blurThresh = blurJson[BlurThreshJsonKey];
 }
 
 CImageSubprocessorHolder::~CImageSubprocessorHolder()

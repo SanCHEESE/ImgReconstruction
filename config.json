@@ -1,50 +1,51 @@
 {
-  "acc": 0,
-  "fetch": {
-    "offset": {
-      "y": 1,
-      "x": 1
-    },
-    "size": {
-      "width": 8,
-      "height": 8
-    }
-  },
-  "classifier": 0,
   "compare": {
+    "metric": 1,
     "sum": {
       "method": 0,
       "weight": 1.5
     },
-    "eps": 500,
-    "equalize": 0,
-    "metric": 0
+    "equalize": 1,
+    "eps": 500
   },
-  "filter": {
-    "bin": {
-      "method": 0,
-      "k": -0.2,
-      "size": {
-        "width": 2,
-        "height": 2
-      }
+  "bin": {
+    "size": {
+      "width": 25,
+      "height": 25
     },
-    "contrast": 30
+    "method": 0,
+    "k": -0.2
   },
   "extend": {
     "width": 25,
     "height": 25
   },
+  "filter": {
+    "bin": {
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "method": 0,
+      "k": -0.2
+    },
+    "contrast": 30
+  },
   "blur": {
     "method": 0,
+    "thresh": 0.8,
     "ratio": 0.4
   },
-  "bin": {
-    "method": 0,
-    "k": -0.2,
+  "acc": 0,
+  "classifier": 0,
+  "fetch": {
     "size": {
-      "width": 25,
-      "height": 25
+      "width": 8,
+      "height": 8
+    },
+    "offset": {
+      "x": 1,
+      "y": 1
     }
   }
 }

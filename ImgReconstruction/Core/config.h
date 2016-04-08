@@ -37,6 +37,8 @@ static const std::string ImageSumJsonKey = "sum";
 static const std::string BrightnessEqualizeJsonKey = "equalize";
 static const std::string ImageCompareJsonKey = "compare";
 
+static const std::string BlurThreshJsonKey = "thresh";
+
 // patch fetching
 static cv::Point DefaultPatchOffset = {1, 1};
 static int DefaultMaxPatchSideSize = 8;

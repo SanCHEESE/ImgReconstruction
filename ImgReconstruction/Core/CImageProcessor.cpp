@@ -79,10 +79,18 @@ CImage CImageProcessor::RestoreImage()
 				// sorting by blur increase
 				std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
 
+#ifdef _DEBUG
+				for (auto patch : clusterPatches) {
+					std::cout << patch.GetBlurValue() << std::endl;
+				}
+#endif
+
 				// copying to summing image
 				CImagePatch bestPatch = clusterPatches[0];
 				for (auto& patch : clusterPatches) {
-					if (patch.GetFrame() != bestPatch.GetFrame()) {
+					bool blurThresh = std::abs((bestPatch.GetBlurValue() - patch.GetBlurValue()));
+					// copy if threshhold in relatively big
+					if (patch.GetFrame() != bestPatch.GetFrame() && _config.blurThresh < blurThresh) {
 						accImage.SetImageRegion(bestPatch.GrayImage(), patch.GetFrame());
 					}
 				}
