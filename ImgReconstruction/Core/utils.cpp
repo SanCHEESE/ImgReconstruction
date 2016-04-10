@@ -133,6 +133,19 @@ namespace utils
 		return img;
 	}
 
+	double BicubicK(double x, double B, double C)
+	{
+		double k = 0;
+		x = std::abs(x);
+		if (std::abs(x) < 1) {
+			k = (12 - 9 * B - 6 * C)*pow(x, 3) + (-18 + 12 * B + 6 * C)*pow(x, 2) + (6 - 2 * B);
+		} else if (std::abs(x) >= 1 && std::abs(x) < 2) {
+			k = (-B + 6 * C)*pow(x, 3) + (6 * B + 30 * C)*pow(x, 2) + (-12 - 48 * C)*x + (8 * B + 24 * C);
+		}
+
+		return k/6;
+	}
+
 	int LevensteinDistance(const std::string &s1, const std::string &s2)
 	{
 		// To change the type this function manipulates and returns, change

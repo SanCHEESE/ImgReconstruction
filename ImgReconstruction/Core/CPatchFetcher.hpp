@@ -15,7 +15,7 @@
 class CPatchFetcher : public IPatchFetcher
 {
 public:
-	CPatchFetcher(const cv::Size& size, const cv::Point& offset, IPatchFilter* filter) : _size(size), _offset(offset), _filter(filter)
+	CPatchFetcher(const cv::Size& size, const cv::Point_<float>& offset, IPatchFilter* filter) : _size(size), _offset(offset), _filter(filter)
 	{};
 
 	virtual std::vector<CImage> FetchPatches(const CImage& img) const
@@ -52,8 +52,8 @@ public:
 		CImage grayImage = imgPatch.GrayImage();
 		CImage binImage = imgPatch.BinImage();
 
-		IPatchIterator* patchIterator = grayImage.GetIntPatchIterator(_size, _offset);
-		IPatchIterator* binPatchIterator = binImage.GetIntPatchIterator(_size, _offset);
+		IPatchIterator* patchIterator = grayImage.GetFloatPatchIterator(_size, _offset);
+		IPatchIterator* binPatchIterator = binImage.GetFloatPatchIterator(_size, _offset);
 
 		std::vector<CImagePatch> patches;
 		while (patchIterator->HasNext()) {
@@ -63,6 +63,7 @@ public:
 			if (_filter->PatchPassesFilter(imgPatch)) {
 				imgPatch.SetBinImage(binPatchIterator->GetNext());
 				patches.push_back(imgPatch);
+				imgPatch.GrayImage().Save();
 			} else {
 				binPatchIterator->MoveNext();
 			}
@@ -78,5 +79,5 @@ public:
 private:
 	IPatchFilter* _filter;
 	cv::Size _size;
-	cv::Point _offset;
+	cv::Point_<float> _offset;
 };
