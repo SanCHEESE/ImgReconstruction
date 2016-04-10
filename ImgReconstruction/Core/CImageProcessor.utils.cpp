@@ -9,20 +9,6 @@
 #include "CImageProcessor.h"
 #include "CTimeLogger.h"
 
-void CImageProcessor::BuildBinImage(const CImage &img)
-{
-	CTimeLogger::StartLogging();
-
-	CImage blurredImage;
-	cv::bilateralFilter(img, blurredImage, 2, 1, 1);
-	CImage binarizedImage;
-	binarizedImage = _subprocHolder->PatchBinarizer()->Binarize(img);
-
-	CTimeLogger::Print("Binarization: ");
-
-	_mainImage.SetBinImage(binarizedImage);
-}
-
 std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(const std::vector<CImagePatch>& aClass)
 {
 	std::map<int, std::vector<CImagePatch>> clusters;

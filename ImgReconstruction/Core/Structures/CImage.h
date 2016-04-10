@@ -9,6 +9,7 @@
 #pragma once
 
 #include "common.h"
+#include "IPatchIterator.h"
 
 class IBlurMeasurer;
 
@@ -44,33 +45,31 @@ public:
 	CImage GetRotatedImage(double angle) const;
 	static CImage GetImageWithText(const std::string& text, const cv::Point& origin, const cv::Scalar& textColor, const cv::Scalar& bgColor, const cv::Size& imgSize);
 
-	std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point& offset) const;
 	cv::Rect GetFrame() const;
+	//template<typename T>
+	void SetFrame(const cv::Rect2f& frame) { _frame = frame; }
 	cv::Size GetSize() const;
 
-	class CPatchIterator
+	template<typename T = int>
+	std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point_<T>& offset) const
 	{
-	public:
-		CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point offset, const cv::Rect& pointingRect = cv::Rect()) :
-			_size(size), _pointingRect(pointingRect), _offset(offset), _iterImage(iterImage)
-		{
-			if (_pointingRect == cv::Rect()) {
-				_pointingRect = cv::Rect(0, 0, _size.width, _size.height);
-			}
+		std::vector<CImage> patches;
+		IPatchIterator* patchIterator = 0;
+		if (typeid(T) == typeid(int)) {
+			patchIterator = GetIntPatchIterator(size, offset);
+		} else if (typeid(T) == typeid(float)) {
+			patchIterator = GetFloatPatchIterator(size, offset);
 		}
+		while (patchIterator->HasNext()) {
+			patches.push_back(patchIterator->GetNext());
+		}
+		return patches;
+	}
 
-		bool HasNext();
-		CImage GetNext();
-		void MoveNext();
-	private:
-		cv::Size _size;
-		cv::Rect _pointingRect;
-		cv::Point _offset;
-		const CImage* const _iterImage;
-	};
-	CPatchIterator GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect = cv::Rect()) const;
+	IPatchIterator* GetIntPatchIterator(const cv::Size& size, const cv::Point_<int>& offset, const cv::Rect_<int>& startRect = cv::Rect_<int>()) const;
+	IPatchIterator* GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, const cv::Rect_<float>& startRect = cv::Rect_<float>()) const;
 
 	friend std::ostream& operator<<(std::ostream& os, const CImage& img);
 private:
-	cv::Rect _frame;
+	cv::Rect2f _frame;
 };

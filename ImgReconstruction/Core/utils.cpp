@@ -137,8 +137,8 @@ namespace utils
 	{
 		// To change the type this function manipulates and returns, change
 		// the return type and the types of the two variables below.
-		int s1len = s1.size();
-		int s2len = s2.size();
+		int s1len = static_cast<int>(s1.size());
+		int s2len = static_cast<int>(s2.size());
 
 		auto column_start = (decltype(s1len))1;
 

@@ -53,6 +53,9 @@
     <Filter Include="src\Testers">
       <UniqueIdentifier>{47e3fe84-247d-4fe3-a1f5-caac43612c8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Structures\PatchIterator">
+      <UniqueIdentifier>{713ca210-0ab8-42fa-9f01-78a69bfa6b9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Helpers\CTimeLogger.cpp">
@@ -206,6 +209,12 @@
     </ClInclude>
     <ClInclude Include="CBlurMetricsTester.h">
       <Filter>src\Testers</Filter>
+    </ClInclude>
+    <ClInclude Include="IPatchIterator.h">
+      <Filter>src\Structures\PatchIterator</Filter>
+    </ClInclude>
+    <ClInclude Include="CPatchIterator.h">
+      <Filter>src\Structures\PatchIterator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -29,7 +29,6 @@ private:
 	CImage RestoreImage();
 	CImage RestoreImageIteratively(int iterCount, const CImage& img);
 	void GenerateHelperImages(const CImage& img);
-	void BuildBinImage(const CImage& img);
 
 	// utils
 	std::map<int, std::vector<CImagePatch>> Clusterize(const std::vector<CImagePatch>& aClass);

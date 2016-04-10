@@ -1,6 +1,6 @@
 {
   "compare": {
-    "metric": 1,
+    "metric": 0,
     "sum": {
       "method": 0,
       "weight": 1.5
@@ -33,7 +33,7 @@
   },
   "blur": {
     "method": 0,
-    "thresh": 0.8,
+    "thresh": 0.5,
     "ratio": 0.4
   },
   "acc": 0,

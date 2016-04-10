@@ -154,7 +154,9 @@
     <ClInclude Include="Core\Structures\CImage.h" />
     <ClInclude Include="Core\Structures\CImagePatch.h" />
     <ClInclude Include="Core\utils.h" />
+    <ClInclude Include="CPatchIterator.h" />
     <ClInclude Include="Helpers\CTimeLogger.h" />
+    <ClInclude Include="IPatchIterator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

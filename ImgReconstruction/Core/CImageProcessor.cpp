@@ -21,10 +21,9 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
 	_origImageSize = img.GetSize();
 
 	CImage extentImage = _subprocHolder->ImageExtender()->Extent(img);
-
-	_mainImage = CImagePatch();
-	_mainImage.SetGrayImage(extentImage);
-	BuildBinImage(extentImage);
+	CImage blurredImage;
+	cv::bilateralFilter(extentImage, blurredImage, 2, 1, 1);
+	_mainImage = CImagePatch(extentImage, _subprocHolder->PatchBinarizer()->Binarize(blurredImage));
 }
 
 CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img)
@@ -84,7 +83,7 @@ CImage CImageProcessor::RestoreImage()
 				// copying to summing image
 				CImagePatch bestPatch = clusterPatches[0];
 				for (auto& patch : clusterPatches) {
-					bool blurThresh = std::abs((bestPatch.GetBlurValue() - patch.GetBlurValue()));
+					double blurThresh = std::abs((bestPatch.GetBlurValue() - patch.GetBlurValue()));
 					// copy if threshhold in relatively big
 					if (patch.GetFrame() != bestPatch.GetFrame() && _config.blurThresh < blurThresh) {
 						accImage.SetImageRegion(bestPatch.GrayImage(), patch.GetFrame());

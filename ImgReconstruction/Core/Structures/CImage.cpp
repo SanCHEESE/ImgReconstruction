@@ -9,7 +9,9 @@
 #include <sstream>
 
 #include "CImage.h"
+#include "CPatchIterator.h"
 #include "IBlurMeasurer.h"
+
 
 void CImage::copyTo(CImage &image) const
 {
@@ -154,11 +156,6 @@ CImage CImage::GetResizedImage(const cv::Size &size) const
 	return result;
 }
 
-CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect) const
-{
-	return CPatchIterator(this, size, offset, pointingRect);
-}
-
 CImage CImage::GetImageWithText(const std::string& text, const cv::Point& origin, const cv::Scalar& textColor, const cv::Scalar& bgColor, const cv::Size& imgSize)
 {
 	CImage textImg(imgSize.height, imgSize.width, CV_8UC1, bgColor);
@@ -193,16 +190,6 @@ CImage CImage::GetPatch(const cv::Rect &rect) const
 	return CImage(*this, rect);
 }
 
-std::vector<CImage> CImage::GetAllPatches(const cv::Size& size, const cv::Point& offset) const
-{
-	std::vector<CImage> patches;
-	CImage::CPatchIterator patchIterator = GetPatchIterator(size, offset);
-	while (patchIterator.HasNext()) {
-		patches.push_back(patchIterator.GetNext());
-	}
-	return patches;
-}
-
 cv::Rect CImage::GetFrame() const
 {
 	return _frame;
@@ -218,49 +205,12 @@ void CImage::CopyMetadataTo(CImage &image) const
 	image._frame = this->_frame;
 }
 
-bool CImage::CPatchIterator::HasNext()
+IPatchIterator* CImage::GetIntPatchIterator(const cv::Size& size, const cv::Point_<int>& offset, const cv::Rect_<int>& startRect) const
 {
-	if (_pointingRect.width + _pointingRect.x == _iterImage->cols &&
-		_pointingRect.height + _pointingRect.y == _iterImage->rows) {
-		return true;
-	}
-
-	return _pointingRect.width + _pointingRect.x + (_offset.x <= 1 ? _offset.x : (_offset.x - 1)) < _iterImage->cols ||
-		_pointingRect.height + _pointingRect.y + (_offset.x <= 1 ? _offset.x : (_offset.x - 1)) < _iterImage->rows;
+	return new CPatchIterator<int>(this, size, offset, startRect);
 }
 
-void CImage::CPatchIterator::MoveNext()
+IPatchIterator* CImage::GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, const cv::Rect_<float>& startRect) const
 {
-	int maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage->rows);
-	int maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage->cols);
-	if (_pointingRect.width + _pointingRect.x < _iterImage->cols - 1) {
-		// not near the right border
-		_pointingRect.x += _offset.x;
-	} else if (_pointingRect.width + _pointingRect.x >= _iterImage->cols - 1) {
-		// moving to the next row
-		_pointingRect.y += _offset.y;
-		_pointingRect.x = 0;
-	}
-}
-
-inline CImage CImage::CPatchIterator::GetNext()
-{
-	int maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage->rows);
-	int maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage->cols);
-
-	// fetching patch
-	cv::Rect patchFrame = cv::Rect(_pointingRect.x, _pointingRect.y, maxCol - _pointingRect.x, maxRow - _pointingRect.y);
-	CImage patch = (*_iterImage)(patchFrame);
-	patch._frame = patchFrame;
-
-	if (_pointingRect.width + _pointingRect.x < _iterImage->cols - 1) {
-		// not near the right border
-		_pointingRect.x += _offset.x;
-	} else if (_pointingRect.width + _pointingRect.x >= _iterImage->cols - 1) {
-		// moving to the next row
-		_pointingRect.y += _offset.y;
-		_pointingRect.x = 0;
-	}
-
-	return patch;
+	return new CPatchIterator<float>(this, size, offset, startRect);
 }

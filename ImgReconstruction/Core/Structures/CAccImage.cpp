@@ -100,7 +100,7 @@ uchar CAccImage::Sum(TAccImageSumMethod method, std::vector<uchar> colors)
 
 	switch (method) {
 		case TAccImageSumMethodAvg:
-			result = std::accumulate(colors.begin(), colors.end(), 0) / colors.size();
+			result = static_cast<uchar>(std::accumulate(colors.begin(), colors.end(), 0) / colors.size());
 			break;
 		case TAccImageSumMethodMedian:
 		{

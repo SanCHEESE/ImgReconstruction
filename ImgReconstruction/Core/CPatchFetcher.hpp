@@ -22,10 +22,10 @@ public:
 	{
 		CTimeLogger::StartLogging();
 
-		CImage::CPatchIterator patchIterator = img.GetPatchIterator(_size, _offset);
+		IPatchIterator* patchIterator = img.GetIntPatchIterator(_size, _offset);
 		std::vector<CImage> patches;
-		while (patchIterator.HasNext()) {
-			CImage patch = patchIterator.GetNext();
+		while (patchIterator->HasNext()) {
+			CImage patch = patchIterator->GetNext();
 			if (patch.GetSize().width == 0 || patch.GetSize().height == 0) {
 				continue;
 			}
@@ -37,6 +37,8 @@ public:
 				patches.push_back(patch);
 			}
 		}
+
+		delete patchIterator;
 
 		CTimeLogger::Print("Patch fetching: ");
 		return patches;
@@ -50,21 +52,24 @@ public:
 		CImage grayImage = imgPatch.GrayImage();
 		CImage binImage = imgPatch.BinImage();
 
-		CImage::CPatchIterator patchIterator = grayImage.GetPatchIterator(_size, _offset);
-		CImage::CPatchIterator binPatchIterator = binImage.GetPatchIterator(_size, _offset);
+		IPatchIterator* patchIterator = grayImage.GetIntPatchIterator(_size, _offset);
+		IPatchIterator* binPatchIterator = binImage.GetIntPatchIterator(_size, _offset);
 
 		std::vector<CImagePatch> patches;
-		while (patchIterator.HasNext()) {
+		while (patchIterator->HasNext()) {
 			CImagePatch imgPatch;
-			imgPatch.SetGrayImage(patchIterator.GetNext());
+			imgPatch.SetGrayImage(patchIterator->GetNext());
 
 			if (_filter->PatchPassesFilter(imgPatch)) {
-				imgPatch.SetBinImage(binPatchIterator.GetNext());
+				imgPatch.SetBinImage(binPatchIterator->GetNext());
 				patches.push_back(imgPatch);
 			} else {
-				binPatchIterator.MoveNext();
+				binPatchIterator->MoveNext();
 			}
 		}
+
+		delete patchIterator;
+		delete binPatchIterator;
 
 		CTimeLogger::Print("Patch fetching: ");
 

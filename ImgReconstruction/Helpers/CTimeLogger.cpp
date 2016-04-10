@@ -19,8 +19,7 @@ void CTimeLogger::StartLogging(const std::string& desc)
 
 void CTimeLogger::Print(const std::string& decr)
 {
-	double diff = ((double)clock() - (double)_time);
-	_totalTime += diff;
+	_totalTime += clock() - _time;
 	/*std::clog << "--------------------------------------------" << std::endl;
 	std::clog << decr << "\n\t" << "Time: " << diff/CLOCKS_PER_SEC << " s" << std::endl;
 	std::clog << "--------------------------------------------" << std::endl;*/
