@@ -16,10 +16,6 @@ void CImageProcessor::ProcessImage(const CImage& img, const std::string& outImag
 	RestoreImageIteratively(_iterCount, img);
 }
 
-#ifdef __APPLE__
-#pragma mark - Private
-#endif
-
 void CImageProcessor::GenerateHelperImages(const CImage& img)
 {
 	_origImageSize = img.GetSize();

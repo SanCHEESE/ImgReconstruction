@@ -10,10 +10,6 @@
 
 #include <bitset>
 
-#ifdef __APPLE__
-#pragma mark - Public
-#endif
-
 double CImagePatch::BlurValue(const IBlurMeasurer *const measurer)
 {
 	if (_blurValue < 0) {
@@ -68,10 +64,6 @@ std::ostream& operator<<(std::ostream& os, const CImagePatch& patch)
 
 	return os;
 }
-
-#ifdef __APPLE__
-#pragma mark - Private
-#endif
 
 void CImagePatch::Initialize()
 {

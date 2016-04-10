@@ -11,8 +11,6 @@
 #include "CImage.h"
 #include "IBlurMeasurer.h"
 
-#pragma mark - Overrides
-
 void CImage::copyTo(CImage &image) const
 {
 	((cv::Mat)*this).copyTo(image);
@@ -42,8 +40,6 @@ std::ostream& operator<<(std::ostream& os, const CImage& img)
 	}
 	return os;
 }
-
-#pragma mark - Save
 
 void CImage::Save(const std::string& path, int quality, const std::string& ext) const
 {
@@ -158,7 +154,6 @@ CImage CImage::GetResizedImage(const cv::Size &size) const
 	return result;
 }
 
-#pragma mark - CImage
 CImage::CPatchIterator CImage::GetPatchIterator(const cv::Size& size, const cv::Point& offset, const cv::Rect& pointingRect) const
 {
 	return CPatchIterator(this, size, offset, pointingRect);
@@ -222,8 +217,6 @@ void CImage::CopyMetadataTo(CImage &image) const
 {
 	image._frame = this->_frame;
 }
-
-#pragma mark - CPatchIterator
 
 bool CImage::CPatchIterator::HasNext()
 {
