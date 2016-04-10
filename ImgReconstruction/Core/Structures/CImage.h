@@ -66,8 +66,8 @@ public:
 		return patches;
 	}
 
-	IPatchIterator* GetIntPatchIterator(const cv::Size& size, const cv::Point_<int>& offset, const cv::Rect_<int>& startRect = cv::Rect_<int>()) const;
-	IPatchIterator* GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, const cv::Rect_<float>& startRect = cv::Rect_<float>()) const;
+	IPatchIterator* GetIntPatchIterator(const cv::Size& size, const cv::Point_<int>& offset) const;
+	IPatchIterator* GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset) const;
 
 	friend std::ostream& operator<<(std::ostream& os, const CImage& img);
 private:

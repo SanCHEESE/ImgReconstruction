@@ -8,24 +8,22 @@ template<typename T = int>
 class CPatchIterator : public IPatchIterator
 {
 public:
-	CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point_<T> offset, const cv::Rect_<T>& pointingRect = cv::Rect_<T>()) :
-		_size(size), _pointingRect(pointingRect), _offset(offset)
+	CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point_<T> offset) :
+		_size(size), _offset(offset)
 	{
-		if (_pointingRect == cv::Rect_<T>()) {
-			_pointingRect = cv::Rect_<T>(0, 0, _size.width, _size.height);
-		}
-
 		if (typeid(T) == typeid(float)) {
 			cv::copyMakeBorder(*iterImage, _iterImage, 2, 2, 2, 2, cv::BORDER_REFLECT, 0);
+			_pointingRect = cv::Rect2f(2, 2, size.width, size.height);
 		} else if (typeid(T) == typeid(int)) {
 			_iterImage = *iterImage;
+			_pointingRect = cv::Rect_<T>(0, 0, _size.width, _size.height);
 		}
 	}
 
 	virtual CImage GetNext()
 	{
-		int maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage.rows);
-		int maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage.cols);
+		float maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage.rows);
+		float maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage.cols);
 
 		// fetching patch
 		cv::Rect_<T> patchFrame = cv::Rect_<T>(_pointingRect.x, _pointingRect.y, maxCol - _pointingRect.x, maxRow - _pointingRect.y);
@@ -46,8 +44,8 @@ public:
 
 	virtual void MoveNext()
 	{
-		int maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage.rows);
-		int maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage.cols);
+		float maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage.rows);
+		float maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage.cols);
 		if (_pointingRect.width + _pointingRect.x < _iterImage.cols - 1) {
 			// not near the right border
 			_pointingRect.x += _offset.x;

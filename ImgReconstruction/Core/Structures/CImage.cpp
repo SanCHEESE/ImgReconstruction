@@ -205,12 +205,12 @@ void CImage::CopyMetadataTo(CImage &image) const
 	image._frame = this->_frame;
 }
 
-IPatchIterator* CImage::GetIntPatchIterator(const cv::Size& size, const cv::Point_<int>& offset, const cv::Rect_<int>& startRect) const
+IPatchIterator* CImage::GetIntPatchIterator(const cv::Size& size, const cv::Point_<int>& offset) const
 {
-	return new CPatchIterator<int>(this, size, offset, startRect);
+	return new CPatchIterator<int>(this, size, offset);
 }
 
-IPatchIterator* CImage::GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, const cv::Rect_<float>& startRect) const
+IPatchIterator* CImage::GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset) const
 {
-	return new CPatchIterator<float>(this, size, offset, startRect);
+	return new CPatchIterator<float>(this, size, offset);
 }
