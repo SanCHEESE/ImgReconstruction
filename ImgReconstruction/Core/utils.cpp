@@ -133,6 +133,8 @@ namespace utils
 		return img;
 	}
 
+	// double Lanczos()
+
 	double BicubicK(double x, double B, double C)
 	{
 		double k = 0;

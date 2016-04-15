@@ -70,6 +70,8 @@ public:
 	IPatchIterator* GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset) const;
 
 	friend std::ostream& operator<<(std::ostream& os, const CImage& img);
+
+	bool interpolated;
 private:
 	cv::Rect2f _frame;
 };

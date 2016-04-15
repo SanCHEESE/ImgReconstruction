@@ -80,8 +80,16 @@ CImage CImageProcessor::RestoreImage()
 				}
 #endif
 
+				int bestPatchIdx = 0;
+				for (int i = 0; i < clusterPatches.size(); i++) {
+					if (!clusterPatches[i].GrayImage().interpolated) {
+						bestPatchIdx = i;
+						break;
+					}
+				}
+
 				// copying to summing image
-				CImagePatch bestPatch = clusterPatches[0];
+				CImagePatch bestPatch = clusterPatches[bestPatchIdx];
 				for (auto& patch : clusterPatches) {
 					double blurThresh = std::abs((bestPatch.GetBlurValue() - patch.GetBlurValue()));
 					// copy if threshhold in relatively big

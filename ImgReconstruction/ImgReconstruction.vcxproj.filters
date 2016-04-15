@@ -56,6 +56,9 @@
     <Filter Include="src\Structures\PatchIterator">
       <UniqueIdentifier>{713ca210-0ab8-42fa-9f01-78a69bfa6b9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Structures\Kernels">
+      <UniqueIdentifier>{b6c5b20c-8cff-4530-93ac-e881fc6c5a04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Helpers\CTimeLogger.cpp">
@@ -213,8 +216,23 @@
     <ClInclude Include="IPatchIterator.h">
       <Filter>src\Structures\PatchIterator</Filter>
     </ClInclude>
-    <ClInclude Include="CPatchIterator.h">
+    <ClInclude Include="CPatchIterator.hpp">
       <Filter>src\Structures\PatchIterator</Filter>
+    </ClInclude>
+    <ClInclude Include="IInterpolationKernel.h">
+      <Filter>src\Structures\Kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="CLanczosKernel.hpp">
+      <Filter>src\Structures\Kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="CInterpolationKernel.hpp">
+      <Filter>src\Structures\Kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="CLanczosCustomKernel.hpp">
+      <Filter>src\Structures\Kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="CBicubicKernel.hpp">
+      <Filter>src\Structures\Kernels</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

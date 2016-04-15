@@ -115,7 +115,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CBicubicKernel.hpp" />
     <ClInclude Include="CBlurMetricsTester.h" />
+    <ClInclude Include="CInterpolationKernel.hpp" />
+    <ClInclude Include="CLanczosCustomKernel.hpp" />
+    <ClInclude Include="CLanczosKernel.hpp" />
     <ClInclude Include="common.h" />
     <ClInclude Include="Core\CAdaptiveGaussianBinarizer.hpp" />
     <ClInclude Include="Core\CAvgHashPatchClassifier.hpp" />
@@ -154,8 +158,9 @@
     <ClInclude Include="Core\Structures\CImage.h" />
     <ClInclude Include="Core\Structures\CImagePatch.h" />
     <ClInclude Include="Core\utils.h" />
-    <ClInclude Include="CPatchIterator.h" />
+    <ClInclude Include="CPatchIterator.hpp" />
     <ClInclude Include="Helpers\CTimeLogger.h" />
+    <ClInclude Include="IInterpolationKernel.h" />
     <ClInclude Include="IPatchIterator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
