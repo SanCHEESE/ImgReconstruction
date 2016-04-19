@@ -30,9 +30,9 @@ public:
 
 
 		int blackPixels = 0;
-		for (int row = 0; row < bin2x2.GetSize().height; row++) {
-			for (int col = 0; col < bin2x2.GetSize().width; col++) {
-				blackPixels += bin2x2.at<uchar>(row, col) < 255;
+		for (int column = 0; column < bin2x2.GetSize().width; column++) {
+			for (int row = 0; row < bin2x2.GetSize().height; row++) {
+				blackPixels += bin2x2.at<uchar>(column, row) < 255;
 			}
 		}
 
