@@ -64,9 +64,6 @@ public:
 			}
 		}
 
-
-		/*   std::cout << "Before filter: " << patches.size() << std::endl;
-		   std::cout << "After filter: " << filteredPatches.size() << std::endl;*/
 		CTimeLogger::Print("Patch filtering: ");
 
 		return filteredPatches;
