@@ -11,7 +11,7 @@
 #include <CLanczosCustomKernel.hpp>
 #include <CLanczosKernel.hpp>
 
-static const int ExtentBorderSize = 2;
+static const int ExtentBorderSize = 3;
 
 template<typename T = int>
 class CPatchIterator : public IPatchIterator
@@ -22,7 +22,7 @@ public:
 	{
 		if (typeid(T) == typeid(float)) {
 			_borderInset = ExtentBorderSize;
-			cv::copyMakeBorder(*iterImage, _iterImage, _borderInset, _borderInset, _borderInset, _borderInset, cv::BORDER_REFLECT, 0);
+			cv::copyMakeBorder(*iterImage, _iterImage, _borderInset, _borderInset, _borderInset, _borderInset, cv::BORDER_REPLICATE, 0);
 			_pointingRect = cv::Rect2f(_borderInset, _borderInset, size.width, size.height);
 
 			InitInterpKernel();
@@ -40,24 +40,24 @@ public:
 
 	void InitInterpKernel()
 	{
-		_a = 3;
+		_a = ExtentBorderSize;
 
 		_k = new CLanczosKernel(_a);
 		_coeffsX = _k->Coeffs(_offset.x, _a);
 		_coeffsY = _k->Coeffs(_offset.y, _a);
 
-		double sum = 0;
-		for (auto& coeff: _coeffsX) {
-			sum += coeff;
-		}
+		//double sum = 0;
+		//for (auto& coeff: _coeffsX) {
+		//	sum += coeff;
+		//}
 
-		std::cout << sum << std::endl;
+		//std::cout << sum << std::endl;
 
-		sum = 0;
-		for (auto& coeff : _coeffsX) {
-			sum += coeff;
-		}
-		std::cout << sum << std::endl;
+		//sum = 0;
+		//for (auto& coeff : _coeffsX) {
+		//	sum += coeff;
+		//}
+		//std::cout << sum << std::endl;
 	}
 
 	virtual inline CImage GetNext()
@@ -79,12 +79,6 @@ public:
 		}
 		patch.SetFrame(patchFrame);
 
-		if (typeid(T) == typeid(float)) {
-			std::stringstream str;
-			str << patchFrame;
-			patch.Save(str.str());
-		};
-
 		if (_pointingRect.width + _pointingRect.x + _offset.x <= _iterImage.cols - _borderInset) {
 			// not near the right border
 			_pointingRect.x += _offset.x;
@@ -105,7 +99,7 @@ public:
 		} else if (_pointingRect.width + _pointingRect.x + _offset.x > _iterImage.cols - _borderInset) {
 			// moving to the next row
 			_pointingRect.y += _offset.y;
-			_pointingRect.x = 0;
+			_pointingRect.x = _borderInset;
 		}
 	}
 
@@ -113,7 +107,6 @@ public:
 	{
 		if (_pointingRect.width + _pointingRect.x + _offset.x >= _iterImage.cols - _borderInset && typeid(T) == typeid(float)) {
 			// if we reached end column, check if we can go down
-			//std::cout << "reached end of columns " << _pointingRect << std::endl;
 			return _pointingRect.y + _pointingRect.height + _offset.y <= _iterImage.rows - _borderInset;
 		}
 
@@ -129,35 +122,26 @@ public:
 
 	CImage GetSubRect(const CImage& image, const cv::Rect2f& rect)
 	{
-
-
 		CImage subRectImage(rect.width, rect.height, cv::DataType<uchar>::type, 0);
-		for (int sr_i = 0; sr_i < rect.width; sr_i++) {
-			for (int sr_j = 0; sr_j < rect.height; sr_j++) {
+		for (int sr_i = 0; sr_i < rect.height; sr_i++) { // rows
+			for (int sr_j = 0; sr_j < rect.width; sr_j++) { // cols
 				// for each pixel of subsampled patch
-				double x = rect.x + sr_i;
-				double y = rect.y + sr_j;
+				double x = rect.x + sr_j;
+				double y = rect.y + sr_i;
 
 				// calculate its value
 				double p = 0;
-				int i_start = floorf(x) - _a + 1;
-				int j_start = floorf(y) - _a + 1;
-				for (int i = i_start; i <= floorf(x) + _a; i++) {
-					for (int j = j_start; j <= floorf(x) + _a; j++) {
-						subRectImage.at<uchar>(sr_i, sr_j) += image.at<uchar>(i, j) * _coeffsX[i - i_start] * _coeffsY[j - j_start];
+				int i_start = floorf(y) - _a + 1;
+				int j_start = floorf(x) - _a + 1;
+				for (int i = i_start; i <= floorf(y) + _a; i++) { // rows
+					for (int j = j_start; j <= floorf(x) + _a; j++) { // cols
+						p += image.at<uchar>(i, j) * _coeffsY[i - i_start] * _coeffsX[j - j_start];
 					}
 				}
 
 				subRectImage.at<uchar>(sr_i, sr_j) = p;
 			}
 		}
-
-		std::cout << "Getting rect: " << rect << std::endl;
-
-		CImage result;
-		cv::Rect2i intRect = rect;
-		cv::absdiff(subRectImage, image(intRect), result);
-		std::cout << "\t near int rect diff: " << cv::sum(result)[0] << std::endl;
 
 		return subRectImage;
 	}
