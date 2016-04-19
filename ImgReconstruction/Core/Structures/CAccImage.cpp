@@ -14,14 +14,14 @@ CAccImage::CAccImage(const CImage& img)
 {
 	cv::Size size = {img.cols, img.rows};
 
-	_accImg = std::vector<std::vector<std::vector<uchar>>>(size.height);
-	for (int y = 0; y < size.height; y++) {
-		_accImg[y] = std::vector<std::vector<uchar>>(size.width, std::vector<uchar>());
+	_accImg = std::vector<std::vector<std::vector<uchar>>>(size.width);
+	for (int x = 0; x < size.width; x++) {
+		_accImg[x] = std::vector<std::vector<uchar>>(size.height, std::vector<uchar>());
 	}
 
-	for (int y = 0; y < size.height; y++) {
-		for (int x = 0; x < size.width; x++) {
-			_accImg[y][x].push_back(img.at<uchar>(y, x));
+	for (int x = 0; x < size.width; x++) {
+		for (int y = 0; y < size.height; y++) {
+			_accImg[x][y].push_back(img.at<uchar>(y, x));
 		}
 	}
 
@@ -30,9 +30,9 @@ CAccImage::CAccImage(const CImage& img)
 
 CAccImage::CAccImage(const cv::Size& size)
 {
-	_accImg = std::vector<std::vector<std::vector<uchar>>>(size.height);
-	for (int y = 0; y < size.height; y++) {
-		_accImg[y] = std::vector<std::vector<uchar>>(size.width, std::vector<uchar>());
+	_accImg = std::vector<std::vector<std::vector<uchar>>>(size.width);
+	for (int x = 0; x < size.width; x++) {
+		_accImg[x] = std::vector<std::vector<uchar>>(size.height, std::vector<uchar>());
 	}
 
 	_size = size;
@@ -47,9 +47,9 @@ void CAccImage::SetImageRegion(const CImage& image, const cv::Rect& frame)
 {
 	assert(frame.x + frame.width <= _size.width);
 	assert(frame.y + frame.height <= _size.height);
-	for (int y = frame.y; y < frame.y + frame.height; y++) {
-		for (int x = frame.x; x < frame.x + frame.width; x++) {
-			_accImg[y][x].push_back(image.at<uchar>(y - frame.y, x - frame.x));
+	for (int x = frame.x; x < frame.x + frame.width; x++) {
+		for (int y = frame.y; y < frame.y + frame.height; y++) {
+			_accImg[x][y].push_back(image.at<uchar>(y - frame.y, x - frame.x));
 		}
 	}
 }
@@ -57,9 +57,9 @@ void CAccImage::SetImageRegion(const CImage& image, const cv::Rect& frame)
 CImage CAccImage::GetResultImage(TAccImageSumMethod method) const
 {
 	CImage resultImage(_size, CV_8U, 0);
-	for (int y = 0; y < _size.height; y++) {
-		for (int x = 0; x < _size.width; x++) {
-			auto colors = _accImg[y][x];
+	for (int x = 0; x < _size.width; x++) {
+		for (int y = 0; y < _size.height; y++) {
+			auto colors = _accImg[x][y];
 			resultImage.at<uchar>(y, x) = Sum(method, colors);
 		}
 	}
@@ -72,9 +72,9 @@ CImage CAccImage::CreateHistImage() const
 	const int PixelScale = 16;
 
 	CImage histImage(_size.height * PixelScale, _size.width * PixelScale, CV_8UC1, cv::Scalar(255));
-	for (int y = 0; y < histImage.rows; y += PixelScale) {
-		for (int x = 0; x < histImage.cols; x += PixelScale) {
-			auto colors = _accImg[y / PixelScale][x / PixelScale];
+	for (int x = 0; x < histImage.cols; x += PixelScale) {
+		for (int y = 0; y < histImage.rows; y += PixelScale) {
+			auto colors = _accImg[x / PixelScale][y / PixelScale];
 			uchar color = Sum(TAccImageSumMethodAvg, colors);
 			std::string text = std::to_string(colors.size());
 			cv::Point origin = {3, 12};
