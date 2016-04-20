@@ -8,10 +8,9 @@
 
 #include <IInterpolationKernel.h>
 #include <CBicubicKernel.hpp>
-#include <CLanczosCustomKernel.hpp>
 #include <CLanczosKernel.hpp>
 
-static const int ExtentBorderSize = 3;
+static const int ExtentBorderSize = 2;
 
 template<typename T = int>
 class CPatchIterator : public IPatchIterator
@@ -29,7 +28,6 @@ public:
 		
 		} else if (typeid(T) == typeid(int)) {
 			_iterImage = *iterImage;
-			_pointingRect = cv::Rect_<T>(0, 0, _size.width, _size.height);
 		}
 	}
 
@@ -43,8 +41,8 @@ public:
 		_a = ExtentBorderSize;
 
 		_k = new CLanczosKernel(_a);
-		_coeffsX = _k->Coeffs(_offset.x, _a);
-		_coeffsY = _k->Coeffs(_offset.y, _a);
+		_coeffsX = _k->Coeffs(_offset.x);
+		_coeffsY = _k->Coeffs(_offset.y);
 
 		//double sum = 0;
 		//for (auto& coeff: _coeffsX) {
@@ -131,10 +129,6 @@ public:
 
 				// calculate its value
 				double p = 0;
-				int i_start = floorf(y) - _a + 1;
-				int j_start = floorf(x) - _a + 1;
-				for (int i = i_start; i <= floorf(y) + _a; i++) { // rows
-					for (int j = j_start; j <= floorf(x) + _a; j++) { // cols
 						p += image.at<uchar>(i, j) * _coeffsY[i - i_start] * _coeffsX[j - j_start];
 					}
 				}

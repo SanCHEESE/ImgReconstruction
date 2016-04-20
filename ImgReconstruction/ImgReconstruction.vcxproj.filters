@@ -59,6 +59,9 @@
     <Filter Include="src\Structures\Kernels">
       <UniqueIdentifier>{b6c5b20c-8cff-4530-93ac-e881fc6c5a04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Structures\Shift">
+      <UniqueIdentifier>{a8712090-27bf-43d3-b4a1-0501c602abd7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Helpers\CTimeLogger.cpp">
@@ -88,7 +91,7 @@
     <ClCompile Include="Core\CImageSubprocessorHolder.cpp">
       <Filter>src\Algorithm\Suprocessors</Filter>
     </ClCompile>
-    <ClCompile Include="CBlurMetricsTester.cpp">
+    <ClCompile Include="Core\CBlurMetricsTester.cpp">
       <Filter>src\Testers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -210,29 +213,32 @@
     <ClInclude Include="Core\CPHashPatchClassifier.hpp">
       <Filter>src\Algorithm\Suprocessors\Classifier</Filter>
     </ClInclude>
-    <ClInclude Include="CBlurMetricsTester.h">
+    <ClInclude Include="Core\CBlurMetricsTester.h">
       <Filter>src\Testers</Filter>
     </ClInclude>
-    <ClInclude Include="IPatchIterator.h">
+    <ClInclude Include="Core\CBicubicKernel.hpp">
+      <Filter>src\Structures\Kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CInterpolationKernel.hpp">
+      <Filter>src\Structures\Kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CLanczosKernel.hpp">
+      <Filter>src\Structures\Kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IInterpolationKernel.h">
+      <Filter>src\Structures\Kernels</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Structures\CPatchIterator.hpp">
       <Filter>src\Structures\PatchIterator</Filter>
     </ClInclude>
-    <ClInclude Include="CPatchIterator.hpp">
+    <ClInclude Include="Core\Structures\IPatchIterator.h">
       <Filter>src\Structures\PatchIterator</Filter>
     </ClInclude>
-    <ClInclude Include="IInterpolationKernel.h">
-      <Filter>src\Structures\Kernels</Filter>
+    <ClInclude Include="CImageShifter.hpp">
+      <Filter>src\Structures\Shift</Filter>
     </ClInclude>
-    <ClInclude Include="CLanczosKernel.hpp">
-      <Filter>src\Structures\Kernels</Filter>
-    </ClInclude>
-    <ClInclude Include="CInterpolationKernel.hpp">
-      <Filter>src\Structures\Kernels</Filter>
-    </ClInclude>
-    <ClInclude Include="CLanczosCustomKernel.hpp">
-      <Filter>src\Structures\Kernels</Filter>
-    </ClInclude>
-    <ClInclude Include="CBicubicKernel.hpp">
-      <Filter>src\Structures\Kernels</Filter>
+    <ClInclude Include="Core\Structures\CImageShifter.hpp">
+      <Filter>src\Structures</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

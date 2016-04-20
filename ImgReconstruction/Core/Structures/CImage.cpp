@@ -168,7 +168,7 @@ CImage CImage::GetImageWithText(const std::string& text, const cv::Point& origin
 CImage CImage::GetRotatedImage(double angle) const
 {
 	int len = std::max(this->cols, this->rows);
-	cv::Point2f pt(len / 2., len / 2.);
+	cv::Point2f pt(len / 2.f, len / 2.f);
 	cv::Mat r = cv::getRotationMatrix2D(pt, angle, 1.0);
 
 	CImage rotated;
@@ -176,9 +176,9 @@ CImage CImage::GetRotatedImage(double angle) const
 
 	// cut the image
 	if (_frame.width > _frame.height) {
-		rotated._frame = cv::Rect(_frame.width - _frame.height + 1, 0, _frame.height - 1, _frame.width);
+		rotated._frame = cv::Rect2f(_frame.width - _frame.height + 1, 0, _frame.height - 1, _frame.width);
 	} else {
-		rotated._frame = cv::Rect(_frame.height - _frame.width + 1, 0, _frame.height - 1, _frame.width);
+		rotated._frame = cv::Rect2f(_frame.height - _frame.width + 1, 0, _frame.height - 1, _frame.width);
 	}
 	rotated = rotated(rotated._frame);
 
@@ -190,7 +190,7 @@ CImage CImage::GetPatch(const cv::Rect &rect) const
 	return CImage(*this, rect);
 }
 
-cv::Rect CImage::GetFrame() const
+cv::Rect2f CImage::GetFrame() const
 {
 	return _frame;
 }

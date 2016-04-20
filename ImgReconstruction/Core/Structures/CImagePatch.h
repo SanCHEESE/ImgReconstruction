@@ -48,7 +48,7 @@ public:
 	double GetStandartDeviation() const { return _standartDeviation; };
 	uint64 GetPHash() const { return _pHash; };
 	uint64 GetAvgHash() const { return _avgHash; };
-	cv::Rect GetFrame() const { return _frame; };
+	cv::Rect2f GetFrame() const { return _frame; };
 	cv::Size GetSize() const { return _frame.size(); };
 
 	// setters
@@ -62,7 +62,7 @@ public:
 		image.copyTo(_binImage);
 		_frame = _binImage.GetFrame();
 	};
-	void SetFrame(const cv::Rect& frame) { _frame = frame; };
+	void SetFrame(const cv::Rect2f& frame) { _frame = frame; };
 
 	friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
 
@@ -71,7 +71,7 @@ private:
 	void Initialize();
 	double CalculateStandartDeviation() const;
 
-	cv::Rect _frame;
+	cv::Rect2f _frame;
 	CImage _grayImage;
 	CImage _binImage;
 

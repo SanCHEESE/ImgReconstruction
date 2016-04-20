@@ -25,6 +25,14 @@
 
 typedef enum : int
 {
+	TInterpKernelBicubic,
+	TInterpKernelLanczos,
+
+	TInterpKernelNone
+} TInterpKernelType;
+
+typedef enum : int
+{
 	TImageCompareMetricL1,
 	TImageCompareMetricL2,
 

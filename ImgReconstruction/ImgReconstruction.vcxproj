@@ -103,7 +103,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CBlurMetricsTester.cpp" />
+    <ClCompile Include="Core\CBlurMetricsTester.cpp" />
     <ClCompile Include="Core\CImageProcessor.cpp" />
     <ClCompile Include="Core\CImageProcessor.utils.cpp" />
     <ClCompile Include="Core\CImageSubprocessorHolder.cpp" />
@@ -115,15 +115,12 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CBicubicKernel.hpp" />
-    <ClInclude Include="CBlurMetricsTester.h" />
-    <ClInclude Include="CInterpolationKernel.hpp" />
-    <ClInclude Include="CLanczosCustomKernel.hpp" />
-    <ClInclude Include="CLanczosKernel.hpp" />
     <ClInclude Include="common.h" />
     <ClInclude Include="Core\CAdaptiveGaussianBinarizer.hpp" />
     <ClInclude Include="Core\CAvgHashPatchClassifier.hpp" />
+    <ClInclude Include="Core\CBicubicKernel.hpp" />
     <ClInclude Include="Core\CBinarizer.hpp" />
+    <ClInclude Include="Core\CBlurMetricsTester.h" />
     <ClInclude Include="Core\CBorderImageSummator.hpp" />
     <ClInclude Include="Core\CDynamicRangeBlurMeasurer.hpp" />
     <ClInclude Include="Core\CDynRangeBrightnessEqualizer.hpp" />
@@ -133,8 +130,10 @@
     <ClInclude Include="Core\CImageExtender.hpp" />
     <ClInclude Include="Core\CImageProcessor.h" />
     <ClInclude Include="Core\CImageSubprocessorHolder.h" />
+    <ClInclude Include="Core\CInterpolationKernel.hpp" />
     <ClInclude Include="Core\CL1ImageComparator.hpp" />
     <ClInclude Include="Core\CL2ImageComparator.hpp" />
+    <ClInclude Include="Core\CLanczosKernel.hpp" />
     <ClInclude Include="Core\CMeanBrightnessEqualizer.hpp" />
     <ClInclude Include="Core\CNiBlackBinarizer.hpp" />
     <ClInclude Include="Core\CNICKBinarizer.hpp" />
@@ -151,17 +150,18 @@
     <ClInclude Include="Core\IImageExtender.h" />
     <ClInclude Include="Core\IImageSubprocessor.h" />
     <ClInclude Include="Core\IImageSummator.h" />
+    <ClInclude Include="Core\IInterpolationKernel.h" />
     <ClInclude Include="Core\IPatchClassifier.h" />
     <ClInclude Include="Core\IPatchFetcher.h" />
     <ClInclude Include="Core\IPatchFilter.h" />
     <ClInclude Include="Core\Structures\CAccImage.h" />
     <ClInclude Include="Core\Structures\CImage.h" />
     <ClInclude Include="Core\Structures\CImagePatch.h" />
+    <ClInclude Include="Core\Structures\CImageShifter.hpp" />
+    <ClInclude Include="Core\Structures\CPatchIterator.hpp" />
+    <ClInclude Include="Core\Structures\IPatchIterator.h" />
     <ClInclude Include="Core\utils.h" />
-    <ClInclude Include="CPatchIterator.hpp" />
     <ClInclude Include="Helpers\CTimeLogger.h" />
-    <ClInclude Include="IInterpolationKernel.h" />
-    <ClInclude Include="IPatchIterator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

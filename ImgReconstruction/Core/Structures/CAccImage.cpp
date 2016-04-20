@@ -7,10 +7,9 @@
 //
 
 #include <numeric>
+#include <CAccImage.h>
 
-#include "CAccImage.h"
-
-CAccImage::CAccImage(const CImage& img)
+CAccImage::CAccImage(const CImage& img, const CImageShifter* const shifter) : _shifter(shifter)
 {
 	cv::Size size = {img.cols, img.rows};
 
@@ -28,7 +27,7 @@ CAccImage::CAccImage(const CImage& img)
 	_size = size;
 }
 
-CAccImage::CAccImage(const cv::Size& size)
+CAccImage::CAccImage(const cv::Size& size, const CImageShifter* const shifter) : _shifter(shifter)
 {
 	_accImg = std::vector<std::vector<std::vector<uchar>>>(size.height);
 	for (int y = 0; y < size.height; y++) {
@@ -36,22 +35,6 @@ CAccImage::CAccImage(const cv::Size& size)
 	}
 
 	_size = size;
-}
-
-void CAccImage::SetImageRegion(const CImage &image)
-{
-	SetImageRegion(image, image.GetFrame());
-}
-
-void CAccImage::SetImageRegion(const CImage& image, const cv::Rect& frame)
-{
-	assert(frame.x + frame.width <= _size.width);
-	assert(frame.y + frame.height <= _size.height);
-	for (int y = frame.y; y < frame.y + frame.height; y++) {
-		for (int x = frame.x; x < frame.x + frame.width; x++) {
-			_accImg[y][x].push_back(image.at<uchar>(y - frame.y, x - frame.x));
-		}
-	}
 }
 
 CImage CAccImage::GetResultImage(TAccImageSumMethod method) const

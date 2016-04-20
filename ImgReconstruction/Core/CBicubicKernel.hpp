@@ -5,7 +5,7 @@
 class CBicubicKernel : public CInterpolationKernel
 {
 public:
-	CBicubicKernel(double b, double c) : _b(b), _c(c) {}
+	CBicubicKernel(int a, double b, double c) : CInterpolationKernel(a), _b(b), _c(c) {}
 
 	virtual double operator()(double x) const
 	{

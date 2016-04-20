@@ -61,7 +61,9 @@ CImage CImageProcessor::RestoreImage()
 		std::vector<CImagePatch> aClass = it.second;
 		if (aClass.size() < 2) {
 			// do not process classes with size of 1 object
-			accImage.SetImageRegion(aClass[0].GrayImage());
+			if (!aClass[0].GrayImage().interpolated) {
+				accImage.SetImageRegion<int>(aClass[0].GrayImage());
+			}
 
 			continue;
 		} else {

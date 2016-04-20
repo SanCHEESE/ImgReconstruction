@@ -45,7 +45,7 @@ public:
 	CImage GetRotatedImage(double angle) const;
 	static CImage GetImageWithText(const std::string& text, const cv::Point& origin, const cv::Scalar& textColor, const cv::Scalar& bgColor, const cv::Size& imgSize);
 
-	cv::Rect GetFrame() const;
+	cv::Rect2f GetFrame() const;
 	//template<typename T>
 	void SetFrame(const cv::Rect2f& frame) { _frame = frame; }
 	cv::Size GetSize() const;

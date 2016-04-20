@@ -7,7 +7,8 @@ const double PI = 3.141592653589793;
 class CLanczosKernel : public CInterpolationKernel
 {
 public:
-	CLanczosKernel(int a) : _a(a) {}
+	CLanczosKernel(int a) : CInterpolationKernel(a) {}
+
 	virtual double operator()(double x) const
 	{
 		double k = 0;
@@ -18,7 +19,4 @@ public:
 		}
 		return k;
 	}
-
-private:
-	int _a;
 };
