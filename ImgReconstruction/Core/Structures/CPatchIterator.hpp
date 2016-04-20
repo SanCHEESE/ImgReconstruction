@@ -28,6 +28,7 @@ public:
 		
 		} else if (typeid(T) == typeid(int)) {
 			_iterImage = *iterImage;
+			_pointingRect = cv::Rect(0, 0, _size.width, _size.height);
 		}
 	}
 
@@ -129,6 +130,10 @@ public:
 
 				// calculate its value
 				double p = 0;
+				int i_start = (int)floor(y) - _a + 1;
+				int j_start = (int)floor(x) - _a + 1;
+				for (int i = i_start; i <= (int)floor(y) + _a; i++) { // rows
+					for (int j = j_start; j <= (int)floor(x) + _a; j++) { // cols
 						p += image.at<uchar>(i, j) * _coeffsY[i - i_start] * _coeffsX[j - j_start];
 					}
 				}
