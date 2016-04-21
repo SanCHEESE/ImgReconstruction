@@ -39,6 +39,12 @@ static const std::string ImageCompareJsonKey = "compare";
 
 static const std::string BlurThreshJsonKey = "thresh";
 
+static const std::string KernelJsonKey = "kernel";
+static const std::string TypeJsonKey = "type";
+static const std::string AJsonKey = "a";
+static const std::string BJsonKey = "b";
+static const std::string CJsonKey = "c";
+
 // patch fetching
 static cv::Point DefaultPatchOffset = {1, 1};
 static int DefaultMaxPatchSideSize = 8;

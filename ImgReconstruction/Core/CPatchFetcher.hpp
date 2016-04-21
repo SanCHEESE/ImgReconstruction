@@ -8,14 +8,16 @@
 
 #pragma once
 
-#include "IPatchFetcher.h"
-#include "IPatchFilter.h"
-#include "CTimeLogger.h"
+#include <IPatchFetcher.h>
+#include <IPatchFilter.h>
+#include <CTimeLogger.h>
+#include <IInterpolationKernel.h>
 
 class CPatchFetcher : public IPatchFetcher
 {
 public:
-	CPatchFetcher(const cv::Size& size, const cv::Point_<float>& offset, IPatchFilter* filter) : _size(size), _offset(offset), _filter(filter)
+	CPatchFetcher(const cv::Size& size, const cv::Point_<float>& offset,
+		const IPatchFilter* const filter, const IInterpolationKernel* const kernel = 0) : _size(size), _offset(offset), _filter(filter)
 	{};
 
 	virtual std::vector<CImage> FetchPatches(const CImage& img) const
@@ -52,8 +54,8 @@ public:
 		CImage grayImage = imgPatch.GrayImage();
 		CImage binImage = imgPatch.BinImage();
 
-		IPatchIterator* patchIterator = grayImage.GetFloatPatchIterator(_size, _offset);
-		IPatchIterator* binPatchIterator = binImage.GetFloatPatchIterator(_size, _offset);
+		IPatchIterator* patchIterator = grayImage.GetFloatPatchIterator(_size, _offset, _kernel);
+		IPatchIterator* binPatchIterator = binImage.GetFloatPatchIterator(_size, _offset, _kernel);
 
 		std::vector<CImagePatch> patches;
 		while (patchIterator->HasNext()) {
@@ -77,7 +79,8 @@ public:
 		return patches;
 	}
 private:
-	IPatchFilter* _filter;
+	const IPatchFilter* const _filter;
+	const IInterpolationKernel* const _kernel;
 	cv::Size _size;
 	cv::Point_<float> _offset;
 };

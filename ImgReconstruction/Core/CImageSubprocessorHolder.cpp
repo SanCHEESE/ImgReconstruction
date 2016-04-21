@@ -8,37 +8,40 @@
 
 #include <fstream>
 
-#include "json.hpp"
+#include <json.hpp>
 
-#include "CImageSubprocessorHolder.h"
+#include <CImageSubprocessorHolder.h>
 
-#include "CPatchFilter.hpp"
-#include "CPatchFetcher.hpp"
+#include <CPatchFilter.hpp>
+#include <CPatchFetcher.hpp>
 
-#include "CPHashPatchClassifier.hpp"
-#include "CAvgHashPatchClassifier.hpp"
+#include <CPHashPatchClassifier.hpp>
+#include <CAvgHashPatchClassifier.hpp>
 
-#include "CStdDeviationBlurMeasurer.hpp"
-#include "CDynamicRangeBlurMeasurer.hpp"
-#include "CFFTBlurMeasurer.hpp"
-#include "CFDBlurMeasurer.hpp"
+#include <CStdDeviationBlurMeasurer.hpp>
+#include <CDynamicRangeBlurMeasurer.hpp>
+#include <CFFTBlurMeasurer.hpp>
+#include <CFDBlurMeasurer.hpp>
 
-#include "CMeanBrightnessEqualizer.hpp"
-#include "CDynRangeBrightnessEqualizer.hpp"
+#include <CMeanBrightnessEqualizer.hpp>
+#include <CDynRangeBrightnessEqualizer.hpp>
 
-#include "CStdImageSummator.hpp"
-#include "CBorderImageSummator.hpp"
+#include <CStdImageSummator.hpp>
+#include <CBorderImageSummator.hpp>
 
-#include "CL1ImageComparator.hpp"
-#include "CL2ImageComparator.hpp"
+#include <CL1ImageComparator.hpp>
+#include <CL2ImageComparator.hpp>
 
-#include "CAdaptiveGaussianBinarizer.hpp"
-#include "CNICKBinarizer.hpp"
-#include "CNiBlackBinarizer.hpp"
+#include <CAdaptiveGaussianBinarizer.hpp>
+#include <CNICKBinarizer.hpp>
+#include <CNiBlackBinarizer.hpp>
 
-#include "CImageExtender.hpp"
+#include <CLanczosKernel.hpp>
+#include <CBicubicKernel.hpp>
 
-#include "config.h"
+#include <CImageExtender.hpp>
+
+#include <config.h>
 
 // for convenience
 using json = nlohmann::json;
@@ -149,6 +152,23 @@ IBlurMeasurer* Measurer(TBlurMeasureMethod method, double param)
 	return measurer;
 }
 
+IInterpolationKernel* InterpKernel(TInterpKernelType kernelType, int a, double b, double c)
+{
+	IInterpolationKernel* kernel = 0;
+	switch (kernelType) {
+		case TInterpKernelBicubic:
+			kernel = new CBicubicKernel(a, b, c);
+			break;
+		case TInterpKernelLanczos:
+			kernel = new CLanczosKernel(a);
+			break;
+		default:
+			break;
+	}
+
+	return kernel;
+}
+
 CImageSubprocessorHolder::CImageSubprocessorHolder()
 {
 	IBinarizer *filterBinarizer = Binarizer(DefaultBinMethod, DefaultFilteringPatchSize, DefaultFilteringBinK);
@@ -198,9 +218,21 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	_subprocessors[PatchFilterKey] = (IImageSubprocessor *)patchFilter;
 
 	auto patchFetchJson = json[PatchFetchJsonKey];
+
+	IInterpolationKernel *kernel;
+	if (patchFetchJson.find(KernelJsonKey) != patchFetchJson.end()) {
+		// create kernel
+		auto kernelJson = json[KernelJsonKey];
+		int type = json[TypeJsonKey];
+		int a = kernelJson[AJsonKey];
+		double b = kernelJson[BJsonKey];
+		double c = kernelJson[CJsonKey];
+		kernel = InterpKernel((TInterpKernelType)type, a, b, c);
+		_subprocessors[InterpolationKernelKey] = (IImageSubprocessor *)kernel;
+	}
 	IPatchFetcher *patchFetcher = new CPatchFetcher({patchFetchJson[PatchSizeJsonKey][WidthJsonKey], patchFetchJson[PatchSizeJsonKey][HeightJsonKey]},
 	{patchFetchJson[PatchOffsetJsonKey][XJsonKey], patchFetchJson[PatchOffsetJsonKey][YJsonKey]},
-		patchFilter);
+		patchFilter, kernel);
 	_subprocessors[PatchFetcherKey] = (IImageSubprocessor *)patchFetcher;
 
 	auto comparatorJson = json[ImageCompareJsonKey];

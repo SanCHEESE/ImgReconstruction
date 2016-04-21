@@ -16,11 +16,13 @@ template<typename T = int>
 class CPatchIterator : public IPatchIterator
 {
 public:
-	CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point_<T> offset) :
-		_size(size), _offset(offset), _borderInset(0)
+	CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point_<T> offset, const IInterpolationKernel* const k = 0) :
+		_size(size), _offset(offset), _borderInset(0), _k(k)
 	{
 		if (typeid(T) == typeid(float)) {
-			_borderInset = ExtentBorderSize;
+			_borderInset = _k->A();
+			_coeffsX = _k->Coeffs(_offset.x);
+			_coeffsY = _k->Coeffs(_offset.y);
 			cv::copyMakeBorder(*iterImage, _iterImage, _borderInset, _borderInset, _borderInset, _borderInset, cv::BORDER_REPLICATE, 0);
 			_pointingRect = cv::Rect2f((float)_borderInset, (float)_borderInset, size.width, size.height);
 
@@ -30,33 +32,6 @@ public:
 			_iterImage = *iterImage;
 			_pointingRect = cv::Rect(0, 0, _size.width, _size.height);
 		}
-	}
-
-	~CPatchIterator()
-	{
-		delete _k;
-	}
-
-	void InitInterpKernel()
-	{
-		_a = ExtentBorderSize;
-
-		_k = new CLanczosKernel(_a);
-		_coeffsX = _k->Coeffs(_offset.x);
-		_coeffsY = _k->Coeffs(_offset.y);
-
-		//double sum = 0;
-		//for (auto& coeff: _coeffsX) {
-		//	sum += coeff;
-		//}
-
-		//std::cout << sum << std::endl;
-
-		//sum = 0;
-		//for (auto& coeff : _coeffsX) {
-		//	sum += coeff;
-		//}
-		//std::cout << sum << std::endl;
 	}
 
 	virtual inline CImage GetNext()

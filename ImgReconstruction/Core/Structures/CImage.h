@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include "common.h"
-#include "IPatchIterator.h"
+#include <common.h>
+#include <IPatchIterator.h>
+#include <IInterpolationKernel.h>
 
 class IBlurMeasurer;
 
@@ -67,7 +68,7 @@ public:
 	}
 
 	IPatchIterator* GetIntPatchIterator(const cv::Size& size, const cv::Point_<int>& offset) const;
-	IPatchIterator* GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset) const;
+	IPatchIterator* GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, const IInterpolationKernel* const kernel) const;
 
 	friend std::ostream& operator<<(std::ostream& os, const CImage& img);
 

@@ -8,10 +8,9 @@
 
 #include <sstream>
 
-#include "CImage.h"
-#include "CPatchIterator.hpp"
-#include "IBlurMeasurer.h"
-
+#include <CImage.h>
+#include <CPatchIterator.hpp>
+#include <IBlurMeasurer.h>
 
 void CImage::copyTo(CImage &image) const
 {
@@ -211,7 +210,7 @@ IPatchIterator* CImage::GetIntPatchIterator(const cv::Size& size, const cv::Poin
 	return new CPatchIterator<int>(this, size, offset);
 }
 
-IPatchIterator* CImage::GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset) const
+IPatchIterator* CImage::GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, const IInterpolationKernel* const kernel) const
 {
-	return new CPatchIterator<float>(this, size, offset);
+	return new CPatchIterator<float>(this, size, offset, kernel);
 }

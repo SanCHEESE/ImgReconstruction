@@ -18,7 +18,6 @@
 
 #define RGB(r, g, b) (cv::Scalar((b), (g), (r)))
 #define RGBA(r, g, b, a) (cv::Scalar((b), (g), (r), (a)))
-#define PRINT_LINE(line) (std::cout<<(line)<<std::endl)
 
 #define PRINT_BITS(num)  std::bitset<sizeof(uint64) * 8> b(num); \
 	std::cout << b << std::endl;

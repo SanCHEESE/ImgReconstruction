@@ -3,7 +3,9 @@
 #include <cmath>
 #include <vector>
 
-class IInterpolationKernel
+#include <IImageSubprocessor.h>
+
+class IInterpolationKernel : public IImageSubprocessor
 {
 public:
 	virtual ~IInterpolationKernel() {};

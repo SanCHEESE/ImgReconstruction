@@ -6,15 +6,16 @@
 //  Copyright © 2016 Alexander Bochkarev. All rights reserved.
 //
 
-#include "IBlurMeasurer.h"
-#include "IImageComparator.h"
-#include "IBinarizer.h"
-#include "IPatchFilter.h"
-#include "IPatchClassifier.h"
-#include "IPatchFetcher.h"
-#include "IImageSummator.h"
-#include "IBrightnessEqualizer.h"
-#include "IImageExtender.h"
+#include <IBlurMeasurer.h>
+#include <IImageComparator.h>
+#include <IBinarizer.h>
+#include <IPatchFilter.h>
+#include <IPatchClassifier.h>
+#include <IPatchFetcher.h>
+#include <IImageSummator.h>
+#include <IBrightnessEqualizer.h>
+#include <IInterpolationKernel.h>
+#include <IImageExtender.h>
 
 #pragma once
 
@@ -28,6 +29,7 @@ static const std::string FilterBinarizerKey = "FilterBinarizerKey";
 static const std::string PatchClassifierKey = "PatchClassifierKey";
 static const std::string PatchFetcherKey = "PatchFetcherKey";
 static const std::string ImageExtenderKey = "ImageExtenderKey";
+static const std::string InterpolationKernelKey = "InterpolationKernelKey";
 
 // used to store not generalized classes
 struct CConfig
@@ -51,6 +53,7 @@ public:
 	IPatchClassifier* PatchClassifier() { return (IPatchClassifier*)_subprocessors[PatchClassifierKey]; }
 	IPatchFetcher* PatchFetcher() { return (IPatchFetcher*)_subprocessors[PatchFetcherKey]; }
 	IImageExtender* ImageExtender() { return (IImageExtender*)_subprocessors[ImageExtenderKey]; }
+	IInterpolationKernel* InterpolationKernel() { return (IInterpolationKernel*)_subprocessors[InterpolationKernelKey]; }
 
 	CConfig GetConfig() const { return _config; };
 private:
