@@ -141,9 +141,6 @@
     <ClInclude Include="Core\CImageProcessor.h">
       <Filter>src\Algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Structures\CAccImage.h">
-      <Filter>src\Structures</Filter>
-    </ClInclude>
     <ClInclude Include="Core\IImageExtender.h">
       <Filter>src\Algorithm\Suprocessors\Extender</Filter>
     </ClInclude>
@@ -234,10 +231,10 @@
     <ClInclude Include="Core\Structures\IPatchIterator.h">
       <Filter>src\Structures\PatchIterator</Filter>
     </ClInclude>
-    <ClInclude Include="CImageShifter.hpp">
-      <Filter>src\Structures\Shift</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Structures\CImageShifter.hpp">
+      <Filter>src\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Structures\CAccImage.h">
       <Filter>src\Structures</Filter>
     </ClInclude>
   </ItemGroup>

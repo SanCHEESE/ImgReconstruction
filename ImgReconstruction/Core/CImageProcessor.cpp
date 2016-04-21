@@ -5,9 +5,9 @@
 //  Copyright © 2015 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CImageProcessor.h"
-#include "CTimeLogger.h"
-#include "CAccImage.h"
+#include <CImageProcessor.h>
+#include <CTimeLogger.h>
+#include <CAccImage.h>
 
 void CImageProcessor::ProcessImage(const CImage& img, const std::string& outImagePath)
 {
@@ -55,6 +55,7 @@ CImage CImageProcessor::RestoreImage()
 	// classification by PHash/AvgHash
 	std::map<uint64, std::vector<CImagePatch>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
 
+	//CImageShifter *shifter = new CImageShifter(new );
 	CAccImage accImage(_mainImage.GrayImage());
 
 	for (auto &it : classes) {

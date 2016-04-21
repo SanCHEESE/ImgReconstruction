@@ -18,6 +18,8 @@ public:
 	CAccImage(const CImage& img, const CImageShifter* const shifter = 0);
 	CAccImage(const cv::Size& size, const CImageShifter* const shifter = 0);
 
+	~CAccImage() { delete _shifter; }
+
 	// main methods
 	template<typename T>
 	void SetImageRegion(const CImage& image)
@@ -42,7 +44,8 @@ public:
 		if (typeid(T) == typeid(int)) {
 			setImageRegion(image, frame);
 		} else if (typeid(T) == typeid(float)) {
-			cv::Point2f shift(modf((float)frame.x, 0), modf((float)frame.y, 0));
+			float temp;
+			cv::Point2f shift(modf((float)frame.x, &temp), modf((float)frame.y, &temp));
 			CImage shiftedImage = _shifter->ShiftImage(image, shift);
 			cv::Rect2f newFrame = cv::Rect2f(floorf(frame.x), floorf(frame.y), frame.width, frame.height);
 			setImageRegion(shiftedImage, newFrame);

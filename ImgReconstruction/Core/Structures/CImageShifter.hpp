@@ -8,6 +8,8 @@ class CImageShifter
 {
 public:
 	CImageShifter(const IInterpolationKernel* const kernel) : _interpKernel(kernel) {};
+	~CImageShifter() { delete _interpKernel; }
+
 	virtual CImage ShiftImage(const CImage& image, const cv::Point2f& shift) const
 	{
 		CImage extentImage;

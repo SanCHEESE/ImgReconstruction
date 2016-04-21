@@ -22,7 +22,7 @@ public:
 		if (typeid(T) == typeid(float)) {
 			_borderInset = ExtentBorderSize;
 			cv::copyMakeBorder(*iterImage, _iterImage, _borderInset, _borderInset, _borderInset, _borderInset, cv::BORDER_REPLICATE, 0);
-			_pointingRect = cv::Rect2f(_borderInset, _borderInset, size.width, size.height);
+			_pointingRect = cv::Rect2f((float)_borderInset, (float)_borderInset, size.width, size.height);
 
 			InitInterpKernel();
 		
@@ -61,8 +61,8 @@ public:
 
 	virtual inline CImage GetNext()
 	{
-		float maxRow = MIN(_pointingRect.height + _pointingRect.y, _iterImage.rows - _borderInset);
-		float maxCol = MIN(_pointingRect.width + _pointingRect.x, _iterImage.cols - _borderInset);
+		float maxRow = (float)MIN(_pointingRect.height + _pointingRect.y, _iterImage.rows - _borderInset);
+		float maxCol = (float)MIN(_pointingRect.width + _pointingRect.x, _iterImage.cols - _borderInset);
 
 		// fetching patch
 		float patchWidth = maxCol - _pointingRect.x;
@@ -84,7 +84,7 @@ public:
 		} else if (_pointingRect.width + _pointingRect.x + _offset.x > _iterImage.cols - _borderInset) {
 			// moving to the next row
 			_pointingRect.y += _offset.y;
-			_pointingRect.x = _borderInset;
+			_pointingRect.x = (float)_borderInset;
 		}
 
 		return patch;
@@ -98,7 +98,7 @@ public:
 		} else if (_pointingRect.width + _pointingRect.x + _offset.x > _iterImage.cols - _borderInset) {
 			// moving to the next row
 			_pointingRect.y += _offset.y;
-			_pointingRect.x = _borderInset;
+			_pointingRect.x = (float)_borderInset;
 		}
 	}
 
@@ -138,7 +138,8 @@ public:
 					}
 				}
 
-				subRectImage.at<uchar>(sr_i, sr_j) = p;
+				assert(p < 256);
+				subRectImage.at<uchar>(sr_i, sr_j) = (uchar)p;
 			}
 		}
 
