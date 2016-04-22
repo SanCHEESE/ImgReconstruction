@@ -42,14 +42,16 @@ public:
 			}
 		};
 
-		if (typeid(T) == typeid(int)) {
-			setImageRegion(image, frame);
-		} else if (typeid(T) == typeid(float)) {
-			float temp;
-			cv::Point2f shift(modf((float)frame.x, &temp), modf((float)frame.y, &temp));
+		float temp;
+		float fractX = modf((float)frame.x, &temp);
+		float fractY = modf((float)frame.y, &temp);
+		if (fractY > 0 || fractX > 0) {
+			cv::Point2f shift(fractX, fractY);
 			CImage shiftedImage = _shifter->ShiftImage(image, shift);
 			cv::Rect2f newFrame = cv::Rect2f(floorf(frame.x), floorf(frame.y), frame.width, frame.height);
 			setImageRegion(shiftedImage, newFrame);
+		} else {
+			setImageRegion(image, frame);
 		}
 	}
 

@@ -78,9 +78,9 @@ CImage CImageProcessor::RestoreImage()
 				std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
 
 #ifdef _DEBUG
-				for (auto patch : clusterPatches) {
-					std::cout << patch.GetBlurValue() << std::endl;
-				}
+				//for (auto patch : clusterPatches) {
+				//	std::cout << patch.GetBlurValue() << std::endl;
+				//}
 #endif
 
 				int bestPatchIdx = 0;
