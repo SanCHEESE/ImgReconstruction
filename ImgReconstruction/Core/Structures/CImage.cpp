@@ -164,7 +164,7 @@ CImage CImage::GetImageWithText(const std::string& text, const cv::Point& origin
 	return textImg;
 }
 
-CImage CImage::GetRotatedImage(double angle) const
+CImage CImage::GetRotatedImage(float angle) const
 {
 	int len = std::max(this->cols, this->rows);
 	cv::Point2f pt(len / 2.f, len / 2.f);

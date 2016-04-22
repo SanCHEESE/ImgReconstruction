@@ -38,13 +38,13 @@ namespace utils
 
 		int bitsCount = size.width * size.height;
 
-		std::vector<double> dIdex(bitsCount, 0);
-		double mean = 0.0;
+		std::vector<float> dIdex(bitsCount, 0);
+		float mean = 0.0;
 		int k = 0;
 		for (int i = 0; i < size.width; ++i) {
 			for (int j = 0; j < size.height; ++j) {
-				dIdex[k] = dst.at<double>(i, j);
-				mean += dst.at<double>(i, j) / bitsCount;
+				dIdex[k] = dst.at<float>(i, j);
+				mean += dst.at<float>(i, j) / bitsCount;
 				++k;
 			}
 		}
@@ -133,11 +133,11 @@ namespace utils
 		return img;
 	}
 
-	// double Lanczos()
+	// float Lanczos()
 
-	double BicubicK(double x, double B, double C)
+	float BicubicK(float x, float B, float C)
 	{
-		double k = 0;
+		float k = 0;
 		x = std::abs(x);
 		if (std::abs(x) < 1) {
 			k = (12 - 9 * B - 6 * C)*pow(x, 3) + (-18 + 12 * B + 6 * C)*pow(x, 2) + (6 - 2 * B);

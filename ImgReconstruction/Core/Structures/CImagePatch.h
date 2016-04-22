@@ -36,16 +36,16 @@ public:
 		SetBinImage(patch.BinImage());
 	}
 
-	double BlurValue(const IBlurMeasurer* const measurer);
-	double StandartDeviation();
+	float BlurValue(const IBlurMeasurer* const measurer);
+	float StandartDeviation();
 	uint64 PHash();
 	uint64 AvgHash();
 
 	// accessors
 	const CImage& GrayImage() const { return _grayImage; }
 	const CImage& BinImage() const { return _binImage; }
-	double GetBlurValue() const { return _blurValue; };
-	double GetStandartDeviation() const { return _standartDeviation; };
+	float GetBlurValue() const { return _blurValue; };
+	float GetStandartDeviation() const { return _standartDeviation; };
 	uint64 GetPHash() const { return _pHash; };
 	uint64 GetAvgHash() const { return _avgHash; };
 	cv::Rect2f GetFrame() const { return _frame; };
@@ -69,14 +69,14 @@ public:
 	int aClass;
 private:
 	void Initialize();
-	double CalculateStandartDeviation() const;
+	float CalculateStandartDeviation() const;
 
 	cv::Rect2f _frame;
 	CImage _grayImage;
 	CImage _binImage;
 
-	double _blurValue;
-	double _standartDeviation;
+	float _blurValue;
+	float _standartDeviation;
 
 	uint64 _avgHash;
 	bool _avgHashComputed;

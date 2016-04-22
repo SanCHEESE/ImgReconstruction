@@ -2,16 +2,16 @@
 
 #include <CInterpolationKernel.hpp>
 
-const double PI = 3.141592653589793;
+const float PI = 3.141592653589793f;
 
 class CLanczosKernel : public CInterpolationKernel
 {
 public:
 	CLanczosKernel(int a) : CInterpolationKernel(a) {}
 
-	virtual double operator()(double x) const
+	virtual float operator()(float x) const
 	{
-		double k = 0;
+		float k = 0;
 		if (x == 0) {
 			k = 1;
 		} else if (std::abs(x) > 0 && std::abs(x) < _a) {

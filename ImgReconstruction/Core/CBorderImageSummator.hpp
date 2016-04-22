@@ -13,11 +13,11 @@
 class CBorderImageSummator : public IImageSummator
 {
 public:
-	CBorderImageSummator(double borderWeight) : _borderWeight(borderWeight) {}
+	CBorderImageSummator(float borderWeight) : _borderWeight(borderWeight) {}
 
-	virtual double Sum(const CImage& img) const
+	virtual float Sum(const CImage& img) const
 	{
-		double sum = 0;
+		float sum = 0;
 		for (int i = 0; i < img.rows; i++) {
 			for (int j = 0; j < img.cols; j++) {
 				bool isBorderPixel = i == 0 || j == 0 || (i == img.rows - 1) || (j == img.cols - 1);
@@ -28,5 +28,5 @@ public:
 	}
 
 private:
-	double _borderWeight;
+	float _borderWeight;
 };

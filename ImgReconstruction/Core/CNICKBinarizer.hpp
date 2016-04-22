@@ -17,15 +17,15 @@ public:
     
     virtual CImage Binarize(const CImage& img) const
     {
-        auto imgPatches = img.GetAllPatches(_patchSize, cv::Point(_patchSize.width, _patchSize.height));
+        auto imgPatches = img.GetAllPatches<int>(_patchSize, cv::Point(_patchSize.width, _patchSize.height));
         auto binarizedPatches = std::vector<CImage>(imgPatches.size());
         for (int i = 0; i < imgPatches.size(); i++) {
             CImage patch = imgPatches[i];
             patch.convertTo(patch, CV_64F);
             
-            double mean = cv::mean(patch)[0];
-            double pixelsSumOfSquares = cv::sum(patch.mul(patch))[0];
-            double thresholdValue = mean + _k * sqrt((pixelsSumOfSquares - mean)/patch.GetFrame().area());
+			float mean = cv::mean(patch)[0];
+			float pixelsSumOfSquares = cv::sum(patch.mul(patch))[0];
+			float thresholdValue = mean + _k * sqrt((pixelsSumOfSquares - mean)/patch.GetFrame().area());
             
             CImage binarizedPatch;
             patch.convertTo(patch, CV_8U);

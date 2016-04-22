@@ -5,11 +5,11 @@
 class CBicubicKernel : public CInterpolationKernel
 {
 public:
-	CBicubicKernel(int a, double b = 0.2, double c = 0.4) : CInterpolationKernel(a), _b(b), _c(c) {}
+	CBicubicKernel(int a, float b = 0.2, float c = 0.4) : CInterpolationKernel(a), _b(b), _c(c) {}
 
-	virtual double operator()(double x) const
+	virtual float operator()(float x) const
 	{
-		double k = 0;
+		float k = 0;
 		x = std::abs(x);
 		if (x < 1) {
 			k = (12 - 9 * _b - 6 * _c)*pow(x, 3) + (-18 + 12 * _b + 6 * _c)*pow(x, 2) + (6 - 2 * _b);
@@ -22,6 +22,6 @@ public:
 
 
 private:
-	double _b;
-	double _c;
+	float _b;
+	float _c;
 };

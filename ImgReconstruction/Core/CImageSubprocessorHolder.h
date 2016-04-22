@@ -53,7 +53,12 @@ public:
 	IPatchClassifier* PatchClassifier() { return (IPatchClassifier*)_subprocessors[PatchClassifierKey]; }
 	IPatchFetcher* PatchFetcher() { return (IPatchFetcher*)_subprocessors[PatchFetcherKey]; }
 	IImageExtender* ImageExtender() { return (IImageExtender*)_subprocessors[ImageExtenderKey]; }
-	IInterpolationKernel* InterpolationKernel() { return (IInterpolationKernel*)_subprocessors[InterpolationKernelKey]; }
+	IInterpolationKernel* InterpolationKernel() { 
+		if (_subprocessors.find(InterpolationKernelKey) != _subprocessors.end()) {
+			return (IInterpolationKernel*)_subprocessors[InterpolationKernelKey];
+		}
+		return 0;
+	}
 
 	CConfig GetConfig() const { return _config; };
 private:

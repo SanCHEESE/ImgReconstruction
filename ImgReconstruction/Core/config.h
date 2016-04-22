@@ -54,7 +54,7 @@ static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL1;
 static int DefaultComparisonEps = 1000;
 static TBrightnessEqualization DefaultBrightnessEqualization = TBrightnessEqualizationDynRange;
 static TCompSum DefaultCompSum = TCompSumStd;
-static double DefaultBorderSumWeight = 1.5;
+static float DefaultBorderSumWeight = 1.5;
 
 // blur config
 static float DefaultBlurMetricRadiusRatio = 0.4f;
@@ -66,11 +66,11 @@ static TPatchClassifyingMethod DefaultClassifyingMethod = TPatchClassifyingMetho
 // binarization
 static TBinarizationMethod DefaultBinMethod = TBinarizationMethodNiBlack;
 static cv::Size DefaultBinPatchSize = {25, 25};
-static double DefautBinK = -0.2;
+static float DefautBinK = -0.2f;
 
 // patch filtering
 static cv::Size DefaultFilteringPatchSize = {2, 2};
-static double DefaultFilteringBinK = 1.;
+static float DefaultFilteringBinK = 1.;
 static float DefaultMinPatchContrastValue = 40;
 
 // acc image

@@ -15,7 +15,7 @@
 class CPatchFilter : public IPatchFilter
 {
 public:
-	CPatchFilter(IBinarizer *binarizer, double minContrastValue, const cv::Size& filterPatchSize = {2, 2}, double blackPixelsRatio = 0.25) :
+	CPatchFilter(IBinarizer *binarizer, float minContrastValue, const cv::Size& filterPatchSize = {2, 2}, float blackPixelsRatio = 0.25) :
 		_binarizer(binarizer),
 		_minContrastValue(minContrastValue),
 		_filterPatchSize(filterPatchSize),
@@ -72,7 +72,7 @@ public:
 private:
 	IBinarizer* _binarizer;
 	cv::Size _filterPatchSize;
-	double _minContrastValue;
-	double _blackPixelsRatio;
+	float _minContrastValue;
+	float _blackPixelsRatio;
 
 };

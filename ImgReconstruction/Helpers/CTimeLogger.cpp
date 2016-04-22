@@ -27,5 +27,5 @@ void CTimeLogger::Print(const std::string& decr)
 
 void CTimeLogger::PrintTotalTime()
 {
-	//std::clog << "Total execution time: " << (double)_totalTime/CLOCKS_PER_SEC << " s" << std::endl;
+	//std::clog << "Total execution time: " << (float)_totalTime/CLOCKS_PER_SEC << " s" << std::endl;
 }

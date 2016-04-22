@@ -25,8 +25,6 @@ public:
 			_coeffsY = _k->Coeffs(_offset.y);
 			cv::copyMakeBorder(*iterImage, _iterImage, _borderInset, _borderInset, _borderInset, _borderInset, cv::BORDER_REPLICATE, 0);
 			_pointingRect = cv::Rect2f((float)_borderInset, (float)_borderInset, size.width, size.height);
-
-			InitInterpKernel();
 		
 		} else if (typeid(T) == typeid(int)) {
 			_iterImage = *iterImage;
@@ -100,11 +98,11 @@ public:
 		for (int sr_i = 0; sr_i < rect.height; sr_i++) { // rows
 			for (int sr_j = 0; sr_j < rect.width; sr_j++) { // cols
 				// for each pixel of subsampled patch
-				double x = rect.x + sr_j;
-				double y = rect.y + sr_i;
+				float x = rect.x + sr_j;
+				float y = rect.y + sr_i;
 
 				// calculate its value
-				double p = 0;
+				float p = 0;
 				int i_start = (int)floor(y) - _a + 1;
 				int j_start = (int)floor(x) - _a + 1;
 				for (int i = i_start; i <= (int)floor(y) + _a; i++) { // rows
@@ -122,10 +120,10 @@ public:
 	}
 
 private:
-	IInterpolationKernel *_k;
+	const IInterpolationKernel* const _k;
 	int _a;
-	std::vector<double> _coeffsX;
-	std::vector<double> _coeffsY;
+	std::vector<float> _coeffsX;
+	std::vector<float> _coeffsY;
 
 	int _borderInset;
 	cv::Size _size;

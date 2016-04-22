@@ -56,11 +56,11 @@
     <Filter Include="src\Structures\PatchIterator">
       <UniqueIdentifier>{713ca210-0ab8-42fa-9f01-78a69bfa6b9e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Structures\Kernels">
-      <UniqueIdentifier>{b6c5b20c-8cff-4530-93ac-e881fc6c5a04}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Structures\Shift">
       <UniqueIdentifier>{a8712090-27bf-43d3-b4a1-0501c602abd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Algorithm\Suprocessors\Interpolation Kernel">
+      <UniqueIdentifier>{d4a0e037-ba42-42fd-b5d2-0ed6e3065912}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -82,9 +82,6 @@
     <ClCompile Include="Core\CImageProcessor.utils.cpp">
       <Filter>src\Algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Structures\CAccImage.cpp">
-      <Filter>src\Structures</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Structures\CImagePatch.cpp">
       <Filter>src\Structures</Filter>
     </ClCompile>
@@ -93,6 +90,9 @@
     </ClCompile>
     <ClCompile Include="Core\CBlurMetricsTester.cpp">
       <Filter>src\Testers</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Structures\CAccImage.cpp">
+      <Filter>src\Structures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,29 +213,29 @@
     <ClInclude Include="Core\CBlurMetricsTester.h">
       <Filter>src\Testers</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CBicubicKernel.hpp">
-      <Filter>src\Structures\Kernels</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CInterpolationKernel.hpp">
-      <Filter>src\Structures\Kernels</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CLanczosKernel.hpp">
-      <Filter>src\Structures\Kernels</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\IInterpolationKernel.h">
-      <Filter>src\Structures\Kernels</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Structures\CPatchIterator.hpp">
       <Filter>src\Structures\PatchIterator</Filter>
     </ClInclude>
     <ClInclude Include="Core\Structures\IPatchIterator.h">
       <Filter>src\Structures\PatchIterator</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Structures\CImageShifter.hpp">
-      <Filter>src\Structures</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Structures\CAccImage.h">
       <Filter>src\Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CBicubicKernel.hpp">
+      <Filter>src\Algorithm\Suprocessors\Interpolation Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CInterpolationKernel.hpp">
+      <Filter>src\Algorithm\Suprocessors\Interpolation Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CLanczosKernel.hpp">
+      <Filter>src\Algorithm\Suprocessors\Interpolation Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IInterpolationKernel.h">
+      <Filter>src\Algorithm\Suprocessors\Interpolation Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Structures\CImageShifter.hpp">
+      <Filter>src\Structures\Shift</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

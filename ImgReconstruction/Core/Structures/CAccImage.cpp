@@ -9,7 +9,8 @@
 #include <numeric>
 #include <CAccImage.h>
 
-CAccImage::CAccImage(const CImage& img, const CImageShifter* const shifter) : _shifter(shifter)
+
+CAccImage::CAccImage(const CImage& img, const IInterpolationKernel* const kernel)
 {
 	cv::Size size = {img.cols, img.rows};
 
@@ -24,16 +25,19 @@ CAccImage::CAccImage(const CImage& img, const CImageShifter* const shifter) : _s
 		}
 	}
 
+	_shifter = new CImageShifter(kernel);
 	_size = size;
 }
 
-CAccImage::CAccImage(const cv::Size& size, const CImageShifter* const shifter) : _shifter(shifter)
+CAccImage::CAccImage(const cv::Size& size, const IInterpolationKernel* const kernel)
 {
 	_accImg = std::vector<std::vector<std::vector<uchar>>>(size.height);
 	for (int y = 0; y < size.height; y++) {
 		_accImg[y] = std::vector<std::vector<uchar>>(size.width, std::vector<uchar>());
 	}
 
+
+	_shifter = new CImageShifter(kernel);
 	_size = size;
 }
 

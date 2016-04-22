@@ -56,7 +56,7 @@ CImage CImageProcessor::RestoreImage()
 	std::map<uint64, std::vector<CImagePatch>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
 
 	//CImageShifter *shifter = new CImageShifter(new );
-	CAccImage accImage(_mainImage.GrayImage());
+	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel());
 
 	for (auto &it : classes) {
 		std::vector<CImagePatch> aClass = it.second;
@@ -94,7 +94,7 @@ CImage CImageProcessor::RestoreImage()
 				// copying to summing image
 				CImagePatch bestPatch = clusterPatches[bestPatchIdx];
 				for (auto& patch : clusterPatches) {
-					double blurThresh = std::abs((bestPatch.GetBlurValue() - patch.GetBlurValue()));
+					float blurThresh = std::abs((bestPatch.GetBlurValue() - patch.GetBlurValue()));
 					// copy if threshhold in relatively big
 					if (patch.GetFrame() != bestPatch.GetFrame() && _config.blurThresh < blurThresh) {
 						accImage.SetImageRegion(bestPatch.GrayImage(), patch.GetFrame());

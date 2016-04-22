@@ -13,7 +13,7 @@
 class CStdImageSummator : public IImageSummator
 {
 public:
-	virtual double Sum(const CImage& img) const
+	virtual float Sum(const CImage& img) const
 	{
 		return cv::sum(img)[0];
 	}

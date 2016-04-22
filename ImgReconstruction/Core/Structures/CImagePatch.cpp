@@ -10,7 +10,7 @@
 
 #include <bitset>
 
-double CImagePatch::BlurValue(const IBlurMeasurer *const measurer)
+float CImagePatch::BlurValue(const IBlurMeasurer *const measurer)
 {
 	if (_blurValue < 0) {
 		_blurValue = measurer->Measure(_grayImage);
@@ -19,7 +19,7 @@ double CImagePatch::BlurValue(const IBlurMeasurer *const measurer)
 	return _blurValue;
 }
 
-double CImagePatch::StandartDeviation()
+float CImagePatch::StandartDeviation()
 {
 	if (_standartDeviation < 0) {
 		_standartDeviation = CalculateStandartDeviation();
@@ -73,7 +73,7 @@ void CImagePatch::Initialize()
 	_avgHashComputed = false;
 }
 
-double CImagePatch::CalculateStandartDeviation() const
+float CImagePatch::CalculateStandartDeviation() const
 {
 	return utils::StandartDeviation(_grayImage);
 }

@@ -23,8 +23,8 @@ public:
             CImage patch = imgPatches[i];
             patch.convertTo(patch, CV_64F);
             
-            double mean = cv::mean(patch)[0];
-            double thresholdValue = mean + _k * utils::StandartDeviation(img) - 10;
+			double mean = cv::mean(patch)[0];
+			double thresholdValue = mean + _k * utils::StandartDeviation(img) - 10;
 
             CImage binarizedPatch;
             patch.convertTo(patch, CV_8U);

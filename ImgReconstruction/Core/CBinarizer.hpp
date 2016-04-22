@@ -13,9 +13,9 @@
 class CBinarizer: public IBinarizer
 {
 public:
-    CBinarizer(const cv::Size& patchSize, double k) : _patchSize(patchSize), _k(k) {};
+    CBinarizer(const cv::Size& patchSize, float k) : _patchSize(patchSize), _k(k) {};
     virtual CImage Binarize(const CImage& img) const = 0;
 protected:
     cv::Size _patchSize;
-    double _k;
+	float _k;
 };

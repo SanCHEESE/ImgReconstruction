@@ -13,10 +13,10 @@
 class CDynamicRangeBlurMeasurer : public IBlurMeasurer
 {
 public:
-	virtual double Measure(const CImage& img) const
+	virtual float Measure(const CImage& img) const
 	{
 		double min, max;
 		cv::minMaxLoc(img, &min, &max);
-		return std::abs(min - max);
+		return (float)std::abs(min - max);
 	}
 };

@@ -46,7 +46,7 @@
 // for convenience
 using json = nlohmann::json;
 
-CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, double k)
+CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, float k)
 {
 	CBinarizer *binarizer = 0;
 	switch (method) {
@@ -65,7 +65,7 @@ CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, dou
 	return binarizer;
 }
 
-IImageSummator* Summator(TCompSum method, double weight)
+IImageSummator* Summator(TCompSum method, float weight)
 {
 	IImageSummator *summator = 0;
 	switch (method) {
@@ -130,7 +130,7 @@ IPatchClassifier* Classifier(TPatchClassifyingMethod method)
 	return classifier;
 }
 
-IBlurMeasurer* Measurer(TBlurMeasureMethod method, double param)
+IBlurMeasurer* Measurer(TBlurMeasureMethod method, float param)
 {
 	IBlurMeasurer* measurer = 0;
 	switch (method) {
@@ -152,7 +152,7 @@ IBlurMeasurer* Measurer(TBlurMeasureMethod method, double param)
 	return measurer;
 }
 
-IInterpolationKernel* InterpKernel(TInterpKernelType kernelType, int a, double b, double c)
+IInterpolationKernel* InterpKernel(TInterpKernelType kernelType, int a, float b, float c)
 {
 	IInterpolationKernel* kernel = 0;
 	switch (kernelType) {
@@ -219,14 +219,14 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 
 	auto patchFetchJson = json[PatchFetchJsonKey];
 
-	IInterpolationKernel *kernel;
+	IInterpolationKernel *kernel = 0;
 	if (patchFetchJson.find(KernelJsonKey) != patchFetchJson.end()) {
 		// create kernel
-		auto kernelJson = json[KernelJsonKey];
-		int type = json[TypeJsonKey];
+		auto kernelJson = patchFetchJson[KernelJsonKey];
+		int type = kernelJson[TypeJsonKey];
 		int a = kernelJson[AJsonKey];
-		double b = kernelJson[BJsonKey];
-		double c = kernelJson[CJsonKey];
+		float b = kernelJson[BJsonKey];
+		float c = kernelJson[CJsonKey];
 		kernel = InterpKernel((TInterpKernelType)type, a, b, c);
 		_subprocessors[InterpolationKernelKey] = (IImageSubprocessor *)kernel;
 	}

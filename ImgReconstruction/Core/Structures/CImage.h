@@ -43,7 +43,7 @@ public:
 	CImage GetResizedImage(const cv::Size& size) const;
 	CImage GetSDImage(const cv::Size& filterSize) const;
 	CImage GetPatch(const cv::Rect& rect) const;
-	CImage GetRotatedImage(double angle) const;
+	CImage GetRotatedImage(float angle) const;
 	static CImage GetImageWithText(const std::string& text, const cv::Point& origin, const cv::Scalar& textColor, const cv::Scalar& bgColor, const cv::Size& imgSize);
 
 	cv::Rect2f GetFrame() const;
@@ -52,14 +52,14 @@ public:
 	cv::Size GetSize() const;
 
 	template<typename T = int>
-	std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point_<T>& offset) const
+	std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point_<T>& offset, const IInterpolationKernel* const kernel=0) const
 	{
 		std::vector<CImage> patches;
 		IPatchIterator* patchIterator = 0;
 		if (typeid(T) == typeid(int)) {
 			patchIterator = GetIntPatchIterator(size, offset);
 		} else if (typeid(T) == typeid(float)) {
-			patchIterator = GetFloatPatchIterator(size, offset);
+			patchIterator = GetFloatPatchIterator(size, offset, kernel);
 		}
 		while (patchIterator->HasNext()) {
 			patches.push_back(patchIterator->GetNext());

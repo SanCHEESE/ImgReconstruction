@@ -34,7 +34,7 @@ namespace utils
 	uint64 PHash(const CImage &image, const cv::Size& size = {4, 4});
 	uint64 AvgHash(const CImage &image, const cv::Size& size = {4, 4});
 
-	double BicubicK(double x, double B, double C);
+	float BicubicK(float x, float B, float C);
 
 	std::ostream& operator<<(std::ostream& os, const cv::Mat& mat);
 

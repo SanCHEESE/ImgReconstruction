@@ -9,14 +9,15 @@
 #pragma once
 
 #include <common.h>
+#include <IInterpolationKernel.h>
 #include <CImageShifter.hpp>
 #include <CImage.h>
 
 class CAccImage
 {
 public:
-	CAccImage(const CImage& img, const CImageShifter* const shifter = 0);
-	CAccImage(const cv::Size& size, const CImageShifter* const shifter = 0);
+	CAccImage(const CImage& img, const IInterpolationKernel* const kernel = 0);
+	CAccImage(const cv::Size& size, const IInterpolationKernel* const kernel = 0);
 
 	~CAccImage() { delete _shifter; }
 
@@ -59,7 +60,7 @@ public:
 
 private:
 	static uchar Sum(TAccImageSumMethod method, std::vector<uchar> colors);
-	const CImageShifter* const _shifter;
+	CImageShifter* _shifter;
 
 	std::vector<std::vector<std::vector<uchar>>> _accImg;
 	cv::Size _size;

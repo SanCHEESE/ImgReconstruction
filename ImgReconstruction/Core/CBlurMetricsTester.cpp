@@ -71,8 +71,8 @@ void CBlurMetricsTester::Test()
 			int correct = 0;
 			for (int i = 0; i < patchesToTest.size(); i++) {
 				for (int j = 0; j < patchesToTest.size(); j++) {
-					double blurValue1 = blurMeasurer->Measure(patchesToTest[i]);
-					double blurValue2 = blurMeasurer->Measure(patchesToTest[j]);
+					float blurValue1 = blurMeasurer->Measure(patchesToTest[i]);
+					float blurValue2 = blurMeasurer->Measure(patchesToTest[j]);
 					if (blurValue1 >= blurValue2 && i <= j || i >= j && blurValue1 <= blurValue2) {
 						correct++;
 					} else {
