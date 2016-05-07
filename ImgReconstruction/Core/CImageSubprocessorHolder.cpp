@@ -20,8 +20,6 @@
 
 #include <CStdDeviationBlurMeasurer.hpp>
 #include <CDynamicRangeBlurMeasurer.hpp>
-#include <CFFTBlurMeasurer.hpp>
-#include <CFDBlurMeasurer.hpp>
 
 #include <CMeanBrightnessEqualizer.hpp>
 #include <CDynRangeBrightnessEqualizer.hpp>
@@ -31,6 +29,8 @@
 
 #include <CL1ImageComparator.hpp>
 #include <CL2ImageComparator.hpp>
+#include <CFDImageComparator.hpp>
+#include <CFFTImageComparator.hpp>
 
 #include <CAdaptiveGaussianBinarizer.hpp>
 #include <CNICKBinarizer.hpp>
@@ -108,6 +108,11 @@ IImageComparator* Comparator(TImageCompareMetric metric, IBrightnessEqualizer* e
 		case TImageCompareMetricL2:
 			comparator = new CL2ImageComparator(equalizer, summator, eps);
 			break;
+		case TImageCompareMetricFD:
+			comparator = new CFDImageComparator(0, 0, eps);
+			break;
+		case TImageCompareMetricFFT:
+			comparator = new CFFTImageComparator(0, 0, eps);
 		default:
 			break;
 	}

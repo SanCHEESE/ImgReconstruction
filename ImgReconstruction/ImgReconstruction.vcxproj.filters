@@ -123,12 +123,6 @@
     <ClInclude Include="Core\CDynamicRangeBlurMeasurer.hpp">
       <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CFDBlurMeasurer.hpp">
-      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CFFTBlurMeasurer.hpp">
-      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CStdDeviationBlurMeasurer.hpp">
       <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
     </ClInclude>
@@ -179,9 +173,6 @@
     </ClInclude>
     <ClInclude Include="Core\CDynRangeBrightnessEqualizer.hpp">
       <Filter>src\Algorithm\Suprocessors\Equalizer</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\CImageComparator.hpp">
-      <Filter>src\Algorithm\Suprocessors</Filter>
     </ClInclude>
     <ClInclude Include="Core\CImageSubprocessorHolder.h">
       <Filter>src\Algorithm\Suprocessors</Filter>
@@ -242,6 +233,15 @@
     </ClInclude>
     <ClInclude Include="CInterpolationTester.h">
       <Filter>src\Testers</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CImageComparator.hpp">
+      <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
+    </ClInclude>
+    <ClInclude Include="CFFTImageComparator.hpp">
+      <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
+    </ClInclude>
+    <ClInclude Include="CFDImageComparator.hpp">
+      <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

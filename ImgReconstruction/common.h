@@ -34,6 +34,8 @@ typedef enum : int
 {
 	TImageCompareMetricL1,
 	TImageCompareMetricL2,
+	TImageCompareMetricFFT,
+	TImageCompareMetricFD,
 
 	TImageCompareMetricNone
 } TImageCompareMetric;
@@ -42,8 +44,6 @@ typedef enum : int
 {
 	TBlurMeasureMethodStandartDeviation,
 	TBlurMeasureMethodDynamicRange,
-	//TBlurMeasureMethodFFT,
-	//TBlurMeasureMethodFD,
 
 	TBlurMeasureMethodNone
 } TBlurMeasureMethod;
@@ -52,6 +52,8 @@ typedef enum : int
 {
 	TBrightnessEqualizationMean,
 	TBrightnessEqualizationDynRange,
+	//TBlurMeasureMethodFFT,
+	//TBlurMeasureMethodFD,
 
 	TBrightnessEqualizationNone
 } TBrightnessEqualization;
