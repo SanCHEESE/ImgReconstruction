@@ -10,31 +10,37 @@
 
 #include <common.h>
 #include <IInterpolationKernel.h>
+#include <IImageComparator.h>
 #include <CImageShifter.hpp>
 #include <CImage.h>
 
 class CAccImage
 {
 public:
-	CAccImage(const CImage& img, IInterpolationKernel* const kernel = 0);
-	CAccImage(const cv::Size& size, IInterpolationKernel* const kernel = 0);
+	CAccImage(const CImage& img, IInterpolationKernel* const kernel = 0, IImageComparator* const comparator = 0);
+	CAccImage(const cv::Size& size, IInterpolationKernel* const kernel = 0, IImageComparator* const comparator = 0);
 
 	~CAccImage() { delete _shifter; }
 
 	// main methods
-	template<typename T>
 	void SetImageRegion(const CImage& image)
 	{
-		SetImageRegion<T>(image, image.GetFrame());
+		cv::Rect2f frame = image.GetFrame();
+		for (int y = frame.y; y < frame.y + frame.height; y++) {
+			for (int x = frame.x; x < frame.x + frame.width; x++) {
+				_accImg[y][x].push_back(image.at<uchar>(y - frame.y, x - frame.x));
+			}
+		}
 	}
 
-	template<typename T>
-	void SetImageRegion(const CImage& image, const cv::Rect_<T>& frame)
+	void SetImageRegion(const CImage& image, const CImage& imageToCopyTo)
 	{
+		cv::Rect2f frame = imageToCopyTo.GetFrame();
+
 		assert(frame.x + frame.width <= _size.width);
 		assert(frame.y + frame.height <= _size.height);
 
-		auto setImageRegion = [this](const CImage& image, const cv::Rect_<T>& frame) {
+		auto setImageRegion = [this](const CImage& image, const cv::Rect2f& frame) {
 			for (int y = frame.y; y < frame.y + frame.height; y++) {
 				for (int x = frame.x; x < frame.x + frame.width; x++) {
 					_accImg[y][x].push_back(image.at<uchar>(y - frame.y, x - frame.x));
@@ -48,8 +54,17 @@ public:
 		if (fractY > 0 || fractX > 0) {
 			cv::Point2f shift(fractX, fractY);
 			CImage shiftedImage = _shifter->ShiftImage(image, shift);
-			cv::Rect2f newFrame = cv::Rect2f(floorf(frame.x), floorf(frame.y), frame.width, frame.height);
-			setImageRegion(shiftedImage, newFrame);
+			if (_comparator->Equal(imageToCopyTo, shiftedImage)) {
+				cv::Rect2f newFrame = cv::Rect2f(floorf(frame.x), floorf(frame.y), frame.width, frame.height);
+				setImageRegion(shiftedImage, newFrame);
+			} else {
+				shift = cv::Point2f(1 - fractX, 1 - fractY);
+				shiftedImage = _shifter->ShiftImage(image, shift);
+				if (_comparator->Equal(imageToCopyTo, shiftedImage)) {
+					cv::Rect2f newFrame = cv::Rect2f(ceilf(frame.x), ceilf(frame.y), frame.width, frame.height);
+					setImageRegion(shiftedImage, newFrame);
+				}
+			}
 		} else {
 			setImageRegion(image, frame);
 		}
@@ -66,4 +81,5 @@ private:
 
 	std::vector<std::vector<std::vector<uchar>>> _accImg;
 	cv::Size _size;
+	IImageComparator* const _comparator;
 };

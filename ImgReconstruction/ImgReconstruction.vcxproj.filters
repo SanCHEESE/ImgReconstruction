@@ -180,9 +180,6 @@
     <ClInclude Include="Core\CDynRangeBrightnessEqualizer.hpp">
       <Filter>src\Algorithm\Suprocessors\Equalizer</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CImageComparator.hpp">
-      <Filter>src\Algorithm\Suprocessors</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CImageSubprocessorHolder.h">
       <Filter>src\Algorithm\Suprocessors</Filter>
     </ClInclude>
@@ -242,6 +239,9 @@
     </ClInclude>
     <ClInclude Include="CInterpolationTester.h">
       <Filter>src\Testers</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CImageComparator.hpp">
+      <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

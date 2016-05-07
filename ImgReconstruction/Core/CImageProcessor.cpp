@@ -55,14 +55,14 @@ CImage CImageProcessor::RestoreImage()
 	// classification by PHash/AvgHash
 	std::map<uint64, std::vector<CImagePatch>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
 
-	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel());
+	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel(), _subprocHolder->ImageComparator());
 
 	for (auto &it : classes) {
 		std::vector<CImagePatch> aClass = it.second;
 		if (aClass.size() < 2) {
 			// do not process classes with size of 1 object
 			if (!aClass[0].GrayImage().interpolated) {
-				accImage.SetImageRegion<int>(aClass[0].GrayImage());
+				accImage.SetImageRegion(aClass[0].GrayImage());
 			}
 
 			continue;
@@ -101,7 +101,7 @@ CImage CImageProcessor::RestoreImage()
 					float blurThresh = std::abs((bestPatch.GetBlurValue() - patch.GetBlurValue()));
 					// copy if threshhold in relatively big
 					if (patch.GetFrame() != bestPatch.GetFrame() && _config.blurThresh < blurThresh) {
-						accImage.SetImageRegion(bestPatch.GrayImage(), patch.GetFrame());
+						accImage.SetImageRegion(bestPatch.GrayImage(), patch.GrayImage());
 					}
 				}
 			}

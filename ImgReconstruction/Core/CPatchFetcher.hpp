@@ -54,8 +54,19 @@ public:
 		CImage grayImage = imgPatch.GrayImage();
 		CImage binImage = imgPatch.BinImage();
 
-		IPatchIterator* patchIterator = grayImage.GetFloatPatchIterator(_size, _offset, _kernel);
-		IPatchIterator* binPatchIterator = binImage.GetFloatPatchIterator(_size, _offset, _kernel);
+		IPatchIterator* patchIterator = 0;
+		IPatchIterator* binPatchIterator = 0;
+		float temp;
+		float fractX = modf(_offset.x, &temp);
+		float fractY = modf(_offset.y, &temp);
+		if (fractY > 0 || fractX > 0) {
+			// use interpolation
+			patchIterator = grayImage.GetFloatPatchIterator(_size, _offset, _kernel);
+			binPatchIterator = binImage.GetFloatPatchIterator(_size, _offset, _kernel);
+		} else {
+			patchIterator = grayImage.GetIntPatchIterator(_size, _offset);
+			binPatchIterator = binImage.GetIntPatchIterator(_size, _offset);
+		}
 
 		std::vector<CImagePatch> patches;
 		while (patchIterator->HasNext()) {

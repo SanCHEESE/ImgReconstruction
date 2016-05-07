@@ -15,18 +15,18 @@ class CL2ImageComparator : public CImageComparator
 public:
 	using CImageComparator::CImageComparator;
 
-	virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const
+	virtual bool Equal(const CImage& img1, const CImage& img2) const
 	{
-		CImage normPatch1;
-		patch1.GrayImage().copyTo(normPatch1);
+		CImage normImg1;
+		img1.copyTo(normImg1);
 
-		CImage normPatch2;
-		patch2.GrayImage().copyTo(normPatch2);
+		CImage normImg2;
+		img2.copyTo(normImg2);
 
-		_equalizer->EqualizeBrightness(normPatch1, normPatch2);
+		_equalizer->EqualizeBrightness(normImg1, normImg2);
 
 		cv::Mat result;
-		cv::absdiff(normPatch1, normPatch2, result);
+		cv::absdiff(normImg1, normImg2, result);
 		result.convertTo(result, CV_32S);
 		result = result.mul(result);
 		float dist = sqrt(_summator->Sum(result));
