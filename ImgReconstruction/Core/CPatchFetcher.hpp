@@ -17,7 +17,7 @@ class CPatchFetcher : public IPatchFetcher
 {
 public:
 	CPatchFetcher(const cv::Size& size, const cv::Point_<float>& offset,
-		const IPatchFilter* const filter, const IInterpolationKernel* const kernel = 0) : _size(size), _offset(offset), _filter(filter), _kernel(kernel)
+		const IPatchFilter* const filter, IInterpolationKernel* const kernel = 0) : _size(size), _offset(offset), _filter(filter), _kernel(kernel)
 	{};
 
 	virtual std::vector<CImage> FetchPatches(const CImage& img) const
@@ -80,7 +80,7 @@ public:
 	}
 private:
 	const IPatchFilter* const _filter;
-	const IInterpolationKernel* const _kernel;
+	IInterpolationKernel* const _kernel;
 	cv::Size _size;
 	cv::Point_<float> _offset;
 };

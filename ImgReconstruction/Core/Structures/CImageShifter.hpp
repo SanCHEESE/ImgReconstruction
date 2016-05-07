@@ -7,7 +7,7 @@
 class CImageShifter
 {
 public:
-	CImageShifter(const IInterpolationKernel* const kernel) : _interpKernel(kernel) {};
+	CImageShifter(IInterpolationKernel* const kernel) : _interpKernel(kernel) {};
 
 	virtual CImage ShiftImage(const CImage& image, const cv::Point2f& shift) const
 	{
@@ -22,25 +22,28 @@ public:
 		for (int sr_i = 0; sr_i < image.rows; sr_i++) { // rows
 			for (int sr_j = 0; sr_j < image.cols; sr_j++) { // cols
 				// for each pixel of subsampled patch
-				float x = shift.x + sr_j;
-				float y = shift.y + sr_i;
+				float x = shift.x + sr_j + a;
+				float y = shift.y + sr_i + a;
 
 				// calculate its value
 				float p = 0;
-				int i_start = (int)floorf(y) - a + 1;
-				int j_start = (int)floorf(x) - a + 1;
+				int i_start = (int)floorf(y) + 1 - a;
+				int j_start = (int)floorf(x) + 1 - a;
 				for (int i = i_start; i <= (int)floorf(y) + a; i++) { // rows
 					for (int j = j_start; j <= (int)floorf(x) + a; j++) { // cols
-						p += image.at<uchar>(i, j) * coeffsY[i - i_start] * coeffsX[j - j_start];
+						p += extentImage.at<uchar>(i, j) * coeffsY[i - i_start] * coeffsX[j - j_start];
 					}
 				}
 
 				shiftedImage.at<uchar>(sr_i, sr_j) = p;
 			}
 		}
+		//image.Save();
+		//shiftedImage.Save();
 
+		shiftedImage.interpolated = true;
 		return shiftedImage;
 	}
 private:
-	const IInterpolationKernel* const _interpKernel;
+	IInterpolationKernel* const _interpKernel;
 };

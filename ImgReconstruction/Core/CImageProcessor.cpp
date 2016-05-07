@@ -55,7 +55,6 @@ CImage CImageProcessor::RestoreImage()
 	// classification by PHash/AvgHash
 	std::map<uint64, std::vector<CImagePatch>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
 
-	//CImageShifter *shifter = new CImageShifter(new );
 	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel());
 
 	for (auto &it : classes) {
@@ -72,23 +71,28 @@ CImage CImageProcessor::RestoreImage()
 			auto clusters = Clusterize(aClass);
 
 			for (auto& cluster : clusters) {
+				//if (cluster.second.size() <= 1) {
+				//	continue;
+				//}
+
 				auto clusterPatches = cluster.second;
 
 				// sorting by blur increase
 				std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
 
-#ifdef _DEBUG
-				//for (auto patch : clusterPatches) {
-				//	std::cout << patch.GetBlurValue() << std::endl;
-				//}
-#endif
 
 				int bestPatchIdx = 0;
+				bool nonInterpolatedPatchFound = false;
 				for (int i = 0; i < clusterPatches.size(); i++) {
 					if (!clusterPatches[i].GrayImage().interpolated) {
 						bestPatchIdx = i;
+						nonInterpolatedPatchFound = true;
 						break;
 					}
+				}
+
+				if (!nonInterpolatedPatchFound) {
+					continue;
 				}
 
 				// copying to summing image

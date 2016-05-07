@@ -26,6 +26,12 @@ public:
 	{
 		bool passedBin = false;
 		CImage grey2x2 = patch.GetResizedImage(_filterPatchSize);
+		//if (patch.interpolated) {
+		//	std::cout << grey2x2;
+		//	patch.Save();
+		//	grey2x2.Save();
+		//}
+		
 		CImage bin2x2 = _binarizer->Binarize(grey2x2);
 
 

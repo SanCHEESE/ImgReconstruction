@@ -10,19 +10,19 @@
 #include <CBicubicKernel.hpp>
 #include <CLanczosKernel.hpp>
 
-static const int ExtentBorderSize = 2;
-
 template<typename T = int>
 class CPatchIterator : public IPatchIterator
 {
 public:
-	CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point_<T> offset, const IInterpolationKernel* const k = 0) :
+	CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point_<T> offset, IInterpolationKernel* const k = 0) :
 		_size(size), _offset(offset), _borderInset(0), _k(k)
 	{
 		if (typeid(T) == typeid(float)) {
 			_borderInset = _k->A();
 			_coeffsX = _k->Coeffs(_offset.x);
 			_coeffsY = _k->Coeffs(_offset.y);
+			_a = _k->A();
+
 			cv::copyMakeBorder(*iterImage, _iterImage, _borderInset, _borderInset, _borderInset, _borderInset, cv::BORDER_REPLICATE, 0);
 			_pointingRect = cv::Rect2f((float)_borderInset, (float)_borderInset, size.width, size.height);
 		
@@ -40,7 +40,7 @@ public:
 		// fetching patch
 		float patchWidth = maxCol - _pointingRect.x;
 		float patchHeight = maxRow - _pointingRect.y;
-		cv::Rect_<T> patchFrame = cv::Rect_<T>(_pointingRect.x, _pointingRect.y, patchWidth, patchHeight);
+		cv::Rect_<T> patchFrame = cv::Rect_<T>(_pointingRect.x, _pointingRect.y, roundf(patchWidth), roundf(patchHeight));
 		CImage patch;
 		if (typeid(T) == typeid(float) && ((fmod(patchFrame.x, 1) != 0) || (fmod(patchFrame.y, 1) != 0))) {
 			patch = GetSubRect(_iterImage, patchFrame);
@@ -49,6 +49,7 @@ public:
 			patch = _iterImage(patchFrame);
 			patch.interpolated = false;
 		}
+
 		patch.SetFrame(patchFrame);
 
 		if (_pointingRect.width + _pointingRect.x + _offset.x <= _iterImage.cols - _borderInset) {
@@ -94,9 +95,11 @@ public:
 
 	CImage GetSubRect(const CImage& image, const cv::Rect2f& rect)
 	{
-		CImage subRectImage(rect.width, rect.height, cv::DataType<uchar>::type, 0);
-		for (int sr_i = 0; sr_i < rect.height; sr_i++) { // rows
-			for (int sr_j = 0; sr_j < rect.width; sr_j++) { // cols
+		int intWidth = roundf(rect.width);
+		int intHeight = roundf(rect.height);
+		CImage subRectImage(intWidth, intHeight, cv::DataType<uchar>::type, 0);
+		for (int sr_i = 0; sr_i < intHeight; sr_i++) { // rows
+			for (int sr_j = 0; sr_j < intWidth; sr_j++) { // cols
 				// for each pixel of subsampled patch
 				float x = rect.x + sr_j;
 				float y = rect.y + sr_i;
@@ -111,7 +114,7 @@ public:
 					}
 				}
 
-				assert(p < 256);
+				//assert(p < 256);
 				subRectImage.at<uchar>(sr_i, sr_j) = (uchar)p;
 			}
 		}
@@ -120,7 +123,7 @@ public:
 	}
 
 private:
-	const IInterpolationKernel* const _k;
+	IInterpolationKernel* const _k;
 	int _a;
 	std::vector<float> _coeffsX;
 	std::vector<float> _coeffsY;

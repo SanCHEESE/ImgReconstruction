@@ -11,7 +11,9 @@
 #include "CImage.h"
 #include "CImageSubprocessorHolder.h"
 #include "CImageProcessor.h"
-#include "CBlurMetricsTester.h"
+
+#include <CInterpolationTester.h>
+#include <CBlurMetricsTester.h>
 
 #include "CTimeLogger.h"
 
@@ -53,6 +55,17 @@ int main(int argc, char** argv)
 
 			system("pause");
 
+		} else if (std::string(argv[2]) == "interpolation") {
+			CImage image = CImage(argv[3], IMREAD_GRAYSCALE);
+			if (image.empty()) {
+				std::wcerr << "No such image!" << std::endl;
+				return 1;
+			}
+
+			CInterpolationTester tester(image(cv::Rect(20, 20, 20, 20)));
+			tester.Test();
+
+			system("pause");
 		} else {
 			std::wcerr << "Unknown option" << std::endl;
 		}

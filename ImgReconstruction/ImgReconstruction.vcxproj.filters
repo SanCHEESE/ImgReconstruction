@@ -94,6 +94,9 @@
     <ClCompile Include="Core\Structures\CAccImage.cpp">
       <Filter>src\Structures</Filter>
     </ClCompile>
+    <ClCompile Include="CInterpolationTester.cpp">
+      <Filter>src\Testers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Helpers\CTimeLogger.h">
@@ -236,6 +239,9 @@
     </ClInclude>
     <ClInclude Include="Core\Structures\CImageShifter.hpp">
       <Filter>src\Structures\Shift</Filter>
+    </ClInclude>
+    <ClInclude Include="CInterpolationTester.h">
+      <Filter>src\Testers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

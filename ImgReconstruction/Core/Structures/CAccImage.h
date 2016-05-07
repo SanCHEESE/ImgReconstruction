@@ -16,8 +16,8 @@
 class CAccImage
 {
 public:
-	CAccImage(const CImage& img, const IInterpolationKernel* const kernel = 0);
-	CAccImage(const cv::Size& size, const IInterpolationKernel* const kernel = 0);
+	CAccImage(const CImage& img, IInterpolationKernel* const kernel = 0);
+	CAccImage(const cv::Size& size, IInterpolationKernel* const kernel = 0);
 
 	~CAccImage() { delete _shifter; }
 

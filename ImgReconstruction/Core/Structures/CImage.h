@@ -52,7 +52,7 @@ public:
 	cv::Size GetSize() const;
 
 	template<typename T = int>
-	std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point_<T>& offset, const IInterpolationKernel* const kernel=0) const
+	std::vector<CImage> GetAllPatches(const cv::Size& size, const cv::Point_<T>& offset, IInterpolationKernel* const kernel=0) const
 	{
 		std::vector<CImage> patches;
 		IPatchIterator* patchIterator = 0;
@@ -68,7 +68,7 @@ public:
 	}
 
 	IPatchIterator* GetIntPatchIterator(const cv::Size& size, const cv::Point_<int>& offset) const;
-	IPatchIterator* GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, const IInterpolationKernel* const kernel) const;
+	IPatchIterator* GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, IInterpolationKernel* const kernel) const;
 
 	friend std::ostream& operator<<(std::ostream& os, const CImage& img);
 

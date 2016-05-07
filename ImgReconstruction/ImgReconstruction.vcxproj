@@ -112,6 +112,7 @@
     <ClCompile Include="Core\Structures\CImagePatch.cpp" />
     <ClCompile Include="Core\utils.cpp" />
     <ClCompile Include="Helpers\CTimeLogger.cpp" />
+    <ClCompile Include="CInterpolationTester.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="Core\Structures\IPatchIterator.h" />
     <ClInclude Include="Core\utils.h" />
     <ClInclude Include="Helpers\CTimeLogger.h" />
+    <ClInclude Include="CInterpolationTester.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

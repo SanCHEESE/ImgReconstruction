@@ -210,7 +210,7 @@ IPatchIterator* CImage::GetIntPatchIterator(const cv::Size& size, const cv::Poin
 	return new CPatchIterator<int>(this, size, offset);
 }
 
-IPatchIterator* CImage::GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, const IInterpolationKernel* const kernel) const
+IPatchIterator* CImage::GetFloatPatchIterator(const cv::Size& size, const cv::Point_<float>& offset, IInterpolationKernel* const kernel) const
 {
 	return new CPatchIterator<float>(this, size, offset, kernel);
 }
