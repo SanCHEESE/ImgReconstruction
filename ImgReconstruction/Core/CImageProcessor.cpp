@@ -71,9 +71,9 @@ CImage CImageProcessor::RestoreImage()
 			auto clusters = Clusterize(aClass);
 
 			for (auto& cluster : clusters) {
-				//if (cluster.second.size() <= 1) {
-				//	continue;
-				//}
+				if (cluster.second.size() <= 1) {
+					continue;
+				}
 
 				auto clusterPatches = cluster.second;
 
