@@ -1,7 +1,7 @@
 #pragma once
 
 #include <CImageComparator.hpp>
-#include <CImagePatch.h>
+#include <CImage.h>
 
 class CFFTImageComparator : public CImageComparator
 {
@@ -10,10 +10,10 @@ public:
 
 	CFFTImageComparator(int eps, float radiusRatio = 0.3) : CImageComparator(0, 0, eps), _radiusRatio(radiusRatio) {};
 
-	virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const
+	virtual bool Equal(const CImage& patch1, const CImage& patch2) const
 	{
-		float blurValue1 = BlurValue(patch1.GrayImage());
-		float blurValue2 = BlurValue(patch2.GrayImage());
+		float blurValue1 = BlurValue(patch1);
+		float blurValue2 = BlurValue(patch2);
 
 		return std::abs(blurValue1 - blurValue2) < _eps;
 	}
