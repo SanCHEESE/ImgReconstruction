@@ -127,6 +127,8 @@
     <ClInclude Include="Core\CBorderImageSummator.hpp" />
     <ClInclude Include="Core\CDynamicRangeBlurMeasurer.hpp" />
     <ClInclude Include="Core\CDynRangeBrightnessEqualizer.hpp" />
+    <ClInclude Include="Core\CFDBlurMeasurer.hpp" />
+    <ClInclude Include="Core\CFFTBlurMeasurer.hpp" />
     <ClInclude Include="Core\CImageComparator.hpp" />
     <ClInclude Include="Core\CImageExtender.hpp" />
     <ClInclude Include="Core\CImageProcessor.h" />

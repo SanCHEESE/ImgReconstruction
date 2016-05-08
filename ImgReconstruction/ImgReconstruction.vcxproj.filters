@@ -243,6 +243,11 @@
     <ClInclude Include="CFDImageComparator.hpp">
       <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
     </ClInclude>
-
+    <ClInclude Include="Core\CFDBlurMeasurer.hpp">
+      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CFFTBlurMeasurer.hpp">
+      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -19,8 +19,8 @@ public:
 		auto coeffsY = _interpKernel->Coeffs(shift.y);
 
 		CImage shiftedImage(image.cols, image.rows, cv::DataType<uchar>::type, 0);
-		for (int sr_i = 0; sr_i < image.rows; sr_i++) { // rows
-			for (int sr_j = 0; sr_j < image.cols; sr_j++) { // cols
+		for (int sr_i = 0; sr_i < shiftedImage.rows; sr_i++) { // rows
+			for (int sr_j = 0; sr_j < shiftedImage.cols; sr_j++) { // cols
 				// for each pixel of subsampled patch
 				float x = shift.x + sr_j + a;
 				float y = shift.y + sr_i + a;

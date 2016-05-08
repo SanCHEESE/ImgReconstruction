@@ -76,7 +76,6 @@ public:
 			if (_filter->PatchPassesFilter(imgPatch)) {
 				imgPatch.SetBinImage(binPatchIterator->GetNext());
 				patches.push_back(imgPatch);
-				//imgPatch.GrayImage().Save();
 			} else {
 				binPatchIterator->MoveNext();
 			}

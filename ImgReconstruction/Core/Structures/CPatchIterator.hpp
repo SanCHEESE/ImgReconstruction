@@ -25,6 +25,7 @@ public:
 
 			cv::copyMakeBorder(*iterImage, _iterImage, _borderInset, _borderInset, _borderInset, _borderInset, cv::BORDER_REPLICATE, 0);
 			_pointingRect = cv::Rect2f((float)_borderInset, (float)_borderInset, size.width, size.height);
+
 		
 		} else if (typeid(T) == typeid(int)) {
 			_iterImage = *iterImage;
@@ -45,12 +46,12 @@ public:
 		if (typeid(T) == typeid(float) && ((fmod(patchFrame.x, 1) != 0) || (fmod(patchFrame.y, 1) != 0))) {
 			patch = GetSubRect(_iterImage, patchFrame);
 			patch.interpolated = true;
+			patch.SetFrame(cv::Rect2f(patchFrame.x - _borderInset, patchFrame.y - _borderInset, patchFrame.width, patchFrame.height));
 		} else {
 			patch = _iterImage(patchFrame);
 			patch.interpolated = false;
+			patch.SetFrame(_k != 0 ? cv::Rect2f(patchFrame.x - _borderInset, patchFrame.y - _borderInset, patchFrame.width, patchFrame.height) : patchFrame);
 		}
-
-		patch.SetFrame(patchFrame);
 
 		if (_pointingRect.width + _pointingRect.x + _offset.x <= _iterImage.cols - _borderInset) {
 			// not near the right border

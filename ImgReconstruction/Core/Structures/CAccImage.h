@@ -14,6 +14,8 @@
 #include <CImageShifter.hpp>
 #include <CImage.h>
 
+#include <utils.h>
+
 class CAccImage
 {
 public:
@@ -40,10 +42,10 @@ public:
 		assert(frame.x + frame.width <= _size.width);
 		assert(frame.y + frame.height <= _size.height);
 
-		auto setImageRegion = [this](const CImage& image, const cv::Rect2f& frame) {
+		auto setImageRegion = [this](const CImage& i, const cv::Rect2f& frame) {
 			for (int y = frame.y; y < frame.y + frame.height; y++) {
 				for (int x = frame.x; x < frame.x + frame.width; x++) {
-					_accImg[y][x].push_back(image.at<uchar>(y - frame.y, x - frame.x));
+					_accImg[y][x].push_back(i.at<uchar>(y - frame.y, x - frame.x));
 				}
 			}
 		};
@@ -51,23 +53,24 @@ public:
 		float temp;
 		float fractX = modf((float)frame.x, &temp);
 		float fractY = modf((float)frame.y, &temp);
+		
+		//std::vector<CImage> images;
+
+		//images.push_back(image);
+		//images.push_back(imageToCopyTo);
 		if (fractY > 0 || fractX > 0) {
 			cv::Point2f shift(fractX, fractY);
 			CImage shiftedImage = _shifter->ShiftImage(image, shift);
-			if (_comparator->Equal(imageToCopyTo, shiftedImage)) {
-				cv::Rect2f newFrame = cv::Rect2f(floorf(frame.x), floorf(frame.y), frame.width, frame.height);
-				setImageRegion(shiftedImage, newFrame);
-			} else {
-				shift = cv::Point2f(1 - fractX, 1 - fractY);
-				shiftedImage = _shifter->ShiftImage(image, shift);
-				if (_comparator->Equal(imageToCopyTo, shiftedImage)) {
-					cv::Rect2f newFrame = cv::Rect2f(ceilf(frame.x), ceilf(frame.y), frame.width, frame.height);
-					setImageRegion(shiftedImage, newFrame);
-				}
-			}
+			//images.push_back(shiftedImage);
+			cv::Rect2f newFrame = cv::Rect2f(floorf(frame.x), floorf(frame.y), frame.width, frame.height);
+			setImageRegion(shiftedImage, newFrame);
+
+			//utils::Stack(images, 1).Save();
 		} else {
 			setImageRegion(image, frame);
 		}
+
+		//images.clear();
 	}
 
 	CImage GetResultImage(TAccImageSumMethod method) const;
