@@ -80,20 +80,19 @@ CImage CImageProcessor::RestoreImage()
 				// sorting by blur increase
 				std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
 
-
 				int bestPatchIdx = 0;
-				//bool nonInterpolatedPatchFound = false;
-				//for (int i = 0; i < clusterPatches.size(); i++) {
-				//	if (!clusterPatches[i].GrayImage().interpolated) {
-				//		bestPatchIdx = i;
-				//		nonInterpolatedPatchFound = true;
-				//		break;
-				//	}
-				//}
+				bool nonInterpolatedPatchFound = false;
+				for (int i = 0; i < clusterPatches.size(); i++) {
+					if (!clusterPatches[i].GrayImage().interpolated) {
+						bestPatchIdx = i;
+						nonInterpolatedPatchFound = true;
+						break;
+					}
+				}
 
-				//if (!nonInterpolatedPatchFound) {
-				//	continue;
-				//}
+				if (!nonInterpolatedPatchFound) {
+					continue;
+				}
 
 				// copying to summing image
 				CImagePatch bestPatch = clusterPatches[bestPatchIdx];
