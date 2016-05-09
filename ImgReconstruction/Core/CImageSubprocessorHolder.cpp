@@ -60,6 +60,7 @@ CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, flo
 			binarizer = new CAdaptiveGaussianBinarizer(patchSize, k);
 			break;
 		default:
+			assert(false);
 			break;
 	}
 	return binarizer;
@@ -76,6 +77,7 @@ IImageSummator* Summator(TCompSum method, float weight)
 			summator = new CBorderImageSummator(weight);
 			break;
 		default:
+			assert(false);
 			break;
 	}
 	return summator;
@@ -92,6 +94,7 @@ IBrightnessEqualizer* BrightnessEqualizer(TBrightnessEqualization equalizationTy
 			equalizer = new CMeanBrightnessEqualizer();
 			break;
 		default:
+			assert(false);
 			break;
 	}
 
@@ -114,6 +117,7 @@ IImageComparator* Comparator(TImageCompareMetric metric, IBrightnessEqualizer* e
 		case TImageCompareMetricFFT:
 			comparator = new CFFTImageComparator(0, 0, eps);
 		default:
+			assert(false);
 			break;
 	}
 	return comparator;
@@ -130,6 +134,7 @@ IPatchClassifier* Classifier(TPatchClassifyingMethod method)
 			classifier = new CAvgHashPatchClassifier();
 			break;
 		default:
+			assert(false);
 			break;
 	}
 	return classifier;
@@ -152,6 +157,7 @@ IBlurMeasurer* Measurer(TBlurMeasureMethod method, float param)
 			measurer = new CStdDeviationBlurMeasurer();
 			break;
 		default:
+			assert(false);
 			break;
 	}
 	return measurer;
@@ -168,6 +174,7 @@ IInterpolationKernel* InterpKernel(TInterpKernelType kernelType, int a, float b,
 			kernel = new CLanczosKernel(a);
 			break;
 		default:
+			assert(false);
 			break;
 	}
 
