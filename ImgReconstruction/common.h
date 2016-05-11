@@ -52,8 +52,6 @@ typedef enum : int
 {
 	TBrightnessEqualizationMean,
 	TBrightnessEqualizationDynRange,
-	//TBlurMeasureMethodFFT,
-	//TBlurMeasureMethodFD,
 
 	TBrightnessEqualizationNone
 } TBrightnessEqualization;

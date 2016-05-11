@@ -74,7 +74,9 @@ public:
 			imgPatch.SetGrayImage(patchIterator->GetNext());
 
 			if (_filter->PatchPassesFilter(imgPatch)) {
-				imgPatch.SetBinImage(binPatchIterator->GetNext());
+				CImage binImage = binPatchIterator->GetNext();
+				cv::threshold(binImage, binImage, 125, 255, cv::THRESH_BINARY);
+				imgPatch.SetBinImage(binImage);
 				patches.push_back(imgPatch);
 			} else {
 				binPatchIterator->MoveNext();

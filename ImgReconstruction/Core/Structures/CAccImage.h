@@ -10,7 +10,7 @@
 
 #include <common.h>
 #include <IInterpolationKernel.h>
-#include <IImageComparator.h>
+#include <IBrightnessEqualizer.h>
 #include <CImageShifter.hpp>
 #include <CImage.h>
 
@@ -19,8 +19,8 @@
 class CAccImage
 {
 public:
-	CAccImage(const CImage& img, IInterpolationKernel* const kernel = 0, IImageComparator* const comparator = 0);
-	CAccImage(const cv::Size& size, IInterpolationKernel* const kernel = 0, IImageComparator* const comparator = 0);
+	CAccImage(const CImage& img, IInterpolationKernel* const kernel = 0, IBrightnessEqualizer* const equalizer = 0);
+	CAccImage(const cv::Size& size, IInterpolationKernel* const kernel = 0, IBrightnessEqualizer* const equalizer = 0);
 
 	~CAccImage() { delete _shifter; }
 
@@ -39,13 +39,28 @@ public:
 	{
 		cv::Rect2f frame = imageToCopyTo.GetFrame();
 
+		CImage fromImage;
+		image.copyTo(fromImage);
+
+		CImage toImage;
+		imageToCopyTo.copyTo(toImage);
+
+		_equalizer->EqualizeBrightness(fromImage, toImage);
+
 		assert(frame.x + frame.width <= _size.width);
 		assert(frame.y + frame.height <= _size.height);
 
 		auto setImageRegion = [this](const CImage& i, const cv::Rect2f& frame) {
+			//cv::Scalar mean, stddev;
+			//cv::meanStdDev(i, mean, stddev);
+			//float meanValue = mean[0];
+
 			for (int y = frame.y; y < frame.y + frame.height; y++) {
 				for (int x = frame.x; x < frame.x + frame.width; x++) {
-					_accImg[y][x].push_back(i.at<uchar>(y - frame.y, x - frame.x));
+					uchar valueToPush = i.at<uchar>(y - frame.y, x - frame.x);
+					//uchar lastValue = _accImg[y][x][_accImg[y][x].size() - 1];
+					//valueToPush = valueToPush > meanValue - 20 ? valueToPush : lastValue;
+					_accImg[y][x].push_back(valueToPush);
 				}
 			}
 		};
@@ -54,23 +69,15 @@ public:
 		float fractX = modf((float)frame.x, &temp);
 		float fractY = modf((float)frame.y, &temp);
 		
-		//std::vector<CImage> images;
-
-		//images.push_back(image);
-		//images.push_back(imageToCopyTo);
 		if (fractY > 0 || fractX > 0) {
 			cv::Point2f shift(fractX, fractY);
-			CImage shiftedImage = _shifter->ShiftImage(image, shift);
-			//images.push_back(shiftedImage);
+			CImage shiftedImage = _shifter->ShiftImage(fromImage, shift);
 			cv::Rect2f newFrame = cv::Rect2f(floorf(frame.x), floorf(frame.y), frame.width, frame.height);
 			setImageRegion(shiftedImage, newFrame);
 
-			//utils::Stack(images, 1).Save();
 		} else {
-			setImageRegion(image, frame);
+			setImageRegion(fromImage, frame);
 		}
-
-		//images.clear();
 	}
 
 	CImage GetResultImage(TAccImageSumMethod method) const;
@@ -84,5 +91,5 @@ private:
 
 	std::vector<std::vector<std::vector<uchar>>> _accImg;
 	cv::Size _size;
-	IImageComparator* const _comparator;
+	IBrightnessEqualizer* _equalizer;
 };

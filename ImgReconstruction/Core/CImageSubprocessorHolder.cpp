@@ -46,18 +46,18 @@
 // for convenience
 using json = nlohmann::json;
 
-CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, float k)
+CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, float k, float threshOffset)
 {
 	CBinarizer *binarizer = 0;
 	switch (method) {
 		case TBinarizationMethodNICK:
-			binarizer = new CNICKBinarizer(patchSize, k);
+			binarizer = new CNICKBinarizer(patchSize, k, threshOffset);
 			break;
 		case TBinarizationMethodNiBlack:
-			binarizer = new CNiBlackBinarizer(patchSize, k);
+			binarizer = new CNiBlackBinarizer(patchSize, k, threshOffset);
 			break;
 		case TBinarizationMethodAdaptiveGaussian:
-			binarizer = new CAdaptiveGaussianBinarizer(patchSize, k);
+			binarizer = new CAdaptiveGaussianBinarizer(patchSize, k, threshOffset);
 			break;
 		default:
 			assert(false);
@@ -183,7 +183,7 @@ IInterpolationKernel* InterpKernel(TInterpKernelType kernelType, int a, float b,
 
 CImageSubprocessorHolder::CImageSubprocessorHolder()
 {
-	IBinarizer *filterBinarizer = Binarizer(DefaultBinMethod, DefaultFilteringPatchSize, DefaultFilteringBinK);
+	IBinarizer *filterBinarizer = Binarizer(DefaultBinMethod, DefaultFilteringPatchSize, DefaultFilteringBinK, DefaultThreshOffset);
 	_subprocessors[FilterBinarizerKey] = (IImageSubprocessor *)filterBinarizer;
 	IPatchFilter *patchFilter = new CPatchFilter(filterBinarizer, DefaultMinPatchContrastValue, DefaultFilteringPatchSize);
 	_subprocessors[PatchFilterKey] = (IImageSubprocessor *)patchFilter;
@@ -198,7 +198,7 @@ CImageSubprocessorHolder::CImageSubprocessorHolder()
 	IImageComparator* comparator = Comparator(DefaultCompMetric, brightnessEqualizer, summator, DefaultComparisonEps);
 	_subprocessors[ComparatorKey] = (IImageSubprocessor *)comparator;
 
-	IBinarizer *binarizer = Binarizer(DefaultBinMethod, DefaultBinPatchSize, DefautBinK);
+	IBinarizer *binarizer = Binarizer(DefaultBinMethod, DefaultBinPatchSize, DefautBinK, DefaultThreshOffset);
 	_subprocessors[BinarizerKey] = (IImageSubprocessor *)binarizer;
 
 	IPatchClassifier* classifier = Classifier(DefaultClassifyingMethod);
@@ -224,7 +224,12 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	auto filterBinJson = filterJson[BinJsonKey];
 	cv::Size patchSize = {filterBinJson[PatchSizeJsonKey][WidthJsonKey], filterBinJson[PatchSizeJsonKey][HeightJsonKey]};
 	int binMethod = filterBinJson[MethodJsonKey];
-	IBinarizer *filterBinarizer = Binarizer((TBinarizationMethod)binMethod, patchSize, filterBinJson[KJsonKey]);
+	float threshOffset = DefaultThreshOffset;
+	if (filterBinJson.find(PatchOffsetJsonKey) != filterBinJson.end()) {
+		threshOffset = filterBinJson[PatchOffsetJsonKey];
+	}
+
+	IBinarizer *filterBinarizer = Binarizer((TBinarizationMethod)binMethod, patchSize, filterBinJson[KJsonKey], threshOffset);
 	_subprocessors[FilterBinarizerKey] = (IImageSubprocessor *)filterBinarizer;
 	IPatchFilter *patchFilter = new CPatchFilter(filterBinarizer, filterJson[ContrastValueJsonKey], patchSize);
 	_subprocessors[PatchFilterKey] = (IImageSubprocessor *)patchFilter;
@@ -261,9 +266,9 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 
 	auto binJson = json[BinJsonKey];
 	binMethod = binJson[MethodJsonKey];
+
 	IBinarizer *binarizer = Binarizer((TBinarizationMethod)binMethod,
-	{binJson[PatchSizeJsonKey][WidthJsonKey], binJson[PatchSizeJsonKey][HeightJsonKey]},
-		binJson[KJsonKey]);
+	{binJson[PatchSizeJsonKey][WidthJsonKey], binJson[PatchSizeJsonKey][HeightJsonKey]}, binJson[KJsonKey], threshOffset);
 	_subprocessors[BinarizerKey] = (IImageSubprocessor *)binarizer;
 
 	auto blurJson = json[BlurMeasureJsonKey];

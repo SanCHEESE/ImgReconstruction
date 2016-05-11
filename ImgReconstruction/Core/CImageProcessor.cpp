@@ -24,6 +24,7 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
 	CImage blurredImage;
 	cv::bilateralFilter(extentImage, blurredImage, 2, 1, 1);
 	_mainImage = CImagePatch(extentImage, _subprocHolder->PatchBinarizer()->Binarize(blurredImage));
+	_mainImage.BinImage().Save();
 }
 
 CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img)
@@ -55,7 +56,7 @@ CImage CImageProcessor::RestoreImage()
 	// classification by PHash/AvgHash
 	std::map<uint64, std::vector<CImagePatch>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
 
-	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel(), _subprocHolder->ImageComparator());
+	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel(), _subprocHolder->CompBrightnessEqualizer());
 
 	for (auto &it : classes) {
 		std::vector<CImagePatch> aClass = it.second;
@@ -106,8 +107,6 @@ CImage CImageProcessor::RestoreImage()
 			}
 		}
 	}
-
-	accImage.CreateHistImage().Save();
 
 	return accImage.GetResultImage(_config.accImageSumMethod);
 }

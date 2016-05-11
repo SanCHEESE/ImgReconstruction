@@ -31,6 +31,7 @@ static const std::string PatchFetcherKey = "PatchFetcherKey";
 static const std::string ImageExtenderKey = "ImageExtenderKey";
 static const std::string InterpolationKernelKey = "InterpolationKernelKey";
 
+
 // used to store not generalized classes
 struct CConfig
 {
@@ -59,6 +60,7 @@ public:
 		}
 		return 0;
 	}
+	IBrightnessEqualizer* CompBrightnessEqualizer() { return (IBrightnessEqualizer*)_subprocessors[CompBrightnessEqualizerKey]; }
 
 	CConfig GetConfig() const { return _config; };
 private:

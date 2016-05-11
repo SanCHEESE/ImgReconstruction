@@ -67,6 +67,7 @@ static TPatchClassifyingMethod DefaultClassifyingMethod = TPatchClassifyingMetho
 static TBinarizationMethod DefaultBinMethod = TBinarizationMethodNiBlack;
 static cv::Size DefaultBinPatchSize = {25, 25};
 static float DefautBinK = -0.2f;
+static float DefaultThreshOffset = -10.f;
 
 // patch filtering
 static cv::Size DefaultFilteringPatchSize = {2, 2};

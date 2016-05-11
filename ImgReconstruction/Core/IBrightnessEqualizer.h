@@ -16,5 +16,5 @@ class IBrightnessEqualizer : public IImageSubprocessor
 {
 public:
 	virtual ~IBrightnessEqualizer() {}
-	virtual void EqualizeBrightness(CImage& img1, CImage& img2) const = 0;
+	virtual void EqualizeBrightness(CImage& image, CImage& toImage) const = 0;
 };

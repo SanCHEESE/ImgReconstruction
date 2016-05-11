@@ -30,7 +30,7 @@ public:
 			
 			float mean = cv::mean(patch)[0];
 			float pixelsSumOfSquares = cv::sum(patch.mul(patch))[0];
-			float thresholdValue = mean + _k * sqrt((pixelsSumOfSquares - mean)/patch.GetFrame().area());
+			float thresholdValue = mean + _k * sqrt((pixelsSumOfSquares - mean)/patch.GetFrame().area()) + _offset;
 			
 			CImage binarizedPatch;
 			patch.convertTo(patch, CV_8U);

@@ -10,7 +10,7 @@
 #include <CAccImage.h>
 
 
-CAccImage::CAccImage(const CImage& img, IInterpolationKernel* const kernel, IImageComparator* const comparator) : _comparator(comparator)
+CAccImage::CAccImage(const CImage& img, IInterpolationKernel* const kernel, IBrightnessEqualizer* const equalizer) : _equalizer(equalizer)
 {
 	cv::Size size = {img.cols, img.rows};
 
@@ -30,13 +30,12 @@ CAccImage::CAccImage(const CImage& img, IInterpolationKernel* const kernel, IIma
 
 }
 
-CAccImage::CAccImage(const cv::Size& size, IInterpolationKernel* const kernel, IImageComparator* const comparator) : _comparator(comparator)
+CAccImage::CAccImage(const cv::Size& size, IInterpolationKernel* const kernel, IBrightnessEqualizer* const equalizer) : _equalizer(equalizer)
 {
 	_accImg = std::vector<std::vector<std::vector<uchar>>>(size.height);
 	for (int y = 0; y < size.height; y++) {
 		_accImg[y] = std::vector<std::vector<uchar>>(size.width, std::vector<uchar>());
 	}
-
 
 	_shifter = new CImageShifter(kernel);
 	_size = size;
