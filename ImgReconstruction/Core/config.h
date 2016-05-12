@@ -28,7 +28,6 @@ static const std::string ContrastValueJsonKey = "contrast";
 static const std::string BlurRatioJsonKey = "ratio";
 
 static const std::string BlurMeasureJsonKey = "blur";
-static const std::string ExtenderPatchSizeJsonKey = "extend";
 static const std::string AccSumJsonKey = "acc";
 static const std::string ClassifierJsonKey = "classifier";
 static const std::string PatchFilterJsonKey = "filter";
@@ -57,7 +56,6 @@ static TCompSum DefaultCompSum = TCompSumStd;
 static float DefaultBorderSumWeight = 1.5;
 
 // blur config
-static float DefaultBlurMetricRadiusRatio = 0.4f;
 static TBlurMeasureMethod DefaultBlurMeasureMethod = TBlurMeasureMethodDynamicRange;
 
 // classification method

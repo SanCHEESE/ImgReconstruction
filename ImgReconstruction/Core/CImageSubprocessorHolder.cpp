@@ -140,16 +140,10 @@ IPatchClassifier* Classifier(TPatchClassifyingMethod method)
 	return classifier;
 }
 
-IBlurMeasurer* Measurer(TBlurMeasureMethod method, float param)
+IBlurMeasurer* Measurer(TBlurMeasureMethod method)
 {
 	IBlurMeasurer* measurer = 0;
 	switch (method) {
-		//case TBlurMeasureMethodFD:
-		//	measurer = new CFDBlurMeasurer();
-		//	break;
-		//case TBlurMeasureMethodFFT:
-		//	measurer = new CFFTBlurMeasurer(param);
-		//	break;
 		case TBlurMeasureMethodDynamicRange:
 			measurer = new CDynamicRangeBlurMeasurer();
 			break;
@@ -204,7 +198,7 @@ CImageSubprocessorHolder::CImageSubprocessorHolder()
 	IPatchClassifier* classifier = Classifier(DefaultClassifyingMethod);
 	_subprocessors[PatchClassifierKey] = (IImageSubprocessor *)classifier;
 
-	IBlurMeasurer* measurer = Measurer(DefaultBlurMeasureMethod, DefaultBlurMetricRadiusRatio);
+	IBlurMeasurer* measurer = Measurer(DefaultBlurMeasureMethod);
 	_subprocessors[BlurMeasurerKey] = (IImageSubprocessor *)measurer;
 
 	IImageExtender* extender = new CImageExtender(DefaultBinPatchSize);
@@ -273,10 +267,10 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 
 	auto blurJson = json[BlurMeasureJsonKey];
 	int blurMeasureMethod = blurJson[MethodJsonKey];
-	IBlurMeasurer* measurer = Measurer((TBlurMeasureMethod)blurMeasureMethod, blurJson[BlurRatioJsonKey]);
+	IBlurMeasurer* measurer = Measurer((TBlurMeasureMethod)blurMeasureMethod);
 	_subprocessors[BlurMeasurerKey] = (IImageSubprocessor *)measurer;
 
-	IImageExtender* extender = new CImageExtender({json[ExtenderPatchSizeJsonKey][WidthJsonKey], json[ExtenderPatchSizeJsonKey][HeightJsonKey]});
+	IImageExtender* extender = new CImageExtender({binJson[PatchSizeJsonKey][WidthJsonKey], binJson[PatchSizeJsonKey][HeightJsonKey]});
 	_subprocessors[ImageExtenderKey] = (IImageSubprocessor *)extender;
 
 	int classifyingMethod = json[ClassifierJsonKey];
