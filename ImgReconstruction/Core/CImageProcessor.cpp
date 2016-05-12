@@ -24,7 +24,6 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
 	CImage blurredImage;
 	cv::bilateralFilter(extentImage, blurredImage, 2, 1, 1);
 	_mainImage = CImagePatch(extentImage, _subprocHolder->PatchBinarizer()->Binarize(blurredImage));
-	_mainImage.BinImage().Save();
 }
 
 CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img)
