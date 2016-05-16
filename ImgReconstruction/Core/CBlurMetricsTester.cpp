@@ -19,52 +19,53 @@ void CBlurMetricsTester::Test()
 {
 	std::cout.imbue(std::locale(""));
 
-	const int bigPatchSize = 300;
-	const int bigPatchOffset = 300;
+	const int bigPatchSize = 100;
+	const int bigPatchOffset = 100;
 	const int minContrastValue = 30;
-	const int minPatchSize = 8;
-	const int maxPatchSize = 26;
 
-	CImage img = _image({0, 0, bigPatchSize, bigPatchSize});
+	cv::Size patchSize = {bigPatchSize, bigPatchSize};
+	cv::Point patchOffset = {bigPatchOffset, bigPatchOffset};
+	IPatchFetcher *patchFetcher = new CPatchFetcher(patchSize, patchOffset, 0);
+
+	auto patches = patchFetcher->FetchPatches(_image);
+	std::random_shuffle(patches.begin(), patches.end());
 
 	/* smooth images */
 	int tag = 0;
 	int kernelSize = 1;
 	int maxKernelSize = 27;
-	std::vector<CImage> bigPatches;
 
-	for (int idx = 0; kernelSize <= maxKernelSize; kernelSize += 2, idx++) {
+	std::vector<CImage> blurredImages;
+	for (int idx = kernelSize; idx <= maxKernelSize; idx += 2) {
 		CImage tempImage;
-		cv::GaussianBlur(img, tempImage, cv::Size(kernelSize, kernelSize), 0, 0);
-		bigPatches.push_back(tempImage);
+		cv::GaussianBlur(patches[tag], tempImage, cv::Size(idx, idx), 0, 0);
+		blurredImages.push_back(tempImage);
+		//tempImage.Save();
 		tag++;
 	}
 
-	cv::Rect patchRect = {204, 200, minPatchSize, minPatchSize};
+	delete patchFetcher;
 
+	const int minPatchSize = 5;
+	const int maxPatchSize = 26;
 	/* iterate over patch sizes */
-	for (int patchSize = minPatchSize; patchSize < maxPatchSize; patchSize++) {
+	for (int patchSideSize = minPatchSize; patchSideSize < maxPatchSize; patchSideSize++) {
+		patchSize = {patchSideSize, patchSideSize};
+		patchOffset = {patchSideSize, patchSideSize};
+		IPatchFilter *filter = new CPatchFilter(0, 30);
 
-		patchRect = {204, 200, patchSize, patchSize};
 		std::vector<CImage> patchesToTest;
+		for (CImage& blurredImage: blurredImages) {
+			patchFetcher = new CPatchFetcher(patchSize, patchOffset, filter);
+			auto patches = patchFetcher->FetchPatches(blurredImage);
+			if (patches.size() == 0) {
+				continue;
+			}
+			patchesToTest.push_back(patches[rand() % patches.size()]);
 
-		//IBinarizer* binarizer = new CNiBlackBinarizer({patchSize, patchSize}, -0.2);
-		//IPatchFilter* filter = new CPatchFilter(binarizer, minContrastValue, {patchSize / 4, patchSize / 4}, 0.5);
-		//IPatchFetcher* patchFetcher = new CPatchFetcher({patchSize, patchSize}, {patchSize, patchSize}, filter);
-
-		//CImageExtender extender({patchSize, patchSize});
-		//CImage extended = extender.Extent(bigPatches[0]);
-		//auto patches = patchFetcher->FetchPatches(extended);
-
-		//patchRect = patches[7].GetFrame();
-
-		for (CImage& bigImage : bigPatches) {
-			patchesToTest.push_back(bigImage(patchRect));
+			delete patchFetcher;
 		}
-
-		utils::Stack(patchesToTest, 1).Save("orig {" + std::to_string(patchSize) + ", " + std::to_string(patchSize) + "}");
-
-		for (TBlurMeasureMethod method = TBlurMeasureMethodStandartDeviation; method <= TBlurMeasureMethodDynamicRange; method = (TBlurMeasureMethod)((int)method + 1)) {
+		for (TBlurMeasureMethod method = TBlurMeasureMethodStandartDeviation; method <= TBlurMeasureMethodFD; method = (TBlurMeasureMethod)((int)method + 1)) {
 			IBlurMeasurer* blurMeasurer = BlurMeasurerForMethod(method);
 
 			int errors = 0;
@@ -88,34 +89,28 @@ void CBlurMetricsTester::Test()
 				return blurMeasurer->Measure(patch1) > blurMeasurer->Measure(patch2);
 			});
 
-			utils::Stack(patchesToTest, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSize) + ", " + std::to_string(patchSize) + "}");
-
-			std::cout << (float)errors / (float)(errors + correct) * 100 << std::endl;
+			utils::Stack(patchesToTest, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSideSize) + ", " + std::to_string(patchSideSize) + "}");
 
 			std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
 				"Method " << MethodNameForMethod(method) << " "
 				"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
-
-			delete blurMeasurer;
 		}
 
-		std::cout << std::endl;
+		delete filter;
 
-		//delete binarizer;
-		//delete filter;
-		//delete patchFetcher;
+		//std::cout << std::endl;
 	}
 }
 
 std::string CBlurMetricsTester::MethodNameForMethod(TBlurMeasureMethod method) const
 {
 	switch (method) {
-		//case TBlurMeasureMethodFFT:
-		//	return "TBlurMeasureMethodFFT";
+		case TBlurMeasureMethodFFT:
+			return "TBlurMeasureMethodFFT";
 		case TBlurMeasureMethodDynamicRange:
 			return "TBlurMeasureMethodDynamicRange";
-			//case TBlurMeasureMethodFD:
-			//	return "TBlurMeasureMethodFD";
+		case TBlurMeasureMethodFD:
+			return "TBlurMeasureMethodFD";
 		case TBlurMeasureMethodStandartDeviation:
 			return "TBlurMeasureMethodStandartDeviation";
 		default:
@@ -127,12 +122,12 @@ std::string CBlurMetricsTester::MethodNameForMethod(TBlurMeasureMethod method) c
 IBlurMeasurer* CBlurMetricsTester::BlurMeasurerForMethod(TBlurMeasureMethod method) const
 {
 	switch (method) {
-		//case TBlurMeasureMethodFFT:
-		//	return new CFFTBlurMeasurer(0.3);
+		case TBlurMeasureMethodFFT:
+			return new CFFTBlurMeasurer(0.3);
 		case TBlurMeasureMethodDynamicRange:
 			return new CDynamicRangeBlurMeasurer();
-			//case TBlurMeasureMethodFD:
-			//	return new CFDBlurMeasurer();
+		case TBlurMeasureMethodFD:
+			return new CFDBlurMeasurer();
 		case TBlurMeasureMethodStandartDeviation:
 			return new CStdDeviationBlurMeasurer();
 		default:

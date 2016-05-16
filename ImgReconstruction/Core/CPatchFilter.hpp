@@ -25,29 +25,30 @@ public:
 	virtual bool PatchPassesFilter(const CImage& patch) const
 	{
 		bool passedBin = false;
-		CImage grey2x2 = patch.GetResizedImage(_filterPatchSize);
-		//if (patch.interpolated) {
-		//	std::cout << grey2x2;
-		//	patch.Save();
-		//	grey2x2.Save();
-		//}
-		
-		CImage bin2x2 = _binarizer->Binarize(grey2x2);
 
+		if (_binarizer) {
+			CImage grey2x2 = patch.GetResizedImage(_filterPatchSize);
 
-		int blackPixels = 0;
-		for (int row = 0; row < bin2x2.GetSize().height; row++) {
-			for (int col = 0; col < bin2x2.GetSize().width; col++) {
-				blackPixels += bin2x2.at<uchar>(row, col) < 255;
+			CImage bin2x2 = _binarizer->Binarize(grey2x2);
+
+			int blackPixels = 0;
+			for (int row = 0; row < bin2x2.GetSize().height; row++) {
+				for (int col = 0; col < bin2x2.GetSize().width; col++) {
+					blackPixels += bin2x2.at<uchar>(row, col) < 255;
+				}
 			}
-		}
 
-		/* black pixels takes more or eq than 25% */
-		passedBin = ((float)blackPixels / (float)bin2x2.GetSize().area()) >= _blackPixelsRatio;
+			/* black pixels takes more or eq than 25% */
+			passedBin = ((float)blackPixels / (float)bin2x2.GetSize().area()) >= _blackPixelsRatio;
+		} else {
+			passedBin = true;
+		}
 
 		bool passedContrast = false;
 		if (passedBin) {
-			passedContrast = utils::StandartDeviation(grey2x2) >= _minContrastValue;
+			double min, max;
+			cv::minMaxLoc(patch, &min, &max);
+			passedContrast = (float)std::abs(max - min) >= _minContrastValue;
 		}
 
 		return passedContrast && passedBin;

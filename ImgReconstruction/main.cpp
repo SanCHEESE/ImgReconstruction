@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 				return 1;
 			}
 
-			CInterpolationTester tester(image(cv::Rect(20, 20, 20, 20)));
+			CInterpolationTester tester(image(cv::Rect(14, 15, 100, 100)));
 			tester.Test();
 
 			system("pause");
@@ -80,6 +80,7 @@ int main(int argc, char** argv)
 		CImageSubprocessorHolder::GetInstance().Configure(argv[3]);
 
 		CImageProcessor imProc = CImageProcessor();
+		imProc.SetIterCount(1);
 		imProc.ProcessImage(image, argv[2]);
 
 		CTimeLogger::PrintTotalTime();

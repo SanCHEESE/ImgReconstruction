@@ -26,7 +26,7 @@ public:
 				float y = shift.y + sr_i + a;
 
 				// calculate its value
-				float p = 0;
+				double p = 0;
 				int i_start = (int)floorf(y) + 1 - a;
 				int j_start = (int)floorf(x) + 1 - a;
 				for (int i = i_start; i <= (int)floorf(y) + a; i++) { // rows
@@ -35,7 +35,7 @@ public:
 					}
 				}
 
-				shiftedImage.at<uchar>(sr_i, sr_j) = p;
+				shiftedImage.at<uchar>(sr_i, sr_j) = p > 255 ? 255 : (p < 0 ? 0 : p);
 			}
 		}
 		//image.Save();

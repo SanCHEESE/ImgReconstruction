@@ -33,6 +33,8 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 		GenerateHelperImages(image);
 		image = RestoreImage();
 		image = image({0, 0, _origImageSize.width, _origImageSize.height});
+
+		image.Save("out-0" + std::to_string(iter));
 	}
 
 	image.Save(_outImagePath, 100, "");
@@ -62,7 +64,7 @@ CImage CImageProcessor::RestoreImage()
 		if (aClass.size() < 2) {
 			// do not process classes with size of 1 object
 			if (!aClass[0].GrayImage().interpolated) {
-				accImage.SetImageRegion(aClass[0].GrayImage());
+				accImage.SetImageRegion(aClass[0].GrayImage(), aClass[0].GetFrame());
 			}
 
 			continue;
@@ -106,6 +108,8 @@ CImage CImageProcessor::RestoreImage()
 			}
 		}
 	}
+
+	accImage.CreateHistImage(_config.accImageSumMethod).Save("", 100, ".jpg");
 
 	return accImage.GetResultImage(_config.accImageSumMethod);
 }

@@ -17,11 +17,14 @@ void CInterpolationTester::Test()
 		std::vector<CImage> images;
 		for (int j = 0; j < (sizeof(shifts) / sizeof(*shifts)); j++) {
 			CImage temp = _image;
+			images.push_back(_image);
 			cv::Point2f shift(shifts[j], shifts[j]);
 			for (int k = 0; k < 30; k++) {
-				images.push_back(temp);
 				temp = _shifter->ShiftImage(temp, shift);
+				temp = _shifter->ShiftImage(temp, -shift);
+				images.push_back(temp);
 			}
+
 			std::stringstream stream;
 			stream << i << " " << shifts[j];
 			utils::Stack(images, 1).Save(stream.str());

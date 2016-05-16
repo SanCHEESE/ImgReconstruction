@@ -19,12 +19,7 @@ CAccImage::CAccImage(const CImage& img, IInterpolationKernel* const kernel, IBri
 		_accImg[y] = std::vector<std::vector<uchar>>(size.width, std::vector<uchar>());
 	}
 
-	for (int y = 0; y < size.height; y++) {
-		for (int x = 0; x < size.width; x++) {
-			_accImg[y][x].push_back(img.at<uchar>(y, x));
-		}
-	}
-
+	_img = img;
 	_shifter = new CImageShifter(kernel);
 	_size = size;
 
@@ -47,14 +42,20 @@ CImage CAccImage::GetResultImage(TAccImageSumMethod method) const
 	for (int y = 0; y < _size.height; y++) {
 		for (int x = 0; x < _size.width; x++) {
 			auto colors = _accImg[y][x];
-			resultImage.at<uchar>(y, x) = Sum(method, colors);
+			if (colors.empty()) {
+				resultImage.at<uchar>(y, x) = _img.at<uchar>(y, x);
+			} else {
+				//resultImage.at<uchar>(y, x) = Sum(method, colors);
+				resultImage.at<uchar>(y, x) = std::min(Sum(method, colors), _img.at<uchar>(y, x));
+			}
+			
 		}
 	}
 
 	return resultImage;
 }
 
-CImage CAccImage::CreateHistImage() const
+CImage CAccImage::CreateHistImage(TAccImageSumMethod method) const
 {
 	const int PixelScale = 16;
 
@@ -62,7 +63,13 @@ CImage CAccImage::CreateHistImage() const
 	for (int y = 0; y < histImage.rows; y += PixelScale) {
 		for (int x = 0; x < histImage.cols; x += PixelScale) {
 			auto colors = _accImg[y / PixelScale][x / PixelScale];
-			uchar color = Sum(TAccImageSumMethodAvg, colors);
+			uchar color;
+			if (colors.empty()) {
+				color = _img.at<uchar>(y / PixelScale, x / PixelScale);
+			} else {
+				color = Sum(method, colors);
+			}
+			 
 			std::string text = std::to_string(colors.size());
 			cv::Point origin = {3, 12};
 			if (text.length() > 1) {
