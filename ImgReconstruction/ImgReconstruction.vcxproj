@@ -117,15 +117,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CDerivativeBlurMeasurer.hpp" />
-    <ClInclude Include="CFDImageComparator.hpp" />
-    <ClInclude Include="CFFTImageComparator.hpp" />
     <ClInclude Include="common.h" />
     <ClInclude Include="Core\CAdaptiveGaussianBinarizer.hpp" />
     <ClInclude Include="Core\CAvgHashPatchClassifier.hpp" />
     <ClInclude Include="Core\CBicubicKernel.hpp" />
     <ClInclude Include="Core\CBinarizer.hpp" />
     <ClInclude Include="Core\CBlurMetricsTester.h" />
-    <ClInclude Include="Core\CBorderImageSummator.hpp" />
     <ClInclude Include="Core\CDynamicRangeBlurMeasurer.hpp" />
     <ClInclude Include="Core\CDynRangeBrightnessEqualizer.hpp" />
     <ClInclude Include="Core\CFDBlurMeasurer.hpp" />
@@ -138,7 +135,6 @@
     <ClInclude Include="Core\CL1ImageComparator.hpp" />
     <ClInclude Include="Core\CL2ImageComparator.hpp" />
     <ClInclude Include="Core\CLanczosKernel.hpp" />
-    <ClInclude Include="Core\CMeanBrightnessEqualizer.hpp" />
     <ClInclude Include="Core\CNiBlackBinarizer.hpp" />
     <ClInclude Include="Core\CNICKBinarizer.hpp" />
     <ClInclude Include="Core\config.h" />
@@ -146,14 +142,12 @@
     <ClInclude Include="Core\CPatchFilter.hpp" />
     <ClInclude Include="Core\CPHashPatchClassifier.hpp" />
     <ClInclude Include="Core\CStdDeviationBlurMeasurer.hpp" />
-    <ClInclude Include="Core\CStdImageSummator.hpp" />
     <ClInclude Include="Core\IBinarizer.h" />
     <ClInclude Include="Core\IBlurMeasurer.h" />
     <ClInclude Include="Core\IBrightnessEqualizer.h" />
     <ClInclude Include="Core\IImageComparator.h" />
     <ClInclude Include="Core\IImageExtender.h" />
     <ClInclude Include="Core\IImageSubprocessor.h" />
-    <ClInclude Include="Core\IImageSummator.h" />
     <ClInclude Include="Core\IInterpolationKernel.h" />
     <ClInclude Include="Core\IPatchClassifier.h" />
     <ClInclude Include="Core\IPatchFetcher.h" />

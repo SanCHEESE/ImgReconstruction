@@ -12,7 +12,6 @@
 #include <IPatchFilter.h>
 #include <IPatchClassifier.h>
 #include <IPatchFetcher.h>
-#include <IImageSummator.h>
 #include <IBrightnessEqualizer.h>
 #include <IInterpolationKernel.h>
 #include <IImageExtender.h>
@@ -21,7 +20,6 @@
 
 static const std::string BlurMeasurerKey = "BlurMeasurerKey";
 static const std::string ComparatorKey = "ComparatorKey";
-static const std::string CompImgSummatorKey = "CompareImgSummatorKey";
 static const std::string CompBrightnessEqualizerKey = "CompBrightnessEqualizerKey";
 static const std::string BinarizerKey = "BinarizerKey";
 static const std::string PatchFilterKey = "PatchFilterKey";

@@ -35,7 +35,6 @@ static const std::string AccJsonKey = "acc";
 static const std::string ClassifierJsonKey = "classifier";
 static const std::string FilterJsonKey = "filter";
 static const std::string FetchJsonKey = "fetch";
-static const std::string EqualizeJsonKey = "equalize";
 static const std::string CompareJsonKey = "compare";
 
 static const std::string ThreshJsonKey = "thresh";
@@ -53,8 +52,6 @@ static int DefaultMaxPatchSideSize = 8;
 // comparison
 static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL1;
 static int DefaultComparisonEps = 1000;
-static TBrightnessEqualization DefaultBrightnessEqualization = TBrightnessEqualizationDynRange;
-static TCompSum DefaultCompSum = TCompSumStd;
 static float DefaultBorderSumWeight = 1.5;
 
 // blur config

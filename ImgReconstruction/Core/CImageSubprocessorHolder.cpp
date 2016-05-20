@@ -22,16 +22,10 @@
 #include <CDynamicRangeBlurMeasurer.hpp>
 #include <CDerivativeBlurMeasurer.hpp>
 
-#include <CMeanBrightnessEqualizer.hpp>
 #include <CDynRangeBrightnessEqualizer.hpp>
-
-#include <CStdImageSummator.hpp>
-#include <CBorderImageSummator.hpp>
 
 #include <CL1ImageComparator.hpp>
 #include <CL2ImageComparator.hpp>
-#include <CFDImageComparator.hpp>
-#include <CFFTImageComparator.hpp>
 
 #include <CAdaptiveGaussianBinarizer.hpp>
 #include <CNICKBinarizer.hpp>
@@ -67,56 +61,16 @@ CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, flo
 	return binarizer;
 }
 
-IImageSummator* Summator(TCompSum method, float weight)
-{
-	IImageSummator *summator = 0;
-	switch (method) {
-		case TCompSumStd:
-			summator = new CStdImageSummator();
-			break;
-		case TCompSumBorder:
-			summator = new CBorderImageSummator(weight);
-			break;
-		default:
-			assert(false);
-			break;
-	}
-	return summator;
-}
-
-IBrightnessEqualizer* BrightnessEqualizer(TBrightnessEqualization equalizationType)
-{
-	IBrightnessEqualizer* equalizer = 0;
-	switch (equalizationType) {
-		case TBrightnessEqualizationDynRange:
-			equalizer = new CDynRangeBrightnessEqualizer();
-			break;
-		case TBrightnessEqualizationMean:
-			equalizer = new CMeanBrightnessEqualizer();
-			break;
-		default:
-			assert(false);
-			break;
-	}
-
-	return equalizer;
-}
-
-IImageComparator* Comparator(TImageCompareMetric metric, IBrightnessEqualizer* equalizer, IImageSummator* summator, int eps)
+IImageComparator* Comparator(TImageCompareMetric metric, IBrightnessEqualizer* equalizer, int eps)
 {
 	IImageComparator* comparator = 0;
 	switch (metric) {
 		case TImageCompareMetricL1:
-			comparator = new CL1ImageComparator(equalizer, summator, eps);
+			comparator = new CL1ImageComparator(equalizer, eps);
 			break;
 		case TImageCompareMetricL2:
-			comparator = new CL2ImageComparator(equalizer, summator, eps);
+			comparator = new CL2ImageComparator(equalizer, eps);
 			break;
-		case TImageCompareMetricFD:
-			comparator = new CFDImageComparator(0, 0, eps);
-			break;
-		case TImageCompareMetricFFT:
-			comparator = new CFFTImageComparator(0, 0, eps);
 		default:
 			assert(false);
 			break;
@@ -189,11 +143,9 @@ CImageSubprocessorHolder::CImageSubprocessorHolder()
 	IPatchFetcher *patchFetcher = new CPatchFetcher(cv::Size(DefaultMaxPatchSideSize, DefaultMaxPatchSideSize), DefaultPatchOffset, patchFilter);
 	_subprocessors[PatchFetcherKey] = (IImageSubprocessor *)patchFetcher;
 
-	IImageSummator *summator = Summator(DefaultCompSum, DefaultBorderSumWeight);
-	_subprocessors[CompImgSummatorKey] = (IImageSubprocessor *)summator;
-	IBrightnessEqualizer *brightnessEqualizer = BrightnessEqualizer(DefaultBrightnessEqualization);
+	IBrightnessEqualizer *brightnessEqualizer = new CDynRangeBrightnessEqualizer();
 	_subprocessors[CompBrightnessEqualizerKey] = (IImageSubprocessor *)brightnessEqualizer;
-	IImageComparator* comparator = Comparator(DefaultCompMetric, brightnessEqualizer, summator, DefaultComparisonEps);
+	IImageComparator* comparator = Comparator(DefaultCompMetric, brightnessEqualizer, DefaultComparisonEps);
 	_subprocessors[ComparatorKey] = (IImageSubprocessor *)comparator;
 
 	IBinarizer *binarizer = Binarizer(DefaultBinMethod, DefaultBinPatchSize, DefautBinK, DefaultThreshOffset);
@@ -253,13 +205,10 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	auto comparatorJson = json[CompareJsonKey];
 	auto summatorJson = comparatorJson[SumJsonKey];
 	int compSum = summatorJson[MethodJsonKey];
-	IImageSummator *summator = Summator((TCompSum)compSum, summatorJson[WeightJsonKey]);
-	_subprocessors[CompImgSummatorKey] = (IImageSubprocessor *)summator;
-	int brightnessEqualization = comparatorJson[EqualizeJsonKey];
-	IBrightnessEqualizer *brightnessEqualizer = BrightnessEqualizer((TBrightnessEqualization)brightnessEqualization);
+	IBrightnessEqualizer *brightnessEqualizer = new CDynRangeBrightnessEqualizer();
 	_subprocessors[CompBrightnessEqualizerKey] = (IImageSubprocessor *)brightnessEqualizer;
 	int compMetric = comparatorJson[MetricJsonKey];
-	IImageComparator* comparator = Comparator((TImageCompareMetric)compMetric, brightnessEqualizer, summator, comparatorJson[EpsJsonKey]);
+	IImageComparator* comparator = Comparator((TImageCompareMetric)compMetric, brightnessEqualizer, comparatorJson[EpsJsonKey]);
 	_subprocessors[ComparatorKey] = (IImageSubprocessor *)comparator;
 
 	auto binJson = json[BinJsonKey];

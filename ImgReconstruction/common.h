@@ -63,22 +63,6 @@ typedef enum : int
 
 typedef enum : int
 {
-	TBrightnessEqualizationMean,
-	TBrightnessEqualizationDynRange,
-
-	TBrightnessEqualizationNone
-} TBrightnessEqualization;
-
-typedef enum : int
-{
-	TCompSumStd,
-	TCompSumBorder,
-
-	TCompSumNone
-} TCompSum;
-
-typedef enum : int
-{
 	TBinarizationMethodNICK,
 	TBinarizationMethodNiBlack,
 	TBinarizationMethodAdaptiveGaussian,

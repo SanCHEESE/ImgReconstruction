@@ -1,12 +1,7 @@
 {
   "compare": {
     "eps": 400,
-    "sum": {
-      "method": 1,
-      "weight": 1.5
-    },
     "metric": 0,
-    "equalize": 1
   },
   "blur": {
     "thresh": 0.5,
@@ -15,7 +10,6 @@
     "extent": 2,
     "calc": 1
   },
-  "acc": 1,
   "bin": {
     "size": {
       "width": 25,

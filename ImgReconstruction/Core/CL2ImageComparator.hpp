@@ -29,7 +29,7 @@ public:
 		cv::absdiff(normImg1, normImg2, result);
 		result.convertTo(result, CV_32S);
 		result = result.mul(result);
-		float dist = sqrt(_summator->Sum(result));
+		float dist = cv::sum(result)[0];
 		return dist < _eps;
 	}
 };

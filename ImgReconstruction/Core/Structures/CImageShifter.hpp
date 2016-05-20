@@ -38,8 +38,6 @@ public:
 				shiftedImage.at<uchar>(sr_i, sr_j) = p > 255 ? 255 : (p < 0 ? 0 : p);
 			}
 		}
-		//image.Save();
-		//shiftedImage.Save();
 
 		shiftedImage.interpolated = true;
 		return shiftedImage;

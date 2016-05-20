@@ -28,7 +28,7 @@ public:
 		CImage result;
 		cv::absdiff(normImg1, normImg2, result);
 
-		float sum = _summator->Sum(result);
+		float sum = cv::sum(result)[0];
 
 		return sum < _eps;
 	}
