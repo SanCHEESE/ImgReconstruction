@@ -15,7 +15,7 @@ class CPatchIterator : public IPatchIterator
 {
 public:
 	CPatchIterator(const CImage* const iterImage, const cv::Size& size, const cv::Point_<T> offset, IInterpolationKernel* const k = 0) :
-		_size(size), _offset(offset), _borderInset(0), _k(k)
+		_size(size), _offset(offset), _borderInset(0), _k(k), _origImage(iterImage)
 	{
 		if (typeid(T) == typeid(float)) {
 			_borderInset = _k->A();
@@ -61,6 +61,8 @@ public:
 			_pointingRect.y += _offset.y;
 			_pointingRect.x = (float)_borderInset;
 		}
+
+		patch.parentImage = const_cast<CImage *>(_origImage);
 
 		return patch;
 	}
@@ -124,6 +126,8 @@ public:
 	}
 
 private:
+	const CImage * const _origImage;
+
 	IInterpolationKernel* const _k;
 	int _a;
 	std::vector<float> _coeffsX;

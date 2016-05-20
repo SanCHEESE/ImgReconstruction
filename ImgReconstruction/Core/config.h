@@ -21,22 +21,24 @@ static const std::string BinJsonKey = "bin";
 static const std::string MethodJsonKey = "method";
 static const std::string MetricJsonKey = "metric";
 static const std::string EpsJsonKey = "eps";
-static const std::string PatchOffsetJsonKey = "offset";
-static const std::string PatchSizeJsonKey = "size";
-static const std::string SummatorWeightJsonKey = "weight";
-static const std::string ContrastValueJsonKey = "contrast";
-static const std::string BlurRatioJsonKey = "ratio";
+static const std::string OffsetJsonKey = "offset";
+static const std::string SizeJsonKey = "size";
+static const std::string WeightJsonKey = "weight";
+static const std::string ContrastJsonKey = "contrast";
+static const std::string SumJsonKey = "sum";
+static const std::string ExtentJsonKey = "extent";
+static const std::string CutJsonKey = "cut";
+static const std::string CalcJsonKey = "calc";
 
-static const std::string BlurMeasureJsonKey = "blur";
-static const std::string AccSumJsonKey = "acc";
+static const std::string BlurJsonKey = "blur";
+static const std::string AccJsonKey = "acc";
 static const std::string ClassifierJsonKey = "classifier";
-static const std::string PatchFilterJsonKey = "filter";
-static const std::string PatchFetchJsonKey = "fetch";
-static const std::string ImageSumJsonKey = "sum";
-static const std::string BrightnessEqualizeJsonKey = "equalize";
-static const std::string ImageCompareJsonKey = "compare";
+static const std::string FilterJsonKey = "filter";
+static const std::string FetchJsonKey = "fetch";
+static const std::string EqualizeJsonKey = "equalize";
+static const std::string CompareJsonKey = "compare";
 
-static const std::string BlurThreshJsonKey = "thresh";
+static const std::string ThreshJsonKey = "thresh";
 
 static const std::string KernelJsonKey = "kernel";
 static const std::string TypeJsonKey = "type";

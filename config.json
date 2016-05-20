@@ -1,8 +1,8 @@
 {
   "compare": {
-    "eps": 600,
+    "eps": 400,
     "sum": {
-      "method": 0,
+      "method": 1,
       "weight": 1.5
     },
     "metric": 0,
@@ -10,9 +10,12 @@
   },
   "blur": {
     "thresh": 0.5,
-    "method": 0
+    "method": 0,
+    "cut": 8,
+    "extent": 2,
+    "calc": 1
   },
-  "acc": 0,
+  "acc": 1,
   "bin": {
     "size": {
       "width": 25,
@@ -31,7 +34,7 @@
       "c": 0.4,
       "a": 2,
       "b": 0.2,
-      "type": 0
+      "type": 1
     },
     "offset": {
       "x": 0.5,

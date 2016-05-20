@@ -46,9 +46,20 @@ typedef enum : int
 	TBlurMeasureMethodDynamicRange,
 	TBlurMeasureMethodFFT,
 	TBlurMeasureMethodFD,
+	TBlurMeasureMethodDerivative,
 
 	TBlurMeasureMethodNone
 } TBlurMeasureMethod;
+
+typedef enum : int
+{
+	TBlurMeasurerDerivativeCalcMethodMin,
+	TBlurMeasurerDerivativeCalcMethodMax,
+	TBlurMeasurerDerivativeCalcMethodAvg,
+	TBlurMeasurerDerivativeCalcMethodSum,
+
+	TBlurMeasurerDerivativeCalcMethodNone
+} TBlurMeasurerDerivativeCalcMethod;
 
 typedef enum : int
 {

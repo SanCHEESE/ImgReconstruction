@@ -20,6 +20,7 @@
 
 #include <CStdDeviationBlurMeasurer.hpp>
 #include <CDynamicRangeBlurMeasurer.hpp>
+#include <CDerivativeBlurMeasurer.hpp>
 
 #include <CMeanBrightnessEqualizer.hpp>
 #include <CDynRangeBrightnessEqualizer.hpp>
@@ -140,7 +141,8 @@ IPatchClassifier* Classifier(TPatchClassifyingMethod method)
 	return classifier;
 }
 
-IBlurMeasurer* Measurer(TBlurMeasureMethod method)
+IBlurMeasurer* Measurer(TBlurMeasureMethod method, int extentPixels = 0, float cutPercentage = 0, 
+	TBlurMeasurerDerivativeCalcMethod calcMethod = TBlurMeasurerDerivativeCalcMethodMin)
 {
 	IBlurMeasurer* measurer = 0;
 	switch (method) {
@@ -150,6 +152,8 @@ IBlurMeasurer* Measurer(TBlurMeasureMethod method)
 		case TBlurMeasureMethodStandartDeviation:
 			measurer = new CStdDeviationBlurMeasurer();
 			break;
+		case TBlurMeasureMethodDerivative:
+			measurer = new CDerivativeBlurMeasurer(extentPixels, cutPercentage, calcMethod);
 		default:
 			assert(false);
 			break;
@@ -214,21 +218,21 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 
 	auto json = json::parse(content);
 
-	auto filterJson = json[PatchFilterJsonKey];
+	auto filterJson = json[FilterJsonKey];
 	auto filterBinJson = filterJson[BinJsonKey];
-	cv::Size patchSize = {filterBinJson[PatchSizeJsonKey][WidthJsonKey], filterBinJson[PatchSizeJsonKey][HeightJsonKey]};
+	cv::Size patchSize = {filterBinJson[SizeJsonKey][WidthJsonKey], filterBinJson[SizeJsonKey][HeightJsonKey]};
 	int binMethod = filterBinJson[MethodJsonKey];
 	float threshOffset = DefaultThreshOffset;
-	if (filterBinJson.find(PatchOffsetJsonKey) != filterBinJson.end()) {
-		threshOffset = filterBinJson[PatchOffsetJsonKey];
+	if (filterBinJson.find(OffsetJsonKey) != filterBinJson.end()) {
+		threshOffset = filterBinJson[OffsetJsonKey];
 	}
 
 	IBinarizer *filterBinarizer = Binarizer((TBinarizationMethod)binMethod, patchSize, filterBinJson[KJsonKey], threshOffset);
 	_subprocessors[FilterBinarizerKey] = (IImageSubprocessor *)filterBinarizer;
-	IPatchFilter *patchFilter = new CPatchFilter(filterBinarizer, filterJson[ContrastValueJsonKey], patchSize);
+	IPatchFilter *patchFilter = new CPatchFilter(filterBinarizer, filterJson[ContrastJsonKey], patchSize);
 	_subprocessors[PatchFilterKey] = (IImageSubprocessor *)patchFilter;
 
-	auto patchFetchJson = json[PatchFetchJsonKey];
+	auto patchFetchJson = json[FetchJsonKey];
 
 	IInterpolationKernel *kernel = 0;
 	if (patchFetchJson.find(KernelJsonKey) != patchFetchJson.end()) {
@@ -241,17 +245,17 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 		kernel = InterpKernel((TInterpKernelType)type, a, b, c);
 		_subprocessors[InterpolationKernelKey] = (IImageSubprocessor *)kernel;
 	}
-	IPatchFetcher *patchFetcher = new CPatchFetcher({patchFetchJson[PatchSizeJsonKey][WidthJsonKey], patchFetchJson[PatchSizeJsonKey][HeightJsonKey]},
-	{patchFetchJson[PatchOffsetJsonKey][XJsonKey], patchFetchJson[PatchOffsetJsonKey][YJsonKey]},
+	IPatchFetcher *patchFetcher = new CPatchFetcher({patchFetchJson[SizeJsonKey][WidthJsonKey], patchFetchJson[SizeJsonKey][HeightJsonKey]},
+	{patchFetchJson[OffsetJsonKey][XJsonKey], patchFetchJson[OffsetJsonKey][YJsonKey]},
 		patchFilter, kernel);
 	_subprocessors[PatchFetcherKey] = (IImageSubprocessor *)patchFetcher;
 
-	auto comparatorJson = json[ImageCompareJsonKey];
-	auto summatorJson = comparatorJson[ImageSumJsonKey];
+	auto comparatorJson = json[CompareJsonKey];
+	auto summatorJson = comparatorJson[SumJsonKey];
 	int compSum = summatorJson[MethodJsonKey];
-	IImageSummator *summator = Summator((TCompSum)compSum, summatorJson[SummatorWeightJsonKey]);
+	IImageSummator *summator = Summator((TCompSum)compSum, summatorJson[WeightJsonKey]);
 	_subprocessors[CompImgSummatorKey] = (IImageSubprocessor *)summator;
-	int brightnessEqualization = comparatorJson[BrightnessEqualizeJsonKey];
+	int brightnessEqualization = comparatorJson[EqualizeJsonKey];
 	IBrightnessEqualizer *brightnessEqualizer = BrightnessEqualizer((TBrightnessEqualization)brightnessEqualization);
 	_subprocessors[CompBrightnessEqualizerKey] = (IImageSubprocessor *)brightnessEqualizer;
 	int compMetric = comparatorJson[MetricJsonKey];
@@ -262,24 +266,30 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	binMethod = binJson[MethodJsonKey];
 
 	IBinarizer *binarizer = Binarizer((TBinarizationMethod)binMethod,
-	{binJson[PatchSizeJsonKey][WidthJsonKey], binJson[PatchSizeJsonKey][HeightJsonKey]}, binJson[KJsonKey], threshOffset);
+	{binJson[SizeJsonKey][WidthJsonKey], binJson[SizeJsonKey][HeightJsonKey]}, binJson[KJsonKey], threshOffset);
 	_subprocessors[BinarizerKey] = (IImageSubprocessor *)binarizer;
 
-	auto blurJson = json[BlurMeasureJsonKey];
+	auto blurJson = json[BlurJsonKey];
 	int blurMeasureMethod = blurJson[MethodJsonKey];
-	IBlurMeasurer* measurer = Measurer((TBlurMeasureMethod)blurMeasureMethod);
+	IBlurMeasurer* measurer = 0;
+	if (blurMeasureMethod == TBlurMeasureMethodDerivative) {
+		int calcMethod = blurJson[CalcJsonKey];
+		measurer = Measurer((TBlurMeasureMethod)blurMeasureMethod, blurJson[ExtentJsonKey], blurJson[CutJsonKey], (TBlurMeasurerDerivativeCalcMethod)calcMethod);
+	} else {
+		measurer = Measurer((TBlurMeasureMethod)blurMeasureMethod);
+	}
 	_subprocessors[BlurMeasurerKey] = (IImageSubprocessor *)measurer;
 
-	IImageExtender* extender = new CImageExtender({binJson[PatchSizeJsonKey][WidthJsonKey], binJson[PatchSizeJsonKey][HeightJsonKey]});
+	IImageExtender* extender = new CImageExtender({binJson[SizeJsonKey][WidthJsonKey], binJson[SizeJsonKey][HeightJsonKey]});
 	_subprocessors[ImageExtenderKey] = (IImageSubprocessor *)extender;
 
 	int classifyingMethod = json[ClassifierJsonKey];
 	IPatchClassifier* classifier = Classifier((TPatchClassifyingMethod)classifyingMethod);
 	_subprocessors[PatchClassifierKey] = (IImageSubprocessor *)classifier;
 
-	int accSumMethod = json[AccSumJsonKey];
+	int accSumMethod = json[AccJsonKey];
 	_config.accImageSumMethod = (TAccImageSumMethod)accSumMethod;
-	_config.blurThresh = blurJson[BlurThreshJsonKey];
+	_config.blurThresh = blurJson[ThreshJsonKey];
 }
 
 CImageSubprocessorHolder::~CImageSubprocessorHolder()

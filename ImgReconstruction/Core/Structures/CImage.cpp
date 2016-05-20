@@ -203,6 +203,7 @@ void CImage::CopyMetadataTo(CImage &image) const
 {
 	image._frame = this->_frame;
 	image.interpolated = this->interpolated;
+	image.parentImage = this->parentImage;
 }
 
 IPatchIterator* CImage::GetIntPatchIterator(const cv::Size& size, const cv::Point_<int>& offset) const

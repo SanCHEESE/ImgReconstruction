@@ -249,5 +249,8 @@
     <ClInclude Include="Core\CFFTBlurMeasurer.hpp">
       <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
     </ClInclude>
+    <ClInclude Include="CDerivativeBlurMeasurer.hpp">
+      <Filter>src\Algorithm\Suprocessors\BlurMeasurer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

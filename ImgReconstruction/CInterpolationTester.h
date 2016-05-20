@@ -16,7 +16,7 @@ public:
 	CInterpolationTester() {};
 	~CInterpolationTester() {};
 private:
-	IInterpolationKernel* KernelForType(TInterpKernelType kernelType, int a = 3, float b = 0.2, float c = 0.5);
+	IInterpolationKernel* KernelForType(TInterpKernelType kernelType, int a = 2, float b = 0.8, float c = 0.2);
 
 	IInterpolationKernel* _kernel;
 	CImageShifter* _shifter;

@@ -116,6 +116,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CDerivativeBlurMeasurer.hpp" />
     <ClInclude Include="CFDImageComparator.hpp" />
     <ClInclude Include="CFFTImageComparator.hpp" />
     <ClInclude Include="common.h" />
