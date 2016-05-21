@@ -65,7 +65,6 @@ typedef enum : int
 {
 	TBinarizationMethodNICK,
 	TBinarizationMethodNiBlack,
-	TBinarizationMethodAdaptiveGaussian,
 
 	TBinarizationMethodNone
 } TBinarizationMethod;
@@ -77,11 +76,3 @@ typedef enum : int
 
 	TPatchClassifyingMethodNone
 } TPatchClassifyingMethod;
-
-typedef enum : int
-{
-	TAccImageSumMethodAvg,
-	TAccImageSumMethodMedian,
-
-	TAccImageSumMethodNone
-} TAccImageSumMethod;

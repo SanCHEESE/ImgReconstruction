@@ -17,6 +17,11 @@ class CImagePatch
 {
 public:
 	CImagePatch() { Initialize(); }
+	CImagePatch(const CImage& grayImage)
+	{
+		Initialize();
+		SetGrayImage(grayImage);
+	}
 	CImagePatch(const CImage& grayImage, const CImage& binImage)
 	{
 		Initialize();

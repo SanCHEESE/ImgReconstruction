@@ -27,7 +27,6 @@
 #include <CL1ImageComparator.hpp>
 #include <CL2ImageComparator.hpp>
 
-#include <CAdaptiveGaussianBinarizer.hpp>
 #include <CNICKBinarizer.hpp>
 #include <CNiBlackBinarizer.hpp>
 
@@ -50,9 +49,6 @@ CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, flo
 			break;
 		case TBinarizationMethodNiBlack:
 			binarizer = new CNiBlackBinarizer(patchSize, k, threshOffset);
-			break;
-		case TBinarizationMethodAdaptiveGaussian:
-			binarizer = new CAdaptiveGaussianBinarizer(patchSize, k, threshOffset);
 			break;
 		default:
 			assert(false);
@@ -159,8 +155,6 @@ CImageSubprocessorHolder::CImageSubprocessorHolder()
 
 	IImageExtender* extender = new CImageExtender(DefaultBinPatchSize);
 	_subprocessors[ImageExtenderKey] = (IImageSubprocessor *)extender;
-
-	_config.accImageSumMethod = DefaultAccImageSumMethod;
 };
 
 void CImageSubprocessorHolder::Configure(const std::string &path)
@@ -236,8 +230,6 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	IPatchClassifier* classifier = Classifier((TPatchClassifyingMethod)classifyingMethod);
 	_subprocessors[PatchClassifierKey] = (IImageSubprocessor *)classifier;
 
-	int accSumMethod = json[AccJsonKey];
-	_config.accImageSumMethod = (TAccImageSumMethod)accSumMethod;
 	_config.blurThresh = blurJson[ThreshJsonKey];
 }
 

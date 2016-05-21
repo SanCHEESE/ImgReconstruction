@@ -36,7 +36,7 @@ CAccImage::CAccImage(const cv::Size& size, IInterpolationKernel* const kernel, I
 	_size = size;
 }
 
-CImage CAccImage::GetResultImage(TAccImageSumMethod method) const
+CImage CAccImage::GetResultImage() const
 {
 	CImage resultImage(_size, CV_8U, 0);
 	for (int y = 0; y < _size.height; y++) {
@@ -46,7 +46,7 @@ CImage CAccImage::GetResultImage(TAccImageSumMethod method) const
 				resultImage.at<uchar>(y, x) = _img.at<uchar>(y, x);
 			} else {
 				//resultImage.at<uchar>(y, x) = Sum(method, colors);
-				resultImage.at<uchar>(y, x) = std::min(Sum(method, colors), _img.at<uchar>(y, x));
+				resultImage.at<uchar>(y, x) = std::min(Sum(colors), _img.at<uchar>(y, x));
 			}
 			
 		}
@@ -55,7 +55,7 @@ CImage CAccImage::GetResultImage(TAccImageSumMethod method) const
 	return resultImage;
 }
 
-CImage CAccImage::CreateHistImage(TAccImageSumMethod method) const
+CImage CAccImage::CreateHistImage() const
 {
 	const int PixelScale = 16;
 
@@ -67,7 +67,7 @@ CImage CAccImage::CreateHistImage(TAccImageSumMethod method) const
 			if (colors.empty()) {
 				color = _img.at<uchar>(y / PixelScale, x / PixelScale);
 			} else {
-				color = Sum(method, colors);
+				color = Sum(colors);
 			}
 			 
 			std::string text = std::to_string(colors.size());
@@ -84,7 +84,7 @@ CImage CAccImage::CreateHistImage(TAccImageSumMethod method) const
 	return histImage;
 }
 
-uchar CAccImage::Sum(TAccImageSumMethod method, std::vector<uchar> colors)
+uchar CAccImage::Sum(std::vector<uchar> colors)
 {
 	uchar result;
 
@@ -92,22 +92,12 @@ uchar CAccImage::Sum(TAccImageSumMethod method, std::vector<uchar> colors)
 		return 0;
 	}
 
-	switch (method) {
-		case TAccImageSumMethodAvg:
-			result = static_cast<uchar>(std::accumulate(colors.begin(), colors.end(), 0) / colors.size());
-			break;
-		case TAccImageSumMethodMedian:
-		{
-			std::sort(colors.begin(), colors.end());
-			if (colors.size() % 2 == 1) {
-				result = colors[colors.size() / 2];
-			} else {
-				result = (colors[colors.size() / 2] + colors[colors.size() / 2 - 1]) / 2;
-			}
-			break;
-		}
-		default:
-			break;
+	std::sort(colors.begin(), colors.end());
+	if (colors.size() % 2 == 1) {
+		result = colors[colors.size() / 2];
+	} else {
+		result = (colors[colors.size() / 2] + colors[colors.size() / 2 - 1]) / 2;
 	}
+
 	return result;
 }

@@ -165,9 +165,6 @@
     <ClInclude Include="Core\CBinarizer.hpp">
       <Filter>src\Algorithm\Suprocessors\Binarizer</Filter>
     </ClInclude>
-    <ClInclude Include="Core\CAdaptiveGaussianBinarizer.hpp">
-      <Filter>src\Algorithm\Suprocessors\Binarizer</Filter>
-    </ClInclude>
     <ClInclude Include="Core\CNiBlackBinarizer.hpp">
       <Filter>src\Algorithm\Suprocessors\Binarizer</Filter>
     </ClInclude>

@@ -31,7 +31,6 @@ static const std::string CutJsonKey = "cut";
 static const std::string CalcJsonKey = "calc";
 
 static const std::string BlurJsonKey = "blur";
-static const std::string AccJsonKey = "acc";
 static const std::string ClassifierJsonKey = "classifier";
 static const std::string FilterJsonKey = "filter";
 static const std::string FetchJsonKey = "fetch";
@@ -52,7 +51,6 @@ static int DefaultMaxPatchSideSize = 8;
 // comparison
 static TImageCompareMetric DefaultCompMetric = TImageCompareMetricL1;
 static int DefaultComparisonEps = 1000;
-static float DefaultBorderSumWeight = 1.5;
 
 // blur config
 static TBlurMeasureMethod DefaultBlurMeasureMethod = TBlurMeasureMethodDynamicRange;
@@ -70,8 +68,5 @@ static float DefaultThreshOffset = -10.f;
 static cv::Size DefaultFilteringPatchSize = {2, 2};
 static float DefaultFilteringBinK = 1.;
 static float DefaultMinPatchContrastValue = 40;
-
-// acc image
-static TAccImageSumMethod DefaultAccImageSumMethod = TAccImageSumMethodAvg;
 
 

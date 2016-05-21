@@ -45,12 +45,6 @@ public:
 		}
 		extentFrame.height = img.rows + 2 * _extentPixels;
 
-		if (imgFrame.x < _extentPixels) {
-			extentFrame.x = imgFrame.x;
-		} else {
-			extentFrame.x = imgFrame.x - _extentPixels;
-		}
-
 		CImage extentImage = (*img.parentImage)(extentFrame);
 
 		std::vector<int> dx(255, 0);
@@ -139,7 +133,7 @@ public:
 		derivatives.push_back(dxyBlur);
 		derivatives.push_back(dyxBlur);
 
-		return CalculateBlurValue(derivatives);
+		return -CalculateBlurValue(derivatives);
 
 	}
 private:

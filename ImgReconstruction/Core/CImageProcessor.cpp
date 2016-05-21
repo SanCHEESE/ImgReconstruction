@@ -109,7 +109,7 @@ CImage CImageProcessor::RestoreImage()
 		}
 	}
 
-	accImage.CreateHistImage(_config.accImageSumMethod).Save("", 100, ".jpg");
+	accImage.CreateHistImage().Save("", 100, ".jpg");
 
-	return accImage.GetResultImage(_config.accImageSumMethod);
+	return accImage.GetResultImage();
 }

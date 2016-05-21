@@ -64,13 +64,13 @@ public:
 		}
 	}
 
-	CImage GetResultImage(TAccImageSumMethod method) const;
+	CImage GetResultImage() const;
 
 	// debug
-	CImage CreateHistImage(TAccImageSumMethod method = TAccImageSumMethodMedian) const;
+	CImage CreateHistImage() const;
 
 private:
-	static uchar Sum(TAccImageSumMethod method, std::vector<uchar> colors);
+	static uchar Sum(std::vector<uchar> colors);
 	CImageShifter* _shifter; 
 	IBrightnessEqualizer* _equalizer;
 

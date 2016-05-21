@@ -33,7 +33,6 @@ static const std::string InterpolationKernelKey = "InterpolationKernelKey";
 // used to store not generalized classes
 struct CConfig
 {
-	TAccImageSumMethod accImageSumMethod;
 	float blurThresh;
 };
 

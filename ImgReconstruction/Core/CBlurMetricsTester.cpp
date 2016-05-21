@@ -4,6 +4,7 @@
 #include <CFDBlurMeasurer.hpp>
 #include <CFFTBlurMeasurer.hpp>
 #include <CStdDeviationBlurMeasurer.hpp>
+#include <CDerivativeBlurMeasurer.hpp>
 
 #include <CPatchFetcher.hpp>
 #include <CImageExtender.hpp>
@@ -65,7 +66,7 @@ void CBlurMetricsTester::Test()
 
 			delete patchFetcher;
 		}
-		for (TBlurMeasureMethod method = TBlurMeasureMethodStandartDeviation; method <= TBlurMeasureMethodFD; method = (TBlurMeasureMethod)((int)method + 1)) {
+		for (TBlurMeasureMethod method = TBlurMeasureMethodStandartDeviation; method <= TBlurMeasureMethodDerivative; method = (TBlurMeasureMethod)((int)method + 1)) {
 			IBlurMeasurer* blurMeasurer = BlurMeasurerForMethod(method);
 
 			int errors = 0;
@@ -91,9 +92,12 @@ void CBlurMetricsTester::Test()
 
 			utils::Stack(patchesToTest, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSideSize) + ", " + std::to_string(patchSideSize) + "}");
 
-			std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
-				"Method " << MethodNameForMethod(method) << " "
-				"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
+			if (method == TBlurMeasureMethodDerivative) {
+				std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
+					"Method " << MethodNameForMethod(method) << " "
+					"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
+			}
+
 		}
 
 		delete filter;
@@ -113,6 +117,8 @@ std::string CBlurMetricsTester::MethodNameForMethod(TBlurMeasureMethod method) c
 			return "TBlurMeasureMethodFD";
 		case TBlurMeasureMethodStandartDeviation:
 			return "TBlurMeasureMethodStandartDeviation";
+		case TBlurMeasureMethodDerivative:
+			return "TBlurMeasureMethodDerivative";
 		default:
 			break;
 	}
@@ -130,6 +136,8 @@ IBlurMeasurer* CBlurMetricsTester::BlurMeasurerForMethod(TBlurMeasureMethod meth
 			return new CFDBlurMeasurer();
 		case TBlurMeasureMethodStandartDeviation:
 			return new CStdDeviationBlurMeasurer();
+		case TBlurMeasureMethodDerivative:
+			return new CDerivativeBlurMeasurer(2, 5, TBlurMeasurerDerivativeCalcMethodAvg);
 		default:
 			break;
 	}
