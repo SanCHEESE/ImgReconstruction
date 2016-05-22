@@ -10,6 +10,8 @@
 
 #include "CBinarizer.hpp"
 
+#include <utils.h>
+
 class CNiBlackBinarizer: public CBinarizer
 {
 public:

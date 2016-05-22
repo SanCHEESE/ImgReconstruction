@@ -83,13 +83,14 @@ public:
 			dyx[std::abs(delta)] += 1;
 		}
 
+		int i = 0;
 		int total = std::accumulate(dx.begin(), dx.end(), 0);
 		int histDx = 0;
 		int dxBlur = 0;
-		for (auto it = dx.begin(); it != dx.end(); it++) {
+		for (auto it = dx.begin(); it != dx.end(); it++, i++) {
 			histDx += *it;
 			if ((float)histDx/total >= 1 - (float)_cutPercentage/100.f) {
-				dxBlur = *it;
+				dxBlur = i;
 				break;
 			}
 		}
@@ -97,10 +98,11 @@ public:
 		total = std::accumulate(dy.begin(), dy.end(), 0);
 		int histDy = 0;
 		int dyBlur = 0;
-		for (auto it = dy.begin(); it != dy.end(); it++) {
+		i = 0;
+		for (auto it = dy.begin(); it != dy.end(); it++, i++) {
 			histDy += *it;
 			if ((float)histDy / total >= 1 - (float)_cutPercentage / 100.f) {
-				dyBlur = *it;
+				dyBlur = i;
 				break;
 			}
 		}
@@ -108,10 +110,11 @@ public:
 		total = std::accumulate(dxy.begin(), dxy.end(), 0);
 		int histDxy = 0;
 		int dxyBlur = 0;
-		for (auto it = dxy.begin(); it != dxy.end(); it++) {
+		i = 0;
+		for (auto it = dxy.begin(); it != dxy.end(); it++, i++) {
 			histDxy += *it;
 			if ((float)histDxy / total >= 1 - (float)_cutPercentage / 100.f) {
-				dxyBlur = *it;
+				dxyBlur = i;
 				break;
 			}
 		}
@@ -119,10 +122,11 @@ public:
 		total = std::accumulate(dyx.begin(), dyx.end(), 0);
 		int histDyx = 0;
 		int dyxBlur = 0;
-		for (auto it = dyx.begin(); it != dyx.end(); it++) {
+		i = 0;
+		for (auto it = dyx.begin(); it != dyx.end(); it++, i++) {
 			histDyx += *it;
 			if ((float)histDyx / total >= 1 - (float)_cutPercentage / 100.f) {
-				dyxBlur = *it;
+				dyxBlur = i;
 				break;
 			}
 		}
@@ -133,7 +137,7 @@ public:
 		derivatives.push_back(dxyBlur);
 		derivatives.push_back(dyxBlur);
 
-		return -CalculateBlurValue(derivatives);
+		return CalculateBlurValue(derivatives);
 
 	}
 private:
