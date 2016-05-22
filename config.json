@@ -1,7 +1,7 @@
 {
   "compare": {
     "eps": 400,
-    "metric": 0
+    "metric": 0,
   },
   "blur": {
     "thresh": 0.5,

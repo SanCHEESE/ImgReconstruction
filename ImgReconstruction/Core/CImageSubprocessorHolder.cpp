@@ -197,6 +197,8 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	_subprocessors[PatchFetcherKey] = (IImageSubprocessor *)patchFetcher;
 
 	auto comparatorJson = json[CompareJsonKey];
+	auto summatorJson = comparatorJson[SumJsonKey];
+	int compSum = summatorJson[MethodJsonKey];
 	IBrightnessEqualizer *brightnessEqualizer = new CDynRangeBrightnessEqualizer();
 	_subprocessors[CompBrightnessEqualizerKey] = (IImageSubprocessor *)brightnessEqualizer;
 	int compMetric = comparatorJson[MetricJsonKey];
