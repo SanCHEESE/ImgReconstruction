@@ -26,7 +26,6 @@ public:
 			cv::copyMakeBorder(*iterImage, _iterImage, _borderInset, _borderInset, _borderInset, _borderInset, cv::BORDER_REPLICATE, 0);
 			_pointingRect = cv::Rect2f((float)_borderInset, (float)_borderInset, size.width, size.height);
 
-		
 		} else if (typeid(T) == typeid(int)) {
 			_iterImage = *iterImage;
 			_pointingRect = cv::Rect(0, 0, _size.width, _size.height);
@@ -117,8 +116,7 @@ public:
 					}
 				}
 
-				//assert(p < 256);
-				subRectImage.at<uchar>(sr_i, sr_j) = (uchar)p;
+				subRectImage.at<uchar>(sr_i, sr_j) = p > 255 ? 255 : (p < 0 ? 0 : p);
 			}
 		}
 

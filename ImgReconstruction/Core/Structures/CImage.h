@@ -27,6 +27,12 @@ public:
 	CImage(const CImage& image) { image.copyTo(*this); }
 
 	CImage& operator=(const cv::Mat& image) { image.copyTo(*this); return *this; }
+	CImage operator()(const cv::Rect roi) const { 
+		CImage result = ((cv::Mat)*this)(roi); 
+		result.parentImage = const_cast<CImage *>(this);
+		result.SetFrame(roi);
+		return result; 
+	}
 
 	// overrides
 	void copyTo(CImage &image) const;

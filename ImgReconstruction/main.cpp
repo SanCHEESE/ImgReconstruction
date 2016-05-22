@@ -61,9 +61,10 @@ int main(int argc, char** argv)
 				std::wcerr << "No such image!" << std::endl;
 				return 1;
 			}
-
-			CInterpolationTester tester(image(cv::Rect(14, 15, 100, 100)));
+			CImage testedImage(image(cv::Rect(14, 15, 100, 100)));
+			CInterpolationTester tester(testedImage);
 			tester.Test();
+
 
 			system("pause");
 		} else {
