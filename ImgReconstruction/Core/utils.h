@@ -8,10 +8,12 @@
 
 #pragma once
 
-#include "common.h"
+#include <common.h>
+#include <vector>
+#include <map>
 
-#include "CImage.h"
-#include "CImagePatch.h"
+#include <CImage.h>
+#include <CImagePatch.h>
 
 namespace utils
 {

@@ -11,8 +11,8 @@
 #include <chrono>
 #include <numeric>
 
-#include "CImage.h"
-#include "common.h"
+#include <CImage.h>
+#include <common.h>
 
 namespace utils
 {
