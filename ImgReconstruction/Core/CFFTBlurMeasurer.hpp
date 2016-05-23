@@ -15,7 +15,7 @@ class CFFTBlurMeasurer : public IBlurMeasurer
 public:
 	CFFTBlurMeasurer(float radiusRatio) : _radiusRatio(radiusRatio) {};
 
-	virtual float Measure(const CImage& img) const
+	virtual float Measure(const CImage& img, const CImage* const parentImg = 0) const
 	{
 		CImage fft = img.GetFFTImage();
 		img.CopyMetadataTo(fft);

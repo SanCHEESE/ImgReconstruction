@@ -17,5 +17,5 @@ class IBlurMeasurer : public IImageSubprocessor
 {
 public:
 	virtual ~IBlurMeasurer() {}
-	virtual float Measure(const CImage& img) const = 0;
+	virtual float Measure(const CImage& img, const CImage* const parentImg = 0) const = 0;
 };

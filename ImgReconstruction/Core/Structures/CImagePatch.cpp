@@ -13,7 +13,7 @@
 float CImagePatch::BlurValue(const IBlurMeasurer *const measurer)
 {
 	if (_blurValue < 0) {
-		_blurValue = measurer->Measure(_grayImage);
+		_blurValue = measurer->Measure(_grayImage, parentImage);
 	}
 
 	return _blurValue;

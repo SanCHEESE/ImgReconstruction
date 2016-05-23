@@ -37,6 +37,7 @@ public:
 		_pHashComputed = patch._pHashComputed;
 		_blurValue = patch._blurValue;
 		_standartDeviation = patch._standartDeviation;
+		parentImage = patch.parentImage;
 		SetGrayImage(patch.GrayImage());
 		SetBinImage(patch.BinImage());
 	}
@@ -72,6 +73,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
 
 	int aClass;
+	CImage *parentImage;
 private:
 	void Initialize();
 	float CalculateStandartDeviation() const;

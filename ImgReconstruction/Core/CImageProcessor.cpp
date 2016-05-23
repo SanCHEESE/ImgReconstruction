@@ -51,6 +51,7 @@ CImage CImageProcessor::RestoreImage()
 
 	// calculating
 	for (CImagePatch& patch : patches) {
+		patch.parentImage = const_cast<CImage*>(&_mainImage.GrayImage());
 		patch.BlurValue(_subprocHolder->BlurMeasurer());
 	}
 

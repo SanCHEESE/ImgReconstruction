@@ -13,7 +13,7 @@
 class CStdDeviationBlurMeasurer : public IBlurMeasurer
 {
 public:
-	virtual float Measure(const CImage& img) const
+	virtual float Measure(const CImage& img, const CImage* const parentImg = 0) const
 	{
 		return utils::StandartDeviation(img);
 	}

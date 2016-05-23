@@ -13,7 +13,7 @@
 class CFDBlurMeasurer : public IBlurMeasurer
 {
 public:
-	virtual float Measure(const CImage& img) const
+	virtual float Measure(const CImage& img, const CImage* const parentImg = 0) const
 	{
 		cv::Mat padded;
 		int m = cv::getOptimalDFTSize(img.rows);
