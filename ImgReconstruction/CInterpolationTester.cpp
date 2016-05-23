@@ -12,7 +12,7 @@ void CInterpolationTester::Test()
 	for (TInterpKernelType i = TInterpKernelBicubic; i <= TInterpKernelLanczos; i = (TInterpKernelType)((int)i + 1)) {
 		_kernel = KernelForType(i);
 
-		_shifter = new CImageShifter(_kernel);
+		_shifter = new CImageShifter(_kernel, &_parentImage);
 
 		std::vector<CImage> images;
 		for (int j = 0; j < (sizeof(shifts) / sizeof(*shifts)); j++) {

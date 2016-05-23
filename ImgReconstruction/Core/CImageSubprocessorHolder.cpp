@@ -104,6 +104,7 @@ IBlurMeasurer* Measurer(TBlurMeasureMethod method, int extentPixels = 0, float c
 			break;
 		case TBlurMeasureMethodDerivative:
 			measurer = new CDerivativeBlurMeasurer(extentPixels, cutPercentage, calcMethod);
+			break;
 		default:
 			assert(false);
 			break;

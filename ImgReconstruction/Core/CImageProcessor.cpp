@@ -62,11 +62,8 @@ CImage CImageProcessor::RestoreImage()
 	for (auto &it : classes) {
 		std::vector<CImagePatch> aClass = it.second;
 		if (aClass.size() < 2) {
-			// do not process classes with size of 1 object
-			if (!aClass[0].GrayImage().interpolated) {
-				accImage.SetImageRegion(aClass[0].GrayImage(), aClass[0].GetFrame());
-			}
-
+			// do not process classes with size of 1 object, 
+			// instead we use original image pixel values
 			continue;
 		} else {
 			// ranking by sharpness inside a class
@@ -102,7 +99,7 @@ CImage CImageProcessor::RestoreImage()
 					float blurThresh = std::abs((bestPatch.GetBlurValue() - patch.GetBlurValue()));
 					// copy if threshhold in relatively big
 					if (patch.GetFrame() != bestPatch.GetFrame() && _config.blurThresh < blurThresh) {
-						accImage.SetImageRegion(bestPatch.GrayImage(), patch.GrayImage());
+						accImage.UnitePatches(bestPatch, patch);
 					}
 				}
 			}

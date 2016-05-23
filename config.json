@@ -5,7 +5,7 @@
   },
   "blur": {
     "thresh": 0.5,
-    "method": 0,
+    "method": 4,
     "cut": 8,
     "extent": 2,
     "calc": 1

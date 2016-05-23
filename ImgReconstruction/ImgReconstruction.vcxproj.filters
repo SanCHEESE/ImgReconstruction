@@ -228,5 +228,8 @@
     <ClInclude Include="Core\CImageComparator.hpp">
       <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
     </ClInclude>
+    <ClInclude Include="CBinImageComparator.hpp">
+      <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

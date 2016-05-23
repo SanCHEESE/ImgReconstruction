@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 				return 1;
 			}
 			CImage testedImage(image(cv::Rect(14, 15, 100, 100)));
-			CInterpolationTester tester(testedImage);
+			CInterpolationTester tester(testedImage, image);
 			tester.Test();
 
 

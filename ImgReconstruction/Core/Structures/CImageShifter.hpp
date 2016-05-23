@@ -7,7 +7,7 @@
 class CImageShifter
 {
 public:
-	CImageShifter(IInterpolationKernel* const kernel) : _interpKernel(kernel) {};
+	CImageShifter(IInterpolationKernel* const kernel, const CImage* const parentImage) : _interpKernel(kernel), _parentImage(parentImage) {};
 
 	virtual CImage ShiftImage(const CImage& image, const cv::Point2f& shift) const
 	{
@@ -44,4 +44,5 @@ public:
 	}
 private:
 	IInterpolationKernel* const _interpKernel;
+	const CImage* const _parentImage;
 };

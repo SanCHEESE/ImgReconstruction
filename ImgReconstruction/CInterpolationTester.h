@@ -9,7 +9,7 @@
 class CInterpolationTester
 {
 public:
-	CInterpolationTester(const CImage& image) : _image(image) {};
+	CInterpolationTester(const CImage& image, const CImage& parentImage) : _image(image), _parentImage(parentImage) {};
 
 	void Test();
 
@@ -22,5 +22,6 @@ private:
 	CImageShifter* _shifter;
 
 	CImage _image;
+	CImage _parentImage;
 };
 
