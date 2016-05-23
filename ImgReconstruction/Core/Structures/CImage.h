@@ -22,17 +22,11 @@ public:
 	CImage(const cv::Mat mat) : cv::Mat(mat) { _frame = cv::Rect(0, 0, mat.cols, mat.rows); };
 	CImage(const std::string& path, int flags) : cv::Mat(cv::imread(path, flags)) { _frame = cv::Rect(0, 0, cv::Mat::cols, cv::Mat::rows); };
 	CImage(int rows, int cols, int type, const cv::Scalar& scalar = cv::Scalar(0)) : cv::Mat(rows, cols, type, scalar) { _frame = cv::Rect(0, 0, cols, rows); };
-	CImage(const CImage& image, const cv::Rect& roi) : cv::Mat(image, roi) { _frame = roi; parentImage = const_cast<CImage *>(&image); }
+	CImage(const CImage& image, const cv::Rect& roi) : cv::Mat(image, roi) { _frame = roi;}
 	CImage(const cv::Size size, int type, int value) : cv::Mat(size, type, value) { _frame = cv::Rect(0, 0, size.width, size.height); }
 	CImage(const CImage& image) { image.copyTo(*this); }
 
 	CImage& operator=(const cv::Mat& image) { image.copyTo(*this); return *this; }
-	CImage operator()(const cv::Rect roi) const { 
-		CImage result = ((cv::Mat)*this)(roi); 
-		result.parentImage = const_cast<CImage *>(this);
-		result.SetFrame(roi);
-		return result; 
-	}
 
 	// overrides
 	void copyTo(CImage &image) const;
@@ -79,7 +73,6 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const CImage& img);
 
 	bool interpolated;
-	CImage* parentImage;
 private:
 	cv::Rect2f _frame;
 };

@@ -108,11 +108,13 @@ void CBlurMetricsTester::Test()
 				return blurMeasurer->Measure(patch1) > blurMeasurer->Measure(patch2);
 			});
 
-			utils::Stack(patchesToTest, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSideSize) + ", " + std::to_string(patchSideSize) + "}");
+			if (method == TBlurMeasureMethodDerivative) {
+				utils::Stack(patchesToTest, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSideSize) + ", " + std::to_string(patchSideSize) + "}");
 
-			std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
-				"Method " << MethodNameForMethod(method) << " "
-				"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
+				std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
+					"Method " << MethodNameForMethod(method) << " "
+					"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
+			}
 		}
 
 		delete filter;

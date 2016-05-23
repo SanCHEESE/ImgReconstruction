@@ -61,8 +61,6 @@ public:
 			_pointingRect.x = (float)_borderInset;
 		}
 
-		patch.parentImage = const_cast<CImage *>(_origImage);
-
 		return patch;
 	}
 

@@ -20,32 +20,32 @@ public:
 	{
 		cv::Rect2f imgFrame = img.GetFrame();
 
-		cv::Rect extentFrame;
-		if (imgFrame.x < _extentPixels) {
-			// near left border
-			extentFrame.x = 0;
-		} else if (img.parentImage->cols <= imgFrame.x + imgFrame.width + _extentPixels) {
-			// near right border
-			extentFrame.x = imgFrame.x - _extentPixels - (_extentPixels - (img.parentImage->cols - imgFrame.x - imgFrame.width));
-		} else {
-			// in the middle
-			extentFrame.x = imgFrame.x - _extentPixels;
-		}
-		extentFrame.width = img.cols + 2 * _extentPixels;
+		//cv::Rect extentFrame;
+		//if (imgFrame.x < _extentPixels) {
+		//	// near left border
+		//	extentFrame.x = 0;
+		//} else if (img.parentImage->cols <= imgFrame.x + imgFrame.width + _extentPixels) {
+		//	// near right border
+		//	extentFrame.x = imgFrame.x - _extentPixels - (_extentPixels - (img.parentImage->cols - imgFrame.x - imgFrame.width));
+		//} else {
+		//	// in the middle
+		//	extentFrame.x = imgFrame.x - _extentPixels;
+		//}
+		//extentFrame.width = img.cols + 2 * _extentPixels;
 
-		if (imgFrame.y < _extentPixels) {
-			// near top border
-			extentFrame.y = 0;
-		} else if (img.parentImage->rows <= imgFrame.y + imgFrame.height + _extentPixels) {
-			// near right border
-			extentFrame.y = imgFrame.y - _extentPixels - (_extentPixels - (img.parentImage->rows - imgFrame.y - imgFrame.height));
-		} else {
-			// in the middle
-			extentFrame.y = imgFrame.y - _extentPixels;
-		}
-		extentFrame.height = img.rows + 2 * _extentPixels;
+		//if (imgFrame.y < _extentPixels) {
+		//	// near top border
+		//	extentFrame.y = 0;
+		//} else if (img.parentImage->rows <= imgFrame.y + imgFrame.height + _extentPixels) {
+		//	// near right border
+		//	extentFrame.y = imgFrame.y - _extentPixels - (_extentPixels - (img.parentImage->rows - imgFrame.y - imgFrame.height));
+		//} else {
+		//	// in the middle
+		//	extentFrame.y = imgFrame.y - _extentPixels;
+		//}
+		//extentFrame.height = img.rows + 2 * _extentPixels;
 
-		CImage extentImage = (*img.parentImage)(extentFrame);
+		CImage extentImage = img;
 
 		std::vector<int> dx(255, 0);
 		std::vector<int> dy(255, 0);

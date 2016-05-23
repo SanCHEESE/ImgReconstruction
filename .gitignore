@@ -214,3 +214,4 @@ ModelManifest.xml
 *.jpg
 *.png
 ImgReconstruction.VC.db
+enc_temp_folder/
