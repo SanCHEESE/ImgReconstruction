@@ -9,44 +9,6 @@
 #include <CTimeLogger.h>
 #include <CAccImage.h>
 
-CImage CreateHistImage(const std::map<uint64, std::vector<CImagePatch>>& data)
-{
-	cv::Size patchSize = data.begin()->second[0].GetSize();
-	int maxHeight = 0;
-	for (auto& it : data) {
-		int rowHeigt = it.second.size() * (patchSize.height + 1);
-		if (maxHeight < rowHeigt) {
-			maxHeight = rowHeigt;
-		}
-	}
-
-	CImage histogramImg(maxHeight + 3 + 50, data.size() * (patchSize.width + 3) + 3, CV_8UC1, cv::Scalar(255));
-	int x = 0;
-	for (auto& it : data) {
-		auto patches = it.second;
-		CImage columnImage(1, patchSize.width, CV_8UC1, cv::Scalar(255));
-		for (int i = 0; i < patches.size(); i++) {
-			CImage greyPatchImg = patches[i].GrayImage();
-			cv::Mat horisontalSeparator(1, greyPatchImg.GetFrame().width, CV_8UC1, cv::Scalar(255));
-			cv::vconcat(columnImage, greyPatchImg, columnImage);
-			cv::vconcat(columnImage, horisontalSeparator, columnImage);
-
-		}
-
-		CImage textImg = CImage::GetImageWithText(std::to_string(patches.size()), cv::Point(1, 10), RGB(0, 0, 0), RGB(255, 255, 255), cv::Size(50, 11));
-		textImg = textImg.GetRotatedImage(-90);
-		cv::Mat roi = histogramImg.rowRange(histogramImg.rows - 50 - columnImage.rows, histogramImg.rows - 50).colRange(x, x + columnImage.cols);
-		columnImage.copyTo(roi);
-
-		cv::Mat roi2 = histogramImg.rowRange(histogramImg.rows - 50, histogramImg.rows).colRange(x, x + textImg.cols);
-		textImg.copyTo(roi2);
-
-		x += columnImage.cols + 3;
-	}
-
-	return histogramImg;
-}
-
 void CImageProcessor::ProcessImage(const CImage& img, const std::string& outImagePath)
 {
 	_outImagePath = outImagePath;
@@ -108,6 +70,13 @@ CImage CImageProcessor::RestoreImage()
 			// ranking by sharpness inside a class
 			auto clusters = Clusterize(aClass);
 
+			//for (auto& cluster : clusters) {
+			//	// sorting by blur increase
+			//	std::sort(cluster.second.begin(), cluster.second.end(), MoreBlur());
+			//}
+
+			//CreateHistImage(clusters).Save(std::to_string(it.first) + "hist");
+
 			for (auto& cluster : clusters) {
 				if (cluster.second.size() <= 1) {
 					continue;
@@ -145,7 +114,7 @@ CImage CImageProcessor::RestoreImage()
 		}
 	}
 
-	//CreateHistImage(classes).Save();
+	//CreateHistImage(classes).Save("hash-hist");
 	//accImage.CreateHistImage().Save("", 100, ".jpg");
 
 	return accImage.GetResultImage();
