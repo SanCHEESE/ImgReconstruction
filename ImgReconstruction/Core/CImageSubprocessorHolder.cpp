@@ -165,6 +165,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 
 	auto json = json::parse(content);
 
+	// filter
 	auto filterJson = json[FilterJsonKey];
 	auto filterBinJson = filterJson[BinJsonKey];
 	cv::Size patchSize = {filterBinJson[SizeJsonKey][WidthJsonKey], filterBinJson[SizeJsonKey][HeightJsonKey]};
@@ -173,14 +174,13 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	if (filterBinJson.find(OffsetJsonKey) != filterBinJson.end()) {
 		threshOffset = filterBinJson[OffsetJsonKey];
 	}
-
 	IBinarizer *filterBinarizer = Binarizer((TBinarizationMethod)binMethod, patchSize, filterBinJson[KJsonKey], threshOffset);
 	_subprocessors[FilterBinarizerKey] = (IImageSubprocessor *)filterBinarizer;
 	IPatchFilter *patchFilter = new CPatchFilter(filterBinarizer, filterJson[ContrastJsonKey], patchSize);
 	_subprocessors[PatchFilterKey] = (IImageSubprocessor *)patchFilter;
 
+	// fetching
 	auto patchFetchJson = json[FetchJsonKey];
-
 	IInterpolationKernel *kernel = 0;
 	if (patchFetchJson.find(KernelJsonKey) != patchFetchJson.end()) {
 		// create kernel
@@ -197,6 +197,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 		patchFilter, kernel);
 	_subprocessors[PatchFetcherKey] = (IImageSubprocessor *)patchFetcher;
 
+	// compare
 	auto comparatorJson = json[CompareJsonKey];
 	IBrightnessEqualizer *brightnessEqualizer = new CDynRangeBrightnessEqualizer();
 	_subprocessors[CompBrightnessEqualizerKey] = (IImageSubprocessor *)brightnessEqualizer;
@@ -204,13 +205,14 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	IImageComparator* comparator = Comparator((TImageCompareMetric)compMetric, brightnessEqualizer, comparatorJson[EpsJsonKey]);
 	_subprocessors[ComparatorKey] = (IImageSubprocessor *)comparator;
 
+	// binarizer
 	auto binJson = json[BinJsonKey];
 	binMethod = binJson[MethodJsonKey];
-
 	IBinarizer *binarizer = Binarizer((TBinarizationMethod)binMethod,
-	{binJson[SizeJsonKey][WidthJsonKey], binJson[SizeJsonKey][HeightJsonKey]}, binJson[KJsonKey], threshOffset);
+	{binJson[SizeJsonKey][WidthJsonKey], binJson[SizeJsonKey][HeightJsonKey]}, binJson[KJsonKey], binJson[OffsetJsonKey]);
 	_subprocessors[BinarizerKey] = (IImageSubprocessor *)binarizer;
 
+	// blue measure
 	auto blurJson = json[BlurJsonKey];
 	int blurMeasureMethod = blurJson[MethodJsonKey];
 	IBlurMeasurer* measurer = 0;
@@ -222,18 +224,21 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	}
 	_subprocessors[BlurMeasurerKey] = (IImageSubprocessor *)measurer;
 
+	// extender
 	IImageExtender* extender = new CImageExtender({binJson[SizeJsonKey][WidthJsonKey], binJson[SizeJsonKey][HeightJsonKey]});
 	_subprocessors[ImageExtenderKey] = (IImageSubprocessor *)extender;
 
+	// phash/avg hash classifier
 	int classifyingMethod = json[ClassifierJsonKey];
 	IPatchClassifier* classifier = Classifier((TPatchClassifyingMethod)classifyingMethod);
 	_subprocessors[PatchClassifierKey] = (IImageSubprocessor *)classifier;
 
+	// global config
 	_config.blurThresh = blurJson[ThreshJsonKey];
-
 	auto accJson = json[AccJsonKey];
 	_config.accCopiedWeight = accJson[CopiedJsonKey];
 	_config.accOrigWeight = accJson[OrigJsonKey];
+	_config.runCount = json[RunJsonKey];
 }
 
 CImageSubprocessorHolder::~CImageSubprocessorHolder()

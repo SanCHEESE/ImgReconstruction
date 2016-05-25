@@ -42,11 +42,11 @@ typedef enum : int
 
 typedef enum : int
 {
-	TBlurMeasureMethodStandartDeviation,
+	TBlurMeasureMethodDerivative,
 	TBlurMeasureMethodDynamicRange,
 	TBlurMeasureMethodFFT,
 	TBlurMeasureMethodFD,
-	TBlurMeasureMethodDerivative,
+	TBlurMeasureMethodStandartDeviation,
 
 	TBlurMeasureMethodNone
 } TBlurMeasureMethod;

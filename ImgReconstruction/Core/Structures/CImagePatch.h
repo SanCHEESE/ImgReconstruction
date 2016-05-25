@@ -43,6 +43,10 @@ public:
 	}
 
 	float BlurValue(const IBlurMeasurer* const measurer);
+	void NormalizeBlurValue(float min, float max)
+	{
+		_blurValue = (_blurValue - min) / (max - min);
+	}
 	float StandartDeviation();
 	uint64 PHash();
 	uint64 AvgHash();

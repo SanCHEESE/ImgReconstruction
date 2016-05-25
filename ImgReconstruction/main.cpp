@@ -81,8 +81,8 @@ int main(int argc, char** argv)
 		CImageSubprocessorHolder::GetInstance().Configure(argv[3]);
 
 		CImageProcessor imProc = CImageProcessor();
-		imProc.SetIterCount(1);
-		imProc.ProcessImage(image, argv[2]);
+		imProc.SetIterCount(CImageSubprocessorHolder::GetInstance().GetConfig().runCount);
+		imProc.ProcessImage(image, argv[2]);\
 
 		CTimeLogger::PrintTotalTime();
 	}

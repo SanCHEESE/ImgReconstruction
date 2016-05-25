@@ -72,7 +72,7 @@ public:
 		if (fractY > 0 || fractX > 0) {
 			cv::Point2f shift(fractX, fractY);
 			CImage shiftedImage = _shifter->ShiftImage(fromImage, shift);
-			// cast fromImage brightness to brightness of combined image image
+			// cast fromImage brightness to brightness of combined image
 			_equalizer->EqualizeBrightness(shiftedImage, toImage);
 			cv::Rect2f newFrame = cv::Rect2f(floorf(frame.x), floorf(frame.y), frame.width, frame.height);
 			CopyImageToFrame(shiftedImage, newFrame);

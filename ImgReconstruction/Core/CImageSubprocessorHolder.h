@@ -36,6 +36,7 @@ struct CConfig
 	float blurThresh;
 	float accCopiedWeight;
 	float accOrigWeight;
+	int runCount;
 };
 
 class CImageSubprocessorHolder

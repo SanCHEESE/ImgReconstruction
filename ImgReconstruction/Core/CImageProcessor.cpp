@@ -9,6 +9,8 @@
 #include <CTimeLogger.h>
 #include <CAccImage.h>
 
+#include <limits>
+
 void CImageProcessor::ProcessImage(const CImage& img, const std::string& outImagePath)
 {
 	_outImagePath = outImagePath;
@@ -24,6 +26,8 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
 	CImage blurredImage;
 	cv::bilateralFilter(extentImage, blurredImage, 2, 1, 1);
 	_mainImage = CImagePatch(extentImage, _subprocHolder->PatchBinarizer()->Binarize(blurredImage));
+
+	_mainImage.BinImage().Save();
 }
 
 CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img)
@@ -50,9 +54,19 @@ CImage CImageProcessor::RestoreImage()
 	//std::cout << "Total patches: " << patches.size() << std::endl;
 
 	// calculating
+	float max = std::numeric_limits<float>::min();
+	float min = std::numeric_limits<float>::max();
+
 	for (CImagePatch& patch : patches) {
 		patch.parentImage = const_cast<CImage*>(&_mainImage.GrayImage());
-		patch.BlurValue(_subprocHolder->BlurMeasurer());
+		float blurValue = patch.BlurValue(_subprocHolder->BlurMeasurer());
+		max = MAX(max, blurValue);
+		min = MIN(min, blurValue);
+	}
+
+	// normalize blur values
+	for (int i = 0; i < patches.size(); i++) {
+		patches[i].NormalizeBlurValue(min, max);
 	}
 
 	// classification by PHash/AvgHash

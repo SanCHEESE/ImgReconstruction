@@ -26,7 +26,7 @@ public:
 			patch.convertTo(patch, CV_64F);
 			
 			double mean = cv::mean(patch)[0];
-			double thresholdValue = mean + _k * utils::StandartDeviation(img) + _offset;
+			double thresholdValue = mean + _k * utils::StandartDeviation(img) - _offset;
 
 			CImage binarizedPatch;
 			patch.convertTo(patch, CV_8U);

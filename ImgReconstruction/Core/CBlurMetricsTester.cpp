@@ -75,7 +75,7 @@ void CBlurMetricsTester::Test()
 		IBinarizer *binarizer = new CNiBlackBinarizer(patchSize, -0.2f);
 		IPatchFilter *filter = new CPatchFilter(binarizer, minContrastValue, {2, 2}, 0.75);
 
-		std::vector<CImage> patchesToTest;
+		std::vector<CImagePatch> patchesToTest;
 		for (CImage& blurredImage: blurredImages) {
 			patchFetcher = new CPatchFetcher(patchSize, patchOffset, filter);
 			auto patches = patchFetcher->FetchPatches(blurredImage);
@@ -83,19 +83,22 @@ void CBlurMetricsTester::Test()
 			if (patches.size() == 0) {
 				continue;
 			}
-			patchesToTest.push_back(patches[rand() % patches.size()]);
+			CImage randImg = patches[rand() % patches.size()];
+			CImagePatch randPatch(randImg);
+			randPatch.parentImage = &blurredImage;
+			patchesToTest.push_back(randPatch);
 
 			delete patchFetcher;
 		}
-		for (TBlurMeasureMethod method = TBlurMeasureMethodStandartDeviation; method <= TBlurMeasureMethodDerivative; method = (TBlurMeasureMethod)((int)method + 1)) {
+		for (TBlurMeasureMethod method = TBlurMeasureMethodDerivative; method <= TBlurMeasureMethodStandartDeviation; method = (TBlurMeasureMethod)((int)method + 1)) {
 			IBlurMeasurer* blurMeasurer = BlurMeasurerForMethod(method);
 
 			int errors = 0;
 			int correct = 0;
 			for (int i = 0; i < patchesToTest.size(); i++) {
 				for (int j = 0; j < patchesToTest.size(); j++) {
-					float blurValue1 = blurMeasurer->Measure(patchesToTest[i]);
-					float blurValue2 = blurMeasurer->Measure(patchesToTest[j]);
+					float blurValue1 = patchesToTest[i].BlurValue(blurMeasurer);
+					float blurValue2 = patchesToTest[j].BlurValue(blurMeasurer);
 					if (blurValue1 >= blurValue2 && i <= j || i >= j && blurValue1 <= blurValue2) {
 						correct++;
 					} else {
@@ -104,22 +107,22 @@ void CBlurMetricsTester::Test()
 				}
 			}
 
-			std::sort(patchesToTest.begin(), patchesToTest.end(), [&](const CImage& patch1, const CImage& patch2) -> bool {
-				return blurMeasurer->Measure(patch1) > blurMeasurer->Measure(patch2);
+			std::sort(patchesToTest.begin(), patchesToTest.end(), [&](const CImagePatch& patch1, const CImagePatch& patch2) -> bool {
+				return patch1.GetBlurValue() > patch2.GetBlurValue();
 			});
 
-			if (method == TBlurMeasureMethodDerivative) {
-				utils::Stack(patchesToTest, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSideSize) + ", " + std::to_string(patchSideSize) + "}");
+			//utils::Stack(patchesToTest, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSideSize) + ", " + std::to_string(patchSideSize) + "}");
 
-				std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
-					"Method " << MethodNameForMethod(method) << " "
-					"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
-			}
+			std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
+				"Method " << MethodNameForMethod(method) << " "
+				"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
 		}
 
 		delete filter;
 		delete binarizer;
 	}
+
+	blurredImages.clear();
 }
 
 std::string CBlurMetricsTester::MethodNameForMethod(TBlurMeasureMethod method) const

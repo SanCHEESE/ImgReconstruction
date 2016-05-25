@@ -48,6 +48,8 @@ static const std::string AccJsonKey = "acc";
 static const std::string CopiedJsonKey = "copied";
 static const std::string OrigJsonKey = "orig";
 
+static const std::string RunJsonKey = "run";
+
 // patch fetching
 static cv::Point DefaultPatchOffset = {1, 1};
 static int DefaultMaxPatchSideSize = 8;
