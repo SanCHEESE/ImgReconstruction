@@ -27,7 +27,7 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
 	cv::bilateralFilter(extentImage, blurredImage, 2, 1, 1);
 	_mainImage = CImagePatch(extentImage, _subprocHolder->PatchBinarizer()->Binarize(blurredImage));
 
-	_mainImage.BinImage().Save();
+	//_mainImage.BinImage().Save();
 }
 
 CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img)
@@ -77,6 +77,7 @@ CImage CImageProcessor::RestoreImage()
 
 	for (auto &it : classes) {
 		std::vector<CImagePatch> aClass = it.second;
+		std::cout << aClass.size() << std::endl;
 		if (aClass.size() < 2) {
 			// do not process classes with size of 1 object, 
 			// instead we use original image pixel values

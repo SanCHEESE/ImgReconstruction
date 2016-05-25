@@ -11,10 +11,6 @@
 #include "common.h"
 
 // common
-static const std::string XJsonKey = "x";
-static const std::string YJsonKey = "y";
-static const std::string WidthJsonKey = "width";
-static const std::string HeightJsonKey = "height";
 static const std::string KJsonKey = "k";
 
 static const std::string BinJsonKey = "bin";

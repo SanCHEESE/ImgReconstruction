@@ -168,7 +168,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	// filter
 	auto filterJson = json[FilterJsonKey];
 	auto filterBinJson = filterJson[BinJsonKey];
-	cv::Size patchSize = {filterBinJson[SizeJsonKey][WidthJsonKey], filterBinJson[SizeJsonKey][HeightJsonKey]};
+	cv::Size patchSize = {filterBinJson[SizeJsonKey], filterBinJson[SizeJsonKey]};
 	int binMethod = filterBinJson[MethodJsonKey];
 	float threshOffset = DefaultThreshOffset;
 	if (filterBinJson.find(OffsetJsonKey) != filterBinJson.end()) {
@@ -192,8 +192,8 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 		kernel = InterpKernel((TInterpKernelType)type, a, b, c);
 		_subprocessors[InterpolationKernelKey] = (IImageSubprocessor *)kernel;
 	}
-	IPatchFetcher *patchFetcher = new CPatchFetcher({patchFetchJson[SizeJsonKey][WidthJsonKey], patchFetchJson[SizeJsonKey][HeightJsonKey]},
-	{patchFetchJson[OffsetJsonKey][XJsonKey], patchFetchJson[OffsetJsonKey][YJsonKey]},
+	IPatchFetcher *patchFetcher = new CPatchFetcher({patchFetchJson[SizeJsonKey], patchFetchJson[SizeJsonKey]},
+	{patchFetchJson[OffsetJsonKey], patchFetchJson[OffsetJsonKey]},
 		patchFilter, kernel);
 	_subprocessors[PatchFetcherKey] = (IImageSubprocessor *)patchFetcher;
 
@@ -209,7 +209,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	auto binJson = json[BinJsonKey];
 	binMethod = binJson[MethodJsonKey];
 	IBinarizer *binarizer = Binarizer((TBinarizationMethod)binMethod,
-	{binJson[SizeJsonKey][WidthJsonKey], binJson[SizeJsonKey][HeightJsonKey]}, binJson[KJsonKey], binJson[OffsetJsonKey]);
+	{binJson[SizeJsonKey], binJson[SizeJsonKey]}, binJson[KJsonKey], binJson[OffsetJsonKey]);
 	_subprocessors[BinarizerKey] = (IImageSubprocessor *)binarizer;
 
 	// blue measure
@@ -225,7 +225,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	_subprocessors[BlurMeasurerKey] = (IImageSubprocessor *)measurer;
 
 	// extender
-	IImageExtender* extender = new CImageExtender({binJson[SizeJsonKey][WidthJsonKey], binJson[SizeJsonKey][HeightJsonKey]});
+	IImageExtender* extender = new CImageExtender({binJson[SizeJsonKey], binJson[SizeJsonKey]});
 	_subprocessors[ImageExtenderKey] = (IImageSubprocessor *)extender;
 
 	// phash/avg hash classifier

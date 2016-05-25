@@ -11,37 +11,25 @@
     "calc": 1
   },
   "bin": {
-    "size": {
-      "width": 25,
-      "height": 25
-    },
+    "size": 25,
     "method": 0,
     "offset": 20,
     "k": -0.2
   },
   "fetch": {
-    "size": {
-      "width": 8,
-      "height": 8
-    },
+    "size": 8,
     "kernel": {
       "c": 0.4,
       "a": 2,
       "b": 0.2,
       "type": 1
     },
-    "offset": {
-      "x": 0.5,
-      "y": 0.5
-    }
+    "offset": 0.5
   },
   "classifier": 0,
   "filter": {
     "bin": {
-      "size": {
-        "width": 2,
-        "height": 2
-      },
+      "size": 2,
       "offset": 20,
       "method": 0,
       "k": -0.2
