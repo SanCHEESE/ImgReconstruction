@@ -58,7 +58,8 @@ CImage CImageProcessor::RestoreImage()
 	// classification by PHash/AvgHash
 	std::map<uint64, std::vector<CImagePatch>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
 
-	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel(), _subprocHolder->CompBrightnessEqualizer());
+	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel(),
+		_subprocHolder->CompBrightnessEqualizer(), _config.accOrigWeight, _config.accCopiedWeight);
 
 	for (auto &it : classes) {
 		std::vector<CImagePatch> aClass = it.second;

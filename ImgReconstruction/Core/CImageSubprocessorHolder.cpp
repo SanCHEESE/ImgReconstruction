@@ -230,6 +230,10 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	_subprocessors[PatchClassifierKey] = (IImageSubprocessor *)classifier;
 
 	_config.blurThresh = blurJson[ThreshJsonKey];
+
+	auto accJson = json[AccJsonKey];
+	_config.accCopiedWeight = accJson[CopiedJsonKey];
+	_config.accOrigWeight = accJson[OrigJsonKey];
 }
 
 CImageSubprocessorHolder::~CImageSubprocessorHolder()

@@ -34,6 +34,8 @@ static const std::string InterpolationKernelKey = "InterpolationKernelKey";
 struct CConfig
 {
 	float blurThresh;
+	float accCopiedWeight;
+	float accOrigWeight;
 };
 
 class CImageSubprocessorHolder
@@ -59,7 +61,7 @@ public:
 	}
 	IBrightnessEqualizer* CompBrightnessEqualizer() { return (IBrightnessEqualizer*)_subprocessors[CompBrightnessEqualizerKey]; }
 
-	CConfig GetConfig() const { return _config; };
+	const CConfig& GetConfig() const { return _config; };
 private:
 	CImageSubprocessorHolder();
 	~CImageSubprocessorHolder();
