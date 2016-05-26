@@ -41,7 +41,7 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 		image.Save("out-0" + std::to_string(iter));
 	}
 
-	image.Save(_outImagePath, 100, "");
+	//image.Save(_outImagePath, 100, "");
 
 	return image;
 }
@@ -75,9 +75,10 @@ CImage CImageProcessor::RestoreImage()
 	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel(),
 		_subprocHolder->CompBrightnessEqualizer(), _config.accOrigWeight, _config.accCopiedWeight);
 
+	//int total = 0;
+
 	for (auto &it : classes) {
 		std::vector<CImagePatch> aClass = it.second;
-		std::cout << aClass.size() << std::endl;
 		if (aClass.size() < 2) {
 			// do not process classes with size of 1 object, 
 			// instead we use original image pixel values
@@ -128,6 +129,10 @@ CImage CImageProcessor::RestoreImage()
 				}
 			}
 		}
+
+	/*	total += aClass.size();
+		std::cout << (float)total/patches.size() * 100 << "%" << std::endl;*/
+
 	}
 
 	//CreateHistImage(classes).Save("hash-hist");
