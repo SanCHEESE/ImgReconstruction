@@ -36,9 +36,6 @@
     },
     "contrast": 30
   },
-  "acc": {
-    "copied": 0.5,
-    "orig": 0.5
-  },
+  "orig": 0.5,
   "run": 1
 }

@@ -34,7 +34,6 @@ static const std::string InterpolationKernelKey = "InterpolationKernelKey";
 struct CConfig
 {
 	float blurThresh;
-	float accCopiedWeight;
 	float accOrigWeight;
 	int runCount;
 };

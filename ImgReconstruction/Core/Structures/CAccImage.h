@@ -77,6 +77,7 @@ public:
 			cv::Rect2f newFrame = cv::Rect2f(floorf(frame.x), floorf(frame.y), frame.width, frame.height);
 			CopyImageToFrame(shiftedImage, newFrame);
 		} else {
+			_equalizer->EqualizeBrightness(fromImage, toImage);
 			CopyImageToFrame(fromImage, frame);
 		}
 	}

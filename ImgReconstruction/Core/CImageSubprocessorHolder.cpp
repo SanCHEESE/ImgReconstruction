@@ -235,9 +235,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 
 	// global config
 	_config.blurThresh = blurJson[ThreshJsonKey];
-	auto accJson = json[AccJsonKey];
-	_config.accCopiedWeight = accJson[CopiedJsonKey];
-	_config.accOrigWeight = accJson[OrigJsonKey];
+	_config.accOrigWeight = json[AccJsonKey];
 	_config.runCount = json[RunJsonKey];
 }
 
