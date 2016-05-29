@@ -232,4 +232,7 @@
       <Filter>src\Algorithm\Suprocessors\Comparator</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>
