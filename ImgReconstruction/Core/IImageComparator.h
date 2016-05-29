@@ -18,4 +18,5 @@ public:
 	virtual ~IImageComparator() {};
 	virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const = 0;
 	virtual bool Equal(const CImage& img1, const CImage& img2) const = 0;
+	virtual bool Equal(const cv::cuda::GpuMat& gImg1, const cv::cuda::GpuMat& gImg2) = 0;
 };

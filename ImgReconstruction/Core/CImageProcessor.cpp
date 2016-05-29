@@ -33,6 +33,9 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
 
 CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img)
 {
+	cuda::setDevice(0);
+	std::cout << cv::getBuildInformation();
+
 	CImage image = img;
 
 	std::cout << _outImagePath << ": ";
@@ -44,6 +47,8 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 
 		// image.Save("out-0" + std::to_string(iter));
 	}
+
+	cuda::resetDevice();
 
 	image.Save(_outImagePath, 100, "");
 

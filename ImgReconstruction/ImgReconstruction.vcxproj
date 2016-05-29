@@ -48,9 +48,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <ExecutablePath>C:\opencv\build\x64\vc14\bin;$(ExecutablePath)</ExecutablePath>
-    <LibraryPath>$(SolutionDir)packages\opencvcuda-release.3.1.0\build\native\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\jsoncons_ext\jsonpath;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\jsoncons_ext\csv;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\jsoncons_ext\boost;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\jsoncons;.;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core\Structures;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Helpers;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core;$(IncludePath)</IncludePath>
+    <ExecutablePath>C:\opencv\build\x64\vc12\bin;$(ExecutablePath)</ExecutablePath>
+    <LibraryPath>C:\opencv\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core\Structures;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Helpers;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core;$(IncludePath)</IncludePath>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -86,7 +86,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\packages\opencvcuda-release.3.1.0\build\native\include\opencv2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
@@ -94,8 +94,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_core310.lib;opencv_highgui310.lib;opencv_imgcodecs310.lib;opencv_imgproc310.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\packages\opencvcuda-release.3.1.0\build\native\lib\x64\v120\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_core310.lib;opencv_highgui310.lib;opencv_imgcodecs310.lib;opencv_imgproc310.lib;opencv_cudaarithm310.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc12\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
     <PostBuildEvent>
@@ -163,7 +163,9 @@
     <ClInclude Include="CInterpolationTester.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

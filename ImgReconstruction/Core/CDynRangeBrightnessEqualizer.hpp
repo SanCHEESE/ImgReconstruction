@@ -8,14 +8,13 @@
 
 #pragma once
 
-#include "IBrightnessEqualizer.h"
-
-#include "common.h"
+#include <IBrightnessEqualizer.h>
+#include <common.h> 
 
 class CDynRangeBrightnessEqualizer : public IBrightnessEqualizer
 {
 public:
-	virtual void EqualizeBrightness(CImage& image, CImage& toImage) const
+	virtual void EqualizeBrightness(CImage& image, const CImage& toImage) const
 	{
 		double min1, max1;
 		cv::minMaxLoc(image, &min1, &max1);
@@ -36,4 +35,26 @@ public:
 			}
 		}
 	}
+
+	virtual void EqualizeBrightness(cuda::GpuMat& gImage, const cuda::GpuMat& gToImage) const
+	{	
+		double min1, max1;
+		cuda::minMax(gImage, &min1, &max1);
+
+		double min2, max2;
+		cuda::minMax(gToImage, &min2, &max2);
+
+		double min = min1;
+		double max = max1;
+		double newMin = min2;
+		double newMax = max2;
+
+		cuda::subtract(gImage, min, gImage);
+		cuda::multiply(gImage, newMax - newMin, gImage);
+		cuda::divide(gImage, max - min, gImage);
+		cuda::add(gImage, newMin, gImage);
+	}
+
+private:
+
 };

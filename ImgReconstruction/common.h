@@ -11,11 +11,14 @@
 #include <deque>
 #include <ctime>
 
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/core.hpp>
+#include <opencv2/core/cuda.hpp>
+#include <opencv2/cudaarithm.hpp>
 
+namespace cuda = cv::cuda;
 
 #define RGB(r, g, b) (cv::Scalar((b), (g), (r)))
 #define RGBA(r, g, b, a) (cv::Scalar((b), (g), (r), (a)))

@@ -35,7 +35,7 @@
 
 #include <config.h>
 
-#include <json.hpp>
+#include <jsoncons/json.hpp>
 
 CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, float k, float threshOffset)
 {
