@@ -33,15 +33,18 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
 CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img)
 {
 	CImage image = img;
+
+	std::cout << _outImagePath << ": ";
+
 	for (int iter = 0; iter < iterCount; iter++) {
 		GenerateHelperImages(image);
 		image = RestoreImage();
 		image = image({0, 0, _origImageSize.width, _origImageSize.height});
 
-		image.Save("out-0" + std::to_string(iter));
+		// image.Save("out-0" + std::to_string(iter));
 	}
 
-	//image.Save(_outImagePath, 100, "");
+	image.Save(_outImagePath, 100, "");
 
 	return image;
 }
@@ -78,36 +81,34 @@ CImage CImageProcessor::RestoreImage()
 	//int total = 0;
 
 	for (auto &it : classes) {
-		std::vector<CImagePatch> aClass = it.second;
-		if (aClass.size() < 2) {
+		//total += it.second.size();
+		//std::cout << _outImagePath << " processing " << total << " patches = " << (float)total / patches.size() * 100 << "%" << '\r' << std::flush;
+
+		if (it.second.size() < 2) {
 			// do not process classes with size of 1 object, 
 			// instead we use original image pixel values
+
 			continue;
 		} else {
 			// ranking by sharpness inside a class
-			auto clusters = Clusterize(aClass);
+			auto clusters = Clusterize(it.second);
 
-			//for (auto& cluster : clusters) {
-			//	// sorting by blur increase
-			//	std::sort(cluster.second.begin(), cluster.second.end(), MoreBlur());
-			//}
-
-			//CreateHistImage(clusters).Save(std::to_string(it.first) + "hist");
+			//CreateHistImage(clusters).Save("trash/" + std::to_string(it.first) + "-hist");
 
 			for (auto& cluster : clusters) {
 				if (cluster.second.size() <= 1) {
 					continue;
 				}
 
-				auto clusterPatches = cluster.second;
-
 				// sorting by blur increase
-				std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
+				std::sort(cluster.second.begin(), cluster.second.end(), MoreBlur());
+
+				//std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
 
 				int bestPatchIdx = 0;
 				bool nonInterpolatedPatchFound = false;
-				for (int i = 0; i < clusterPatches.size(); i++) {
-					if (!clusterPatches[i].GrayImage().interpolated) {
+				for (int i = 0; i < cluster.second.size(); i++) {
+					if (!cluster.second[i].GrayImage().interpolated) {
 						bestPatchIdx = i;
 						nonInterpolatedPatchFound = true;
 						break;
@@ -119,8 +120,8 @@ CImage CImageProcessor::RestoreImage()
 				}
 
 				// copying to summing image
-				CImagePatch bestPatch = clusterPatches[bestPatchIdx];
-				for (auto& patch : clusterPatches) {
+				CImagePatch bestPatch = cluster.second[bestPatchIdx];
+				for (auto& patch : cluster.second) {
 					float blurThresh = std::abs((bestPatch.GetBlurValue() - patch.GetBlurValue()));
 					// copy if threshhold in relatively big
 					if (patch.GetFrame() != bestPatch.GetFrame() && _config.blurThresh < blurThresh) {
@@ -129,13 +130,9 @@ CImage CImageProcessor::RestoreImage()
 				}
 			}
 		}
-
-	/*	total += aClass.size();
-		std::cout << (float)total/patches.size() * 100 << "%" << std::endl;*/
-
 	}
 
-	//CreateHistImage(classes).Save("hash-hist");
+	//CreateHistImage(classes).Save("trash/hash-hist");
 	//accImage.CreateHistImage().Save("", 100, ".jpg");
 
 	return accImage.GetResultImage();

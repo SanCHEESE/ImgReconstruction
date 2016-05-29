@@ -34,7 +34,7 @@ private:
 	void GenerateHelperImages(const CImage& img);
 
 	// utils
-	std::map<int, std::vector<CImagePatch>> Clusterize(const std::vector<CImagePatch>& aClass);
+	std::map<int, std::vector<CImagePatch>> Clusterize(std::vector<CImagePatch> aClass);
 
 	// misc
 	std::string _outImagePath;

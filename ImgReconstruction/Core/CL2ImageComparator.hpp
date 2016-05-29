@@ -26,6 +26,7 @@ public:
 		_equalizer->EqualizeBrightness(normImg1, normImg2);
 
 		cv::Mat result;
+		
 		cv::absdiff(normImg1, normImg2, result);
 		result.convertTo(result, CV_32S);
 		result = result.mul(result);

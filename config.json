@@ -1,41 +1,41 @@
 {
   "compare": {
-    "eps": 400,
+    "eps": 438.0064352296392,
     "metric": 0
   },
-  "blur": {
-    "thresh": 0.5,
-    "method": 4,
-    "cut": 8,
-    "extent": 2,
-    "calc": 1
+  "filter": {
+    "contrast": 15,
+    "bin": {
+      "size": 2,
+      "method": 0,
+      "k": -0.2,
+      "offset": 2
+    }
   },
+  "fetch": {
+    "kernel": {
+      "c": 0.06179917173159827,
+      "a": 3,
+      "type": 1,
+      "b": 0.952694352944042
+    },
+    "size": 8,
+    "offset": 1.0
+  },
+  "run": 2,
   "bin": {
     "size": 25,
     "method": 0,
-    "offset": 20,
-    "k": -0.2
-  },
-  "fetch": {
-    "size": 8,
-    "kernel": {
-      "c": 0.4,
-      "a": 2,
-      "b": 0.2,
-      "type": 1
-    },
-    "offset": 0.5
+    "k": -0.2,
+    "offset": 15
   },
   "classifier": 0,
-  "filter": {
-    "bin": {
-      "size": 2,
-      "offset": 20,
-      "method": 0,
-      "k": -0.2
-    },
-    "contrast": 30
+  "blur": {
+    "cut": 8,
+    "thresh": 0.11230238022343289,
+    "method": 0,
+    "calc": 1,
+    "extent": 3
   },
-  "orig": 0.5,
-  "run": 1
+  "acc": 0.13350060406765263
 }
