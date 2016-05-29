@@ -11,6 +11,8 @@ class CBinImageComparator : public CImageComparator
 public:
 	using CImageComparator::CImageComparator;
 
+	CBinImageComparator(IBrightnessEqualizer* equalizer, int eps) : CImageComparator(equalizer, eps) {};
+
 	virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const
 	{
 		CImage absDiff;

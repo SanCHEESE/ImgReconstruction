@@ -15,6 +15,8 @@ class CL2ImageComparator : public CImageComparator
 public:
 	using CImageComparator::CImageComparator;
 
+	CL2ImageComparator(IBrightnessEqualizer* equalizer, int eps) : CImageComparator(equalizer, eps) {};
+
 	virtual bool Equal(const CImage& img1, const CImage& img2) const
 	{
 		CImage normImg1;

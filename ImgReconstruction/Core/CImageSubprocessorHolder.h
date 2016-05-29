@@ -38,6 +38,8 @@ struct CConfig
 	int runCount;
 };
 
+class IImageSubprocessor;
+
 class CImageSubprocessorHolder
 {
 public:

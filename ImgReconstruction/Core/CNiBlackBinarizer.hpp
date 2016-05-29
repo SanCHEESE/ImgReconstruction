@@ -8,14 +8,14 @@
 
 #pragma once
 
-#include "CBinarizer.hpp"
+#include <CBinarizer.hpp>
 
 #include <utils.h>
 
 class CNiBlackBinarizer: public CBinarizer
 {
 public:
-	using CBinarizer::CBinarizer;
+	CNiBlackBinarizer(const cv::Size& patchSize, float k, float offset = 0) : CBinarizer(patchSize, k, offset) {};
 	
 	virtual CImage Binarize(const CImage& img) const
 	{
