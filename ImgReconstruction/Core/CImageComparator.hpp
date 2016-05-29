@@ -19,7 +19,10 @@ public:
 		return Equal(patch1.GrayImage(), patch2.GrayImage());
 	}
 	virtual bool Equal(const CImage& img1, const CImage& img2) const = 0;
+	virtual bool Equal(const cv::cuda::GpuMat& gImg1, const cv::cuda::GpuMat& gImg2) = 0;
 protected:
 	IBrightnessEqualizer* _equalizer;
 	int _eps;
+
+	cuda::GpuMat _gTemp;
 };

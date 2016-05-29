@@ -32,4 +32,18 @@ public:
 
 		return sum < _eps;
 	}
+
+	virtual bool Equal(const cv::cuda::GpuMat& gImg1, const cv::cuda::GpuMat& gImg2)
+	{
+		if (_gTemp.cols == 0 && _gTemp.rows == 0) {
+			_gTemp = cuda::GpuMat(gImg1.rows, gImg1.cols, CV_32S, cv::Scalar(0));
+		}
+
+		gImg1.copyTo(_gTemp);
+
+		_equalizer->EqualizeBrightness(_gTemp, gImg2);
+
+		cuda::absdiff(_gTemp, gImg2, _gTemp);
+		return cuda::sum(_gTemp)[0] < _eps;
+	}
 };

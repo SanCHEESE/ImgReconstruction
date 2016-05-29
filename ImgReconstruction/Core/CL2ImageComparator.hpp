@@ -20,17 +20,27 @@ public:
 		CImage normImg1;
 		img1.copyTo(normImg1);
 
-		CImage normImg2;
-		img2.copyTo(normImg2);
-
-		_equalizer->EqualizeBrightness(normImg1, normImg2);
+		_equalizer->EqualizeBrightness(normImg1, img2);
 
 		cv::Mat result;
 		
-		cv::absdiff(normImg1, normImg2, result);
+		cv::absdiff(normImg1, img2, result);
 		result.convertTo(result, CV_32S);
 		result = result.mul(result);
-		float dist = cv::sum(result)[0];
-		return dist < _eps;
+		return cv::sum(result)[0] < _eps;
+	}
+
+	virtual bool Equal(const cv::cuda::GpuMat& gImg1, const cv::cuda::GpuMat& gImg2)
+	{
+		if (_gTemp.cols == 0 && _gTemp.rows == 0) {
+			_gTemp = cuda::GpuMat(gImg1.rows, gImg1.cols, CV_32S, cv::Scalar(0));
+		}
+
+		gImg1.copyTo(_gTemp);
+
+		_equalizer->EqualizeBrightness(_gTemp, gImg2);
+
+		cuda::absdiff(_gTemp, gImg2, _gTemp);
+		return cuda::sqrSum(_gTemp)[0] < _eps;
 	}
 };
