@@ -115,7 +115,7 @@ namespace utils
 		int width = images[0].GetSize().width;
 		int height = images[0].GetSize().height;
 
-		int rows = images.size() / cols;
+		int rows = (int)images.size() / cols;
 
 		int resultWidth = width * cols + cols - 1;
 		int resultHeight = height * rows + rows - 1;

@@ -88,7 +88,7 @@ public:
 	CImage CreateHistImage() const;
 
 private:
-	void CopyImageToFrame(const CImage& image, cv::Rect2f frame)
+	void CopyImageToFrame(const CImage& image, cv::Rect frame)
 	{
 		for (int y = frame.y; y < frame.y + frame.height; y++) {
 			for (int x = frame.x; x < frame.x + frame.width; x++) {
@@ -99,7 +99,7 @@ private:
 					x == frame.x + frame.width - 1 ||
 					y == frame.y || x == frame.x;
 				// last copied patch is img
-				pixel.patchIdx = _copiedPatched.size() - 1;
+				pixel.patchIdx = (int)_copiedPatched.size() - 1;
 				_accImg[y][x].push_back(pixel);
 			}
 		}

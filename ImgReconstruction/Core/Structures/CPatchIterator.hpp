@@ -114,7 +114,7 @@ public:
 					}
 				}
 
-				subRectImage.at<uchar>(sr_i, sr_j) = p > 255 ? 255 : (p < 0 ? 0 : p);
+				subRectImage.at<uchar>(sr_i, sr_j) = (uchar)(p > 255 ? 255 : (p < 0 ? 0 : p));
 			}
 		}
 

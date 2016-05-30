@@ -92,7 +92,7 @@ CImage CAccImage::GetResultImage()
 				uchar accumulated = Accumulate(pixels);
 
 				if (isBorder) {
-					resultImage.at<uchar>(y, x) = _copiedWeight * accumulated + _img.at<uchar>(y, x) * _originalWeight;
+					resultImage.at<uchar>(y, x) = (int)(_copiedWeight * accumulated + _img.at<uchar>(y, x) * _originalWeight);
 				} else {
 					resultImage.at<uchar>(y, x) = accumulated;
 

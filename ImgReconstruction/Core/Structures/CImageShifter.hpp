@@ -42,8 +42,8 @@ public:
 private:
 	CImage GetSubRect(const CImage& image, const cv::Rect2f& rect)
 	{
-		int intWidth = roundf(rect.width);
-		int intHeight = roundf(rect.height);
+		int intWidth = (int)roundf(rect.width);
+		int intHeight = (int)roundf(rect.height);
 		CImage subRectImage(intWidth, intHeight, cv::DataType<uchar>::type, 0);
 		for (int sr_i = 0; sr_i < intHeight; sr_i++) { // rows
 			for (int sr_j = 0; sr_j < intWidth; sr_j++) { // cols
@@ -61,7 +61,7 @@ private:
 					}
 				}
 
-				subRectImage.at<uchar>(sr_i, sr_j) = p > 255 ? 255 : (p < 0 ? 0 : p);
+				subRectImage.at<uchar>(sr_i, sr_j) = (uchar)(p > 255 ? 255 : (p < 0 ? 0 : p));
 			}
 		}
 
