@@ -18,6 +18,8 @@
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/cudaarithm.hpp>
 
+#define ENABLE_CUDA 0
+
 namespace cuda = cv::cuda;
 
 #define RGB(r, g, b) (cv::Scalar((b), (g), (r)))

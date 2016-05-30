@@ -60,7 +60,7 @@ CImage CImageProcessor::RestoreImage()
 	// get all image patches
 	std::vector<CImagePatch> patches = _subprocHolder->PatchFetcher()->FetchPatches(_mainImage);
 
-	std::cout << "Total patches: " << patches.size() << std::endl;
+	//std::cout << "Total patches: " << patches.size() << std::endl;
 
 	// calculating
 	float max = std::numeric_limits<float>::min();
@@ -84,11 +84,11 @@ CImage CImageProcessor::RestoreImage()
 	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel(),
 		_subprocHolder->CompBrightnessEqualizer(), _config.accOrigWeight, 1 - _config.accOrigWeight);
 
-	int total = 0;
+	//int total = 0;
 
 	for (auto &it : classes) {
-		total += it.second.size();
-		std::cout << _outImagePath << " processing " << total << " patches = " << (float)total / patches.size() * 100 << "%" << '\r' << std::flush;
+	/*	total += it.second.size();
+		std::cout << _outImagePath << " processing " << total << " patches = " << (float)total / patches.size() * 100 << "%" << '\r' << std::flush;*/
 
 		if (it.second.size() < 2) {
 			// do not process classes with size of 1 object, 

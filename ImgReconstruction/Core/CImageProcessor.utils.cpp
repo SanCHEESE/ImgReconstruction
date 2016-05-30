@@ -61,6 +61,7 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(std::vector<
 {
 	std::map<int, std::vector<CImagePatch>> clusters;
 
+#if ENABLE_CUDA
 	cuda::Stream stream;
 	// upload all patches to gpu memory
 	std::vector<cv::cuda::GpuMat> gaClass;
@@ -70,10 +71,11 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(std::vector<
 		gaClass.push_back(gm);
 	}
 	stream.waitForCompletion();
+#endif
 
 	IImageComparator* comparator = _subprocHolder->ImageComparator();
 	int aClassIdx = 0;
-	long k = 0;
+	//long k = 0;
 	for (int i = 0; i < aClass.size(); i++) {
 
 		std::vector<CImagePatch> similarPatches;
@@ -81,25 +83,33 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(std::vector<
 		aClass[i].aClass = aClassIdx;
 
 		for (int j = 1; j < aClass.size(); j++) {
+#if ENABLE_CUDA
 			if (comparator->Equal(gaClass[i], gaClass[j])) {
+#else
+			if (comparator->Equal(aClass[i], aClass[j])) {
+#endif
 				similarPatches.push_back(aClass[j]);
 				aClass[j].aClass = aClassIdx;
 				aClass.erase(aClass.begin() + j);
+#if ENABLE_CUDA
 				gaClass.erase(gaClass.begin() + j);
+#endif
 				j--;
 			}
 
-			k++;
+			//k++;
+
+			//std::cout << "Done: " << (float)k / aClass.size() / aClass.size() << std::endl;
 		}
 
+#if ENABLE_CUDA
 		gaClass.erase(gaClass.begin());
+#endif
 		aClass.erase(aClass.begin());
 		clusters[aClassIdx] = similarPatches;
 
 		aClassIdx++;
 		i--;
-
-		std::cout << "Done: " << (float)k/aClass.size()/ aClass.size() << std::endl;
 	}
 
 	return clusters;
