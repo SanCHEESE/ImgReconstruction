@@ -24,12 +24,19 @@ public:
 
 		_equalizer->EqualizeBrightness(normImg1, img2);
 
-		cv::Mat result;
-		
-		cv::absdiff(normImg1, img2, result);
-		result.convertTo(result, CV_32S);
-		result = result.mul(result);
-		return cv::sum(result)[0] < _eps;
+		double imgArea = img1.GetFrame().area();
+
+		double sum = 0;
+		for (int i = 0; i < normImg1.rows; i++) {
+			for (int j = 0; j < normImg1.cols; j++) {
+				sum += pow(normImg1.at<uchar>(i, j) - img2.at<uchar>(i, j), 2)/imgArea;
+
+				if (sum > _eps) break;
+			}
+			if (sum > _eps) break;
+		}
+
+		return sum < _eps;
 	}
 
 	virtual inline bool Equal(const cv::cuda::GpuMat& gImg1, const cv::cuda::GpuMat& gImg2)

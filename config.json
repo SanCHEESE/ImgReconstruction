@@ -23,7 +23,7 @@
     "size": 10
   },
   "compare": {
-    "metric": 0,
+    "metric": 1,
     "eps": 411.9766355359479
   },
   "classifier": 0,

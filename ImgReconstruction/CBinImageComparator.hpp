@@ -20,7 +20,7 @@ public:
 		return cv::sum(absDiff)[0]/255;
 	}
 
-	virtual inline  bool Equal(const cv::cuda::GpuMat& gImg1, const cv::cuda::GpuMat& gImg2)
+	virtual inline bool Equal(const cv::cuda::GpuMat& gImg1, const cv::cuda::GpuMat& gImg2)
 	{
 		if (_gTemp.cols == 0 && _gTemp.rows == 0) {
 			_gTemp = cuda::GpuMat(gImg1.rows, gImg1.cols, CV_32S, cv::Scalar(0));
