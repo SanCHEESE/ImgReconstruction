@@ -114,7 +114,7 @@ std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::unordere
 			}
 		}
 
-		CTimeLogger::PrintTime();
+		CTimeLogger::PrintTime(std::to_string(aClass.size()));
 
 
 		// clean up used

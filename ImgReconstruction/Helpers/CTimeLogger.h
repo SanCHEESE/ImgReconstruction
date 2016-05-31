@@ -16,7 +16,7 @@ class CTimeLogger
 {
 public:
 	static void StartLogging(const std::string& desc = "");
-	static void PrintTime();
+	static void PrintTime(const std::string& desc = "");
 private:
 	static std::chrono::time_point<std::chrono::system_clock> _start;
 };

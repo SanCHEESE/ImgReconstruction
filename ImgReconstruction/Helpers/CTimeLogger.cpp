@@ -19,9 +19,9 @@ void CTimeLogger::StartLogging(const std::string& desc)
 	_start = get_time::now();
 }
 
-void CTimeLogger::PrintTime()
+void CTimeLogger::PrintTime(const std::string& desc)
 {
 	auto end = get_time::now();
 	auto duration = std::chrono::duration_cast<ms>(end - _start).count();
-	std::clog << "\ttime: " << duration << " ms" << std::endl;
+	std::clog << "\t " << desc << " time: " << duration << " ms" << std::endl;
 }
