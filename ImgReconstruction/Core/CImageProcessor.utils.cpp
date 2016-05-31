@@ -87,7 +87,7 @@ std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::unordere
 
 		aClass.erase(firstPatch);
 
-		CTimeLogger::StartLogging();
+		//CTimeLogger::StartLogging();
 
 #if ENABLE_CUDA
 		cuda::GpuMat gm = *gaClass.begin();
@@ -114,7 +114,7 @@ std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::unordere
 			}
 		}
 
-		CTimeLogger::PrintTime(std::to_string(aClass.size()));
+		//CTimeLogger::PrintTime(std::to_string(aClass.size()));
 
 
 		// clean up used

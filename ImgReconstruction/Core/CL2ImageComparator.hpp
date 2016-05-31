@@ -49,7 +49,7 @@ public:
 
 		_equalizer->EqualizeBrightness(_gTemp, gImg2);
 
-		cuda::absdiff(_gTemp, gImg2, _gTemp);
-		return cuda::sqrSum(_gTemp)[0] < _eps;
+		double norm = cuda::norm(_gTemp, gImg2, cv::NORM_L2SQR);
+		return norm < _eps;
 	}
 };

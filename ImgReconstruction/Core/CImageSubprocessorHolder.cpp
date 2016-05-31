@@ -24,6 +24,7 @@
 
 #include <CL1ImageComparator.hpp>
 #include <CL2ImageComparator.hpp>
+#include <CL3ImageComparator.hpp>
 
 #include <CNICKBinarizer.hpp>
 #include <CNiBlackBinarizer.hpp>
@@ -63,6 +64,9 @@ IImageComparator* Comparator(TImageCompareMetric metric, IBrightnessEqualizer* e
 			break;
 		case TImageCompareMetricL2:
 			comparator = new CL2ImageComparator(equalizer, eps);
+			break;
+		case TImageCompareMetricL3:
+			comparator = new CL3ImageComparator(equalizer, eps);
 			break;
 		default:
 			assert(false);

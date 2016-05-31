@@ -24,7 +24,7 @@
   },
   "compare": {
     "metric": 1,
-    "eps": 411.9766355359479
+    "eps": 300
   },
   "classifier": 0,
   "filter": {
