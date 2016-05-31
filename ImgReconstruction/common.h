@@ -10,6 +10,7 @@
 #include <map>
 #include <deque>
 #include <ctime>
+#include <unordered_set>
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>

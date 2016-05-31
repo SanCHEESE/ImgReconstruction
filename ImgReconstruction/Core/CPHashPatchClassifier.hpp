@@ -9,27 +9,23 @@
 #pragma once
 
 #include "IPatchClassifier.h"
-#include "CTimeLogger.h"
 
 class CPHashPatchClassifier : public IPatchClassifier
 {
 public:
-	virtual std::map<uint64, std::vector<CImagePatch>> Classify(std::vector<CImagePatch>& patches) const
+	virtual std::map<uint64, std::unordered_set<CImagePatch, CImagePatch::hasher>> Classify(std::vector<CImagePatch>& patches) const
 	{
-		CTimeLogger::StartLogging();
 
-		std::map<uint64, std::vector<CImagePatch>> classes;
+		std::map<uint64, std::unordered_set<CImagePatch, CImagePatch::hasher>> classes;
 
 		for (CImagePatch& patch : patches) {
 			auto aClass = classes.find(patch.PHash());
 			if (aClass == classes.end()) {
-				classes[patch.PHash()] = std::vector<CImagePatch>(1, patch);
+				classes[patch.PHash()] = std::unordered_set<CImagePatch, CImagePatch::hasher>({patch});
 			} else {
-				(*aClass).second.push_back(patch);
+				(*aClass).second.insert(patch);
 			}
 		}
-
-		CTimeLogger::Print("Patch classification: ");
 
 		return classes;
 	}

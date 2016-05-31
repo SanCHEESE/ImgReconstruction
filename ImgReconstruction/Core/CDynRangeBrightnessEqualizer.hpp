@@ -14,7 +14,7 @@
 class CDynRangeBrightnessEqualizer : public IBrightnessEqualizer
 {
 public:
-	virtual void EqualizeBrightness(CImage& image, const CImage& toImage) const
+	virtual inline void EqualizeBrightness(CImage& image, const CImage& toImage) const
 	{
 		double min1, max1;
 		cv::minMaxLoc(image, &min1, &max1);
@@ -36,7 +36,7 @@ public:
 		}
 	}
 
-	virtual void EqualizeBrightness(cuda::GpuMat& gImage, const cuda::GpuMat& gToImage) const
+	virtual inline void EqualizeBrightness(cuda::GpuMat& gImage, const cuda::GpuMat& gToImage) const
 	{	
 		double min1, max1;
 		cuda::minMax(gImage, &min1, &max1);

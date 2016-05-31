@@ -6,8 +6,8 @@
 //  Copyright © 2016 Alexander Bochkarev. All rights reserved.
 //
 
-#include "CImageProcessor.h"
-#include "CTimeLogger.h"
+#include <CImageProcessor.h>
+#include <CTimeLogger.h>
 
 CImage CreateHistImage(const std::map<int, std::vector<CImagePatch>>& data)
 {
@@ -57,16 +57,16 @@ CImage CreateHistImage(const std::map<uint64, std::vector<CImagePatch>>& data)
 	return histogramImg;
 }
 
-std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(std::vector<CImagePatch> aClass)
+std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::unordered_set<CImagePatch, CImagePatch::hasher>& aClass)
 {
-	std::map<int, std::vector<CImagePatch>> clusters;
+	std::map<int, std::deque<CImagePatch>> clusters;
 
 #if ENABLE_CUDA
 	cuda::Stream stream;
 	// upload all patches to gpu memory
-	std::vector<cv::cuda::GpuMat> gaClass;
+	std::list<cuda::GpuMat> gaClass;
 	for (const CImagePatch &patch: aClass) {
-		cv::cuda::GpuMat gm;
+		CGpuMat gm;
 		gm.upload(patch.GrayImage(), stream);
 		gaClass.push_back(gm);
 	}
@@ -76,40 +76,61 @@ std::map<int, std::vector<CImagePatch>> CImageProcessor::Clusterize(std::vector<
 	IImageComparator* comparator = _subprocHolder->ImageComparator();
 	int aClassIdx = 0;
 	//long k = 0;
-	for (int i = 0; i < aClass.size(); i++) {
+	while (!aClass.empty()) {
+		std::deque<std::unordered_set<CImagePatch, CImagePatch::hasher>::iterator> toRemove;
 
-		std::vector<CImagePatch> similarPatches;
-		similarPatches.push_back(aClass[i]);
-		aClass[i].aClass = aClassIdx;
+		std::deque<CImagePatch> similarPatches;
 
-		for (int j = 1; j < aClass.size(); j++) {
+		auto firstPatch = aClass.begin();
+		similarPatches.push_back(*firstPatch);
+		similarPatches[0].aClass = aClassIdx;
+
+		aClass.erase(firstPatch);
+
+		CTimeLogger::StartLogging();
+
 #if ENABLE_CUDA
-			if (comparator->Equal(gaClass[i], gaClass[j])) {
+		cuda::GpuMat gm = *gaClass.begin();
+		gaClass.erase(gaClass.begin());
+		auto git = gaClass.begin();
+		std::deque<std::list<cuda::GpuMat>::iterator> gToRemove;
+	
+		for (auto it = aClass.begin(); it != aClass.end(); it++, git++) {
 #else
-			if (comparator->Equal(aClass[i], aClass[j])) {
+		for (auto it = aClass.begin(); it != aClass.end(); it++) {
 #endif
-				similarPatches.push_back(aClass[j]);
-				aClass[j].aClass = aClassIdx;
-				aClass.erase(aClass.begin() + j);
+
 #if ENABLE_CUDA
-				gaClass.erase(gaClass.begin() + j);
+			if (comparator->Equal(gm, *git)) {
+#else
+			if (comparator->Equal(similarPatches[0], *it)) {
 #endif
-				j--;
+				similarPatches.push_back(*it);
+				similarPatches[similarPatches.size() - 1].aClass = aClassIdx;
+				toRemove.push_back(it);
+#if ENABLE_CUDA
+				gToRemove.push_back(git);
+#endif
 			}
-
-			//k++;
-
-			//std::cout << "Done: " << (float)k / aClass.size() / aClass.size() << std::endl;
 		}
 
-#if ENABLE_CUDA
-		gaClass.erase(gaClass.begin());
-#endif
-		aClass.erase(aClass.begin());
-		clusters[aClassIdx] = similarPatches;
+		CTimeLogger::PrintTime();
 
+
+		// clean up used
+		for (auto& r: toRemove) {
+			aClass.erase(r);
+		}
+
+
+#if ENABLE_CUDA
+		for (auto& r : gToRemove) {
+			gaClass.erase(r);
+		}
+#endif
+
+		clusters[aClassIdx] = similarPatches;
 		aClassIdx++;
-		i--;
 	}
 
 	return clusters;

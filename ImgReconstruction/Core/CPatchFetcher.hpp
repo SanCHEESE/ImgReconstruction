@@ -10,7 +10,6 @@
 
 #include <IPatchFetcher.h>
 #include <IPatchFilter.h>
-#include <CTimeLogger.h>
 #include <IInterpolationKernel.h>
 
 class CPatchFetcher : public IPatchFetcher
@@ -22,7 +21,6 @@ public:
 
 	virtual std::vector<CImage> FetchPatches(const CImage& img) const
 	{
-		CTimeLogger::StartLogging();
 
 		IPatchIterator* patchIterator = img.GetIntPatchIterator(_size, _offset);
 		std::vector<CImage> patches;
@@ -41,15 +39,12 @@ public:
 		}
 
 		delete patchIterator;
-
-		CTimeLogger::Print("Patch fetching: ");
 		return patches;
 	}
 
 
 	virtual std::vector<CImagePatch> FetchPatches(const CImagePatch& imgPatch) const
 	{
-		CTimeLogger::StartLogging();
 
 		CImage grayImage = imgPatch.GrayImage();
 		CImage binImage = imgPatch.BinImage();
@@ -85,8 +80,6 @@ public:
 
 		delete patchIterator;
 		delete binPatchIterator;
-
-		CTimeLogger::Print("Patch fetching: ");
 
 		return patches;
 	}

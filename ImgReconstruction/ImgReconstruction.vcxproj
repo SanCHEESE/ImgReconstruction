@@ -44,7 +44,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Helpers;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core\Structures;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction;$(IncludePath)</IncludePath>
+    <IncludePath>C:\opencv\build\include;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Helpers;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core\Structures;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction;$(IncludePath)</IncludePath>
+    <ExecutablePath>C:\opencv\build\x64\vc12\bin\Debug;$(ExecutablePath)</ExecutablePath>
+    <LibraryPath>C:\opencv\build\x64\vc12\lib\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -68,8 +70,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_core310d.lib;opencv_highgui310d.lib;opencv_imgcodecs310d.lib;opencv_imgproc310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_core310d.lib;opencv_highgui310d.lib;opencv_imgcodecs310d.lib;opencv_imgproc310d.lib;opencv_cudaarithm310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\opencv\build\x64\vc12\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <CustomBuildStep>
       <Command>

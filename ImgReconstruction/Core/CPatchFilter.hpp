@@ -10,7 +10,6 @@
 
 #include "IPatchFilter.h"
 #include "IBinarizer.h"
-#include "CTimeLogger.h"
 
 class CPatchFilter : public IPatchFilter
 {
@@ -61,8 +60,6 @@ public:
 
 	virtual std::vector<CImagePatch> FilterPatches(const std::vector<CImagePatch>& patches) const
 	{
-		CTimeLogger::StartLogging();
-
 		std::vector<CImagePatch> filteredPatches;
 
 		for (const CImagePatch& patch : patches) {
@@ -70,8 +67,6 @@ public:
 				filteredPatches.push_back(patch);
 			}
 		}
-
-		CTimeLogger::Print("Patch filtering: ");
 
 		return filteredPatches;
 	}

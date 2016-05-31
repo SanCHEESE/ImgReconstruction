@@ -16,5 +16,5 @@ class IPatchClassifier : public IImageSubprocessor
 {
 public:
 	virtual ~IPatchClassifier() {};
-	virtual std::map<uint64, std::vector<CImagePatch>> Classify(std::vector<CImagePatch>& patches) const = 0;
+	virtual std::map<uint64, std::unordered_set<CImagePatch, CImagePatch::hasher>> Classify(std::vector<CImagePatch>& patches) const = 0;
 };

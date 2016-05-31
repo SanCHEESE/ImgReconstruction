@@ -10,13 +10,13 @@
 
 #include "common.h"
 
+#include <chrono>
+
 class CTimeLogger
 {
 public:
 	static void StartLogging(const std::string& desc = "");
-	static void Print(const std::string& decr);
-	static void PrintTotalTime();
+	static void PrintTime();
 private:
-	static clock_t _time;
-	static clock_t _totalTime;
+	static std::chrono::time_point<std::chrono::system_clock> _start;
 };

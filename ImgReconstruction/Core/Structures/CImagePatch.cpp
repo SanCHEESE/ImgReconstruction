@@ -10,6 +10,8 @@
 
 #include <bitset>
 
+long CImagePatch::_counter = 0;
+
 float CImagePatch::BlurValue(const IBlurMeasurer *const measurer)
 {
 	if (_blurValue < 0) {
@@ -67,10 +69,14 @@ std::ostream& operator<<(std::ostream& os, const CImagePatch& patch)
 
 void CImagePatch::Initialize()
 {
+	aClass = -1;
 	_blurValue = -1;
 	_standartDeviation = -1;
 	_pHashComputed = false;
 	_avgHashComputed = false;
+	id = _counter;
+
+	_counter++;
 }
 
 float CImagePatch::CalculateStandartDeviation() const

@@ -8,24 +8,20 @@
 
 #include "CTimeLogger.h"
 
-clock_t CTimeLogger::_time = 0;
-clock_t CTimeLogger::_totalTime = 0;
+using namespace std;
+using ms = chrono::milliseconds;
+using get_time = chrono::system_clock;
+
+std::chrono::time_point<std::chrono::system_clock> CTimeLogger::_start;
 
 void CTimeLogger::StartLogging(const std::string& desc)
 {
-	//std::clog << desc << std::endl;
-	_time = clock();
+	_start = get_time::now();
 }
 
-void CTimeLogger::Print(const std::string& decr)
+void CTimeLogger::PrintTime()
 {
-	_totalTime += clock() - _time;
-	/*std::clog << "--------------------------------------------" << std::endl;
-	std::clog << decr << "\n\t" << "Time: " << diff/CLOCKS_PER_SEC << " s" << std::endl;
-	std::clog << "--------------------------------------------" << std::endl;*/
-}
-
-void CTimeLogger::PrintTotalTime()
-{
-	//std::clog << "Total execution time: " << (float)_totalTime/CLOCKS_PER_SEC << " s" << std::endl;
+	auto end = get_time::now();
+	auto duration = std::chrono::duration_cast<ms>(end - _start).count();
+	std::clog << "\ttime: " << duration << " ms" << std::endl;
 }

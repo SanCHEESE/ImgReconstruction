@@ -6,7 +6,6 @@
 //
 
 #include <CImageProcessor.h>
-#include <CTimeLogger.h>
 #include <CAccImage.h>
 
 #include <limits>
@@ -24,17 +23,17 @@ void CImageProcessor::GenerateHelperImages(const CImage& img)
 
 	CImage extentImage = _subprocHolder->ImageExtender()->Extent(img);
 	CImage filteredImage;
-	cv::bilateralFilter(extentImage, filteredImage, -1, 5, 5);
-	filteredImage.Save();
-	_mainImage = CImagePatch(filteredImage, _subprocHolder->PatchBinarizer()->Binarize(filteredImage));
+	cv::bilateralFilter(extentImage, filteredImage, -1, 0, 2);
+	_mainImage = CImagePatch(extentImage, _subprocHolder->PatchBinarizer()->Binarize(filteredImage));
 
 	//_mainImage.BinImage().Save();
 }
 
 CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img)
 {
+#if ENABLE_CUDA
 	cuda::setDevice(0);
-	std::cout << cv::getBuildInformation();
+#endif
 
 	CImage image = img;
 
@@ -48,7 +47,9 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 		// image.Save("out-0" + std::to_string(iter));
 	}
 
+#if ENABLE_CUDA
 	cuda::resetDevice();
+#endif
 
 	image.Save(_outImagePath, 100, "");
 
@@ -79,7 +80,7 @@ CImage CImageProcessor::RestoreImage()
 	}
 
 	// classification by PHash/AvgHash
-	std::map<uint64, std::vector<CImagePatch>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
+	std::map<uint64, std::unordered_set<CImagePatch, CImagePatch::hasher>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
 
 	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel(),
 		_subprocHolder->CompBrightnessEqualizer(), _config.accOrigWeight, 1 - _config.accOrigWeight);

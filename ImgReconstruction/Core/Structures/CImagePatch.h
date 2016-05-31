@@ -16,6 +16,14 @@
 class CImagePatch
 {
 public:
+	struct hasher
+	{
+		size_t operator() (const CImagePatch& patch) const
+		{
+			return patch.id;
+		}
+	};
+
 	CImagePatch() { Initialize(); }
 	CImagePatch(const CImage& grayImage)
 	{
@@ -38,8 +46,15 @@ public:
 		_blurValue = patch._blurValue;
 		_standartDeviation = patch._standartDeviation;
 		parentImage = patch.parentImage;
+		aClass = patch.aClass;
+		id = patch.id;
 		SetGrayImage(patch.GrayImage());
 		SetBinImage(patch.BinImage());
+	}
+
+	inline bool operator==(const CImagePatch& p) const
+	{
+		return id == p.id;
 	}
 
 	float BlurValue(const IBlurMeasurer* const measurer);
@@ -77,6 +92,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const CImagePatch& patch);
 
 	int aClass;
+	long id;
 	CImage *parentImage;
 private:
 	void Initialize();
@@ -93,6 +109,8 @@ private:
 	bool _avgHashComputed;
 	uint64 _pHash;
 	bool _pHashComputed;
+
+	static long _counter;
 };
 
 struct MoreBlur

@@ -15,8 +15,6 @@
 #include <CInterpolationTester.h>
 #include <CBlurMetricsTester.h>
 
-#include "CTimeLogger.h"
-
 char* Help = "USAGE: imgReconstruction [in_path] [out_path] (opt)[config_path]\n \
 					in_path - path to input image\n \
 					out_path - path to output image\n \
@@ -83,8 +81,6 @@ int main(int argc, char** argv)
 		CImageProcessor imProc = CImageProcessor();
 		imProc.SetIterCount(CImageSubprocessorHolder::GetInstance().GetConfig().runCount);
 		imProc.ProcessImage(image, argv[2]);\
-
-		CTimeLogger::PrintTotalTime();
 	}
 	
 	return 0;

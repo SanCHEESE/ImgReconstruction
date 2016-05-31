@@ -22,15 +22,24 @@ public:
 		CImage normImg1;
 		img1.copyTo(normImg1);
 
-		CImage normImg2;
-		img2.copyTo(normImg2);
+		_equalizer->EqualizeBrightness(normImg1, img2);
 
-		_equalizer->EqualizeBrightness(normImg1, normImg2);
+		double sum = 0;
+		for (int i = 0; i < normImg1.rows; i++) {
+			for (int j = 0; j < normImg1.cols; j++) {
+				sum += std::abs(normImg1.at<uchar>(i, j) - img2.at<uchar>(i, j));
 
-		CImage result;
-		cv::absdiff(normImg1, normImg2, result);
+				if (sum > _eps) break;
+			}
+			if (sum > _eps) break;
+		}
 
-		float sum = cv::sum(result)[0];
+		//CImage result;
+		//cv::absdiff(normImg1, normImg2, result);
+
+		//float sum = cv::sum(result)[0];
+
+		//double sum = cv::norm(normImg1, normImg2, cv::NORM_L1);
 
 		return sum < _eps;
 	}

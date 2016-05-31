@@ -34,7 +34,7 @@ private:
 	void GenerateHelperImages(const CImage& img);
 
 	// utils
-	std::map<int, std::vector<CImagePatch>> Clusterize(std::vector<CImagePatch> aClass);
+	std::map<int, std::deque<CImagePatch>> Clusterize(std::unordered_set<CImagePatch, CImagePatch::hasher>& aClass);
 
 	// misc
 	std::string _outImagePath;
@@ -46,3 +46,24 @@ private:
 	CImageSubprocessorHolder* _subprocHolder;
 	CConfig _config;
 };
+
+class CGpuMat : public cuda::GpuMat
+{
+public:
+	struct hasher
+	{
+		size_t operator() (const CGpuMat& mat) const
+		{
+			return (size_t)mat.datastart;
+		}
+	};
+
+	inline bool operator==(const CGpuMat& mat2) const
+	{
+		return datastart == mat2.datastart;
+	}
+};
+
+
+
+
