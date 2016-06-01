@@ -37,7 +37,7 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 
 	CImage image = img;
 
-	std::cout << _outImagePath << ": ";
+	//std::cout << _outImagePath << ": ";
 
 	for (int iter = 0; iter < iterCount; iter++) {
 		GenerateHelperImages(image);
