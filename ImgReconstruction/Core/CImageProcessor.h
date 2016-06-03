@@ -24,7 +24,7 @@ public:
 	};
 
 	// Project specific
-	void ProcessImage(const CImage& img, const std::string& outImagePath);
+	void ProcessImage(const CImage& img, const std::string& outImagePath, const std::string& inImagePath);
 	void SetIterCount(int iterCount) { _iterCount = iterCount; };
 
 private:
@@ -38,6 +38,10 @@ private:
 
 	// misc
 	std::string _outImagePath;
+	std::string _inImagePath;
+	std::string _progressFile;
+	int _patchesProcessed;
+	int _totalPatches;
 
 	CImagePatch _mainImage;
 	int _iterCount;

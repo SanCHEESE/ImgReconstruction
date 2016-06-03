@@ -19,4 +19,7 @@ public:
 	virtual bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const = 0;
 	virtual bool Equal(const CImage& img1, const CImage& img2) const = 0;
 	virtual bool Equal(const cv::cuda::GpuMat& gImg1, const cv::cuda::GpuMat& gImg2) = 0;
+
+	virtual void SetEps(int eps) = 0;
+	virtual int GetEps() const = 0;
 };

@@ -10,8 +10,9 @@
 
 #include <limits>
 
-void CImageProcessor::ProcessImage(const CImage& img, const std::string& outImagePath)
+void CImageProcessor::ProcessImage(const CImage& img, const std::string& outImagePath, const std::string& inImagePath)
 {
+	_inImagePath = inImagePath;
 	_outImagePath = outImagePath;
 
 	RestoreImageIteratively(_iterCount, img);
@@ -35,16 +36,16 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 	cuda::setDevice(0);
 #endif
 
-	CImage image = img;
+	int idx = _inImagePath.find_last_of('\\');
+	_progressFile = _inImagePath.substr(idx + 1, _inImagePath.length() - 1);
+	_progressFile = _progressFile + ".txt";
 
-	//std::cout << _outImagePath << ": ";
+	CImage image = img;
 
 	for (int iter = 0; iter < iterCount; iter++) {
 		GenerateHelperImages(image);
 		image = RestoreImage();
 		image = image({0, 0, _origImageSize.width, _origImageSize.height});
-
-		// image.Save("out-0" + std::to_string(iter));
 	}
 
 #if ENABLE_CUDA
@@ -60,8 +61,6 @@ CImage CImageProcessor::RestoreImage()
 {
 	// get all image patches
 	std::vector<CImagePatch> patches = _subprocHolder->PatchFetcher()->FetchPatches(_mainImage);
-
-	//std::cout << "Total patches: " << patches.size() << std::endl;
 
 	// calculating
 	float max = std::numeric_limits<float>::min();
@@ -85,11 +84,10 @@ CImage CImageProcessor::RestoreImage()
 	CAccImage accImage(_mainImage.GrayImage(), _subprocHolder->InterpolationKernel(),
 		_subprocHolder->CompBrightnessEqualizer(), _config.accOrigWeight, 1 - _config.accOrigWeight);
 
-	//int total = 0;
+	_totalPatches = patches.size();
+	_patchesProcessed = 0;
 
 	for (auto &it : classes) {
-	/*	total += it.second.size();
-		std::cout << _outImagePath << " processing " << total << " patches = " << (float)total / patches.size() * 100 << "%" << '\r' << std::flush;*/
 
 		if (it.second.size() < 2) {
 			// do not process classes with size of 1 object, 
@@ -109,8 +107,6 @@ CImage CImageProcessor::RestoreImage()
 
 				// sorting by blur increase
 				std::sort(cluster.second.begin(), cluster.second.end(), MoreBlur());
-
-				//std::sort(clusterPatches.begin(), clusterPatches.end(), MoreBlur());
 
 				int bestPatchIdx = 0;
 				bool nonInterpolatedPatchFound = false;

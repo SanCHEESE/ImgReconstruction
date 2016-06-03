@@ -11,6 +11,8 @@
 #include <deque>
 #include <ctime>
 #include <unordered_set>
+#include <fstream>
+#include <ios>
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>

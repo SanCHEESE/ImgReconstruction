@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 
 		CImageProcessor imProc = CImageProcessor();
 		imProc.SetIterCount(CImageSubprocessorHolder::GetInstance().GetConfig().runCount);
-		imProc.ProcessImage(image, argv[2]);\
+		imProc.ProcessImage(image, argv[2], argv[1]);
 	}
 	
 	return 0;

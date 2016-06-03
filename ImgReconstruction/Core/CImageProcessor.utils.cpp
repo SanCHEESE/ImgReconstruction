@@ -73,7 +73,11 @@ std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::unordere
 	stream.waitForCompletion();
 #endif
 
+	int was1Times = 0;
+	int epsInc = 0;
+
 	IImageComparator* comparator = _subprocHolder->ImageComparator();
+	int eps = comparator->GetEps();
 	int aClassIdx = 0;
 	//long k = 0;
 	while (!aClass.empty()) {
@@ -122,6 +126,17 @@ std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::unordere
 			aClass.erase(r);
 		}
 
+		if (was1Times >= 5) {
+			comparator->SetEps(comparator->GetEps() + 25);
+			epsInc += 25;
+			was1Times = 0;
+		}
+
+		if (toRemove.size() <= 1) {
+			was1Times++;
+		} else {
+			was1Times = 0;
+		}
 
 #if ENABLE_CUDA
 		for (auto& r : gToRemove) {
@@ -131,7 +146,16 @@ std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::unordere
 
 		clusters[aClassIdx] = similarPatches;
 		aClassIdx++;
+
+		_patchesProcessed += toRemove.size() + 1;
+		std::ofstream out;
+		out.open(_progressFile);
+		out << "Progress: " << std::setprecision(3) << (float)_patchesProcessed / _totalPatches * 100 << "% " << _patchesProcessed << " of " << _totalPatches << "\n";
+		out << "Last iter clusterized = " << toRemove.size() + 1 <<  " eps = " << comparator->GetEps() << " inc by " << epsInc <<"\n";
+		out.close();
 	}
+
+	comparator->SetEps(eps);
 
 	return clusters;
 }
