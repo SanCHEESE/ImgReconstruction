@@ -45,13 +45,13 @@ CImage CImageProcessor::RestoreImageIteratively(int iterCount, const CImage& img
 	for (int iter = 0; iter < iterCount; iter++) {
 		GenerateHelperImages(image);
 		image = RestoreImage();
-		image = image({0, 0, _origImageSize.width, _origImageSize.height});
 	}
 
 #if ENABLE_CUDA
 	cuda::resetDevice();
 #endif
 
+	image = image({0, 0, _origImageSize.width, _origImageSize.height});
 	image.Save(_outImagePath, 100, "");
 
 	return image;
