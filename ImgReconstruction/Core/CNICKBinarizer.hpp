@@ -13,7 +13,7 @@
 class CNICKBinarizer : public CBinarizer
 {
 public:
-	CNICKBinarizer(const cv::Size& patchSize, float k, float offset = 0) : CBinarizer(patchSize, k, offset) {};
+	CNICKBinarizer(const cv::Size& patchSize, float k) : CBinarizer(patchSize, k) {};
 	
 	virtual CImage Binarize(const CImage& img) const
 	{
@@ -30,7 +30,7 @@ public:
 			
 			float mean = cv::mean(patch)[0];
 			float pixelsSumOfSquares = cv::sum(patch.mul(patch))[0];
-			float thresholdValue = mean + _k * sqrt((pixelsSumOfSquares - mean)/patch.GetFrame().area()) + _offset;
+			float thresholdValue = mean + _k * sqrt((pixelsSumOfSquares - mean)/patch.GetFrame().area());
 			
 			CImage binarizedPatch;
 			patch.convertTo(patch, CV_8U);

@@ -15,7 +15,7 @@
 class CNiBlackBinarizer: public CBinarizer
 {
 public:
-	CNiBlackBinarizer(const cv::Size& patchSize, float k, float offset = 0) : CBinarizer(patchSize, k, offset) {};
+	CNiBlackBinarizer(const cv::Size& patchSize, float k) : CBinarizer(patchSize, k) {};
 	
 	virtual CImage Binarize(const CImage& img) const
 	{
@@ -26,7 +26,7 @@ public:
 			patch.convertTo(patch, CV_64F);
 			
 			double mean = cv::mean(patch)[0];
-			double thresholdValue = mean + _k * utils::StandartDeviation(img) - _offset;
+			double thresholdValue = mean + _k * utils::StandartDeviation(img);
 
 			CImage binarizedPatch;
 			patch.convertTo(patch, CV_8U);
