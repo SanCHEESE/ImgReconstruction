@@ -1,41 +1,41 @@
 {
-    "acc": 0.14,
+  "compare": {
+    "eps": 438.0064352296392,
+    "metric": 0
+  },
+  "filter": {
+    "contrast": 15,
     "bin": {
-        "k": -0.2,
-        "method": 0,
-        "offset": 2,
-        "size": 25
+      "size": 2,
+      "method": 0,
+      "k": -0.2,
+      "offset": 2
+    }
+  },
+  "fetch": {
+    "kernel": {
+      "c": 0.06179917173159827,
+      "a": 3,
+      "type": 1,
+      "b": 0.952694352944042
     },
-    "blur": {
-        "calc": 2,
-        "cut": 8,
-        "extent": 3,
-        "method": 1,
-        "thresh": 0.66
-    },
-    "classifier": 0,
-    "compare": {
-        "eps": 434.05,
-        "metric": 0
-    },
-    "fetch": {
-        "kernel": {
-            "a": 2,
-            "b": 0.98,
-            "c": 0.45,
-            "type": 1
-        },
-        "offset": 0.5,
-        "size": 8
-    },
-    "filter": {
-        "bin": {
-            "k": -0.2,
-            "method": 1,
-            "offset": 11,
-            "size": 2
-        },
-        "contrast": 20
-    },
-    "run": 1
+    "size": 8,
+    "offset": 1.0
+  },
+  "run": 2,
+  "bin": {
+    "size": 25,
+    "method": 0,
+    "k": -0.2,
+    "offset": 15
+  },
+  "classifier": 0,
+  "blur": {
+    "cut": 8,
+    "thresh": 0.11230238022343289,
+    "method": 0,
+    "calc": 1,
+    "extent": 3
+  },
+  "acc": 0.13350060406765263
 }
