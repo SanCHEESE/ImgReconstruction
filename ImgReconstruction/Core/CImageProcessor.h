@@ -11,8 +11,8 @@
 #include "CImageSubprocessorHolder.h"
 #include "CImagePatch.h"
 
-CImage CreateHistImage(const std::map<uint64, std::vector<CImagePatch>>& data);
-CImage CreateHistImage(const std::map<int, std::vector<CImagePatch>>& data);
+CImage CreateHistImage(const std::map<uint64, std::deque<CImagePatch>>& data);
+CImage CreateHistImage(const std::map<int, std::deque<CImagePatch>>& data);
 CImage CreateHistImage(const std::map<uint64, std::unordered_set<CImagePatch, CImagePatch::hasher>>& data);
 CImage CreateHistImage(const std::map<int, std::unordered_set<CImagePatch, CImagePatch::hasher>>& data);
 

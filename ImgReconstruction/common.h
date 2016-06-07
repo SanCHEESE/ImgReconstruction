@@ -44,6 +44,7 @@ typedef enum : int
 	TImageCompareMetricL1,
 	TImageCompareMetricL2,
 	TImageCompareMetricL3,
+	TImageCompareMetricBin,
 	TImageCompareMetricFFT,
 	TImageCompareMetricFD,
 

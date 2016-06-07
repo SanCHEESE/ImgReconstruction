@@ -9,9 +9,9 @@
 #include <CImageProcessor.h>
 #include <CTimeLogger.h>
 
-CImage CreateHistImage(const std::map<int, std::vector<CImagePatch>>& data)
+CImage CreateHistImage(const std::map<int, std::deque<CImagePatch>>& data)
 {
-	std::map<uint64, std::vector<CImagePatch>> temp;
+	std::map<uint64, std::deque<CImagePatch>> temp;
 	for (auto& d : data) {
 		temp.insert(d);
 	}
@@ -67,7 +67,7 @@ CImage CreateHistImage(const std::map<uint64, std::unordered_set<CImagePatch, CI
 	return histogramImg;
 }
 
-CImage CreateHistImage(const std::map<uint64, std::vector<CImagePatch>>& data)
+CImage CreateHistImage(const std::map<uint64, std::deque<CImagePatch>>& data)
 {
 	cv::Size patchSize = data.begin()->second.begin()->GetSize();
 	int maxHeight = 0;

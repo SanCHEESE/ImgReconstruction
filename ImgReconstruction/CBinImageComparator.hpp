@@ -13,11 +13,18 @@ public:
 
 	CBinImageComparator(IBrightnessEqualizer* equalizer, int eps) : CImageComparator(equalizer, eps) {};
 
+	virtual inline bool Equal(const CImage& img1, const CImage& img2) const
+	{
+		CImage absDiff;
+		cv::absdiff(img1, img2, absDiff);
+		return cv::sum(absDiff)[0];
+	}
+
 	virtual inline bool Equal(const CImagePatch& patch1, const CImagePatch& patch2) const
 	{
 		CImage absDiff;
 		cv::absdiff(patch1.BinImage(), patch2.BinImage(), absDiff);
-		return cv::sum(absDiff)[0]/255;
+		return cv::sum(absDiff)[0];
 	}
 
 	virtual inline bool Equal(const cv::cuda::GpuMat& gImg1, const cv::cuda::GpuMat& gImg2)
