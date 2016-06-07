@@ -33,7 +33,7 @@ namespace utils
 	double StandartDeviation(const CImage& img);
 
 	// classification
-	uint64 PHash(const CImage &image, const cv::Size& size = {4, 4});
+	uint64 PHash(const CImage &image, const cv::Size& size = {6, 6});
 	uint64 AvgHash(const CImage &image, const cv::Size& size = {4, 4});
 
 	float BicubicK(float x, float B, float C);

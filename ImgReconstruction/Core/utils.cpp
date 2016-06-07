@@ -26,25 +26,33 @@ namespace utils
 	uint64 PHash(const CImage &image, const cv::Size& size)
 	{
 		assert(image.cols <= 8 && image.rows <= 8);
-		assert(size.width % 2 == 0 && size.height % 2 == 0);
+
+		cv::Size newSize = size;
+		if (size.width % 2 == 1) {
+			newSize = size * 2;
+		}
 
 		cv::Mat resized;
-		resize(image, resized, size);
+		resize(image, resized, newSize);
 
 		resized.convertTo(resized, CV_64F);
 
 		cv::Mat dst;
 		cv::dct(resized, dst);
 
+		if (newSize != size) {
+			resize(dst, dst, newSize / 2, (0, 0), (0, 0), cv::INTER_NEAREST);
+		}
+
 		int bitsCount = size.width * size.height;
 
-		std::vector<float> dIdex(bitsCount, 0);
-		float mean = 0.0;
+		std::vector<double> dIdex(bitsCount, 0);
+		double mean = 0.0;
 		int k = 0;
 		for (int i = 0; i < size.width; ++i) {
 			for (int j = 0; j < size.height; ++j) {
-				dIdex[k] = dst.at<float>(i, j);
-				mean += dst.at<float>(i, j) / bitsCount;
+				dIdex[k] = dst.at<double>(i, j);
+				mean += dst.at<double>(i, j) / bitsCount;
 				++k;
 			}
 		}

@@ -33,7 +33,7 @@ float CImagePatch::StandartDeviation()
 uint64 CImagePatch::PHash()
 {
 	if (!_pHashComputed) {
-		_pHash = utils::PHash(_binImage);
+		_pHash = utils::PHash(_grayImage);
 		_pHashComputed = true;
 	}
 	return _pHash;

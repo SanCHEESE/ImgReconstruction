@@ -17,9 +17,11 @@ public:
 	
 	virtual CImage Binarize(const CImage& img) const
 	{
+		bool isSinglePatch = false;
 		std::vector<CImage> imgPatches;
 		if (img.rows == _patchSize.height && img.cols == _patchSize.width) {
 			imgPatches.push_back(img);
+			isSinglePatch = true;
 		} else {
 			imgPatches = img.GetAllPatches<int>(_patchSize, cv::Point(_patchSize.width, _patchSize.height));
 		}
@@ -40,10 +42,15 @@ public:
 			binarizedPatches[i] = binarizedPatch;
 		}
 		
-		CImage resultImg = CImage(img.rows, img.cols, CV_8U, cv::Scalar(0));
-		for (const CImage& binarizedPatch: binarizedPatches) {
-			CImage tmp = resultImg(cv::Rect(binarizedPatch.GetFrame()));
-			binarizedPatch.copyTo(tmp);
+		CImage resultImg;
+		if (isSinglePatch) {
+			resultImg = binarizedPatches[0];
+		} else {
+			resultImg = CImage(img.rows, img.cols, CV_8U, cv::Scalar(0));
+			for (const CImage& binarizedPatch : binarizedPatches) {
+				CImage tmp = resultImg(cv::Rect(binarizedPatch.GetFrame()));
+				binarizedPatch.copyTo(tmp);
+			}
 		}
 		
 		return resultImg;
