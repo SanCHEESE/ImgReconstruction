@@ -101,13 +101,13 @@ CImage CImageProcessor::RestoreImage()
 
 			continue;
 		} else {
+
 			// ranking by sharpness inside a class
 			auto clusters = Clusterize(it.second);
 
-			if (clusters.size() > 25) {
-				CreateHistImage(clusters).Save(std::to_string(it.first) + "-hist");
-			}
-			
+			//if (clusters.size() > 25) {
+			//	CreateHistImage(clusters).Save(std::to_string(it.first) + "-hist");
+			//}
 
 			for (auto& cluster : clusters) {
 				if (cluster.second.size() <= 1) {

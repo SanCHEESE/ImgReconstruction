@@ -90,6 +90,7 @@ void CBlurMetricsTester::Test()
 
 			delete patchFetcher;
 		}
+
 		for (TBlurMeasureMethod method = TBlurMeasureMethodDerivative; method <= TBlurMeasureMethodStandartDeviation; method = (TBlurMeasureMethod)((int)method + 1)) {
 			IBlurMeasurer* blurMeasurer = BlurMeasurerForMethod(method);
 
@@ -111,7 +112,11 @@ void CBlurMetricsTester::Test()
 				return patch1.GetBlurValue() > patch2.GetBlurValue();
 			});
 
-			//utils::Stack(patchesToTest, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSideSize) + ", " + std::to_string(patchSideSize) + "}");
+			std::vector<CImage> patchesToDisplay(patchesToTest.size());
+			for (auto& patch: patchesToTest) {
+				patchesToDisplay.push_back(patch.GrayImage());
+			}
+			utils::Stack(patchesToDisplay, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSideSize) + ", " + std::to_string(patchSideSize) + "}");
 
 			std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
 				"Method " << MethodNameForMethod(method) << " "

@@ -113,7 +113,7 @@ namespace utils
 		return os;
 	}
 
-	CImage Stack(std::vector<CImage>& images, int cols)
+	CImage Stack(const std::vector<CImage>& images, int cols)
 	{
 		//cv::Size imageSize = images[0].GetSize();
 		//if (images.size() > 2) {

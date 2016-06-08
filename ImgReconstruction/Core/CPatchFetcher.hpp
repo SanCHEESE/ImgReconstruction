@@ -21,7 +21,6 @@ public:
 
 	virtual std::vector<CImage> FetchPatches(const CImage& img) const
 	{
-
 		IPatchIterator* patchIterator = img.GetIntPatchIterator(_size, _offset);
 		std::vector<CImage> patches;
 		while (patchIterator->HasNext()) {
