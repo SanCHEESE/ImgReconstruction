@@ -133,8 +133,9 @@ namespace utils
 			int col = i % cols;
 			int row = i / cols;
 			maxY = row * (height + 1);
-			cv::Mat roi = img.colRange(col * width, (col + 1) * width).rowRange(maxY, maxY + height);
-			maxY += height + 1;
+			int from = col * width + (col == 0 ? 0 : 1);
+			int to = (col + 1) * width;
+			cv::Mat roi = img.colRange(from, to).rowRange(maxY, maxY + height);
 			images[i].copyTo(roi);
 		}
 

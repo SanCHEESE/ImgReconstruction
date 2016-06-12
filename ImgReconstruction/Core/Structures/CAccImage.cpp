@@ -85,8 +85,6 @@ CImage CAccImage::GetResultImage()
 							}
 						}
 					}
-
-
 				}
 
 				uchar accumulated = Accumulate(pixels);

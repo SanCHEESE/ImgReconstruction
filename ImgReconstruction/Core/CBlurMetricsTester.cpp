@@ -38,8 +38,8 @@ void CBlurMetricsTester::Test()
 
 	std::cout.imbue(std::locale(""));
 
-	const int bigPatchSize = 200;
-	const int bigPatchOffset = 200;
+	const int bigPatchSize = 150;
+	const int bigPatchOffset = 150;
 	const int minContrastValue = 40;
 
 	cv::Size patchSize = {bigPatchSize, bigPatchSize};
@@ -51,17 +51,15 @@ void CBlurMetricsTester::Test()
 	std::random_shuffle(patches.begin(), patches.end());
 
 	/* smooth images */
-	int tag = 0;
-	int kernelSize = 1;
-	int maxKernelSize = 11;
+	float sigma = 0.4;
+	float maxSigma = 3.2;
 
 	std::vector<CImage> blurredImages;
-	for (int idx = kernelSize; idx <= maxKernelSize; idx += 2) {
+	for (int i = 0; sigma <= maxSigma && i < patches.size(); sigma += 0.2, i++) {
 		CImage tempImage;
-		cv::GaussianBlur(patches[tag], tempImage, cv::Size(idx, idx), 0, 0);
+		cv::GaussianBlur(patches[i], tempImage, cv::Size(0, 0), sigma);
 		blurredImages.push_back(tempImage);
 		//tempImage.Save();
-		tag++;
 	}
 
 	delete patchFetcher;
@@ -74,10 +72,11 @@ void CBlurMetricsTester::Test()
 		patchOffset = {patchSideSize, patchSideSize};
 		IBinarizer *binarizer = new CNiBlackBinarizer(patchSize, -0.2f);
 		IPatchFilter *filter = new CPatchFilter(binarizer, minContrastValue, {2, 2}, 0.75);
+		patchFetcher = new CPatchFetcher(patchSize, patchOffset, filter);
 
 		std::vector<CImagePatch> patchesToTest;
+		int i = 0;
 		for (CImage& blurredImage: blurredImages) {
-			patchFetcher = new CPatchFetcher(patchSize, patchOffset, filter);
 			auto patches = patchFetcher->FetchPatches(blurredImage);
 			patches = RemoveBadPatches(patches, patchSideSize);
 			if (patches.size() == 0) {
@@ -86,12 +85,15 @@ void CBlurMetricsTester::Test()
 			CImage randImg = patches[rand() % patches.size()];
 			CImagePatch randPatch(randImg);
 			randPatch.parentImage = &blurredImage;
+			randPatch.aClass = i;
 			patchesToTest.push_back(randPatch);
-
-			delete patchFetcher;
+			i++;
 		}
+		delete patchFetcher;
 
-		for (TBlurMeasureMethod method = TBlurMeasureMethodDerivative; method <= TBlurMeasureMethodStandartDeviation; method = (TBlurMeasureMethod)((int)method + 1)) {
+		for (TBlurMeasureMethod method = TBlurMeasureMethodDerivative; method <= TBlurMeasureMethodFFT; method = (TBlurMeasureMethod)((int)method + 1)) {
+			std::random_shuffle(patchesToTest.begin(), patchesToTest.end());
+
 			IBlurMeasurer* blurMeasurer = BlurMeasurerForMethod(method);
 
 			int errors = 0;
@@ -100,7 +102,9 @@ void CBlurMetricsTester::Test()
 				for (int j = 0; j < patchesToTest.size(); j++) {
 					float blurValue1 = patchesToTest[i].BlurValue(blurMeasurer);
 					float blurValue2 = patchesToTest[j].BlurValue(blurMeasurer);
-					if (blurValue1 >= blurValue2 && i <= j || i >= j && blurValue1 <= blurValue2) {
+					float aClass1 = patchesToTest[i].aClass;
+					float aClass2 = patchesToTest[j].aClass;
+					if (blurValue1 >= blurValue2 && aClass1 <= aClass2 || aClass1 >= aClass2 && blurValue1 <= blurValue2) {
 						correct++;
 					} else {
 						errors++;
@@ -108,20 +112,44 @@ void CBlurMetricsTester::Test()
 				}
 			}
 
+			std::vector<CImage> patchesToDisplay;
+			for (auto& patch : patchesToTest) {
+				patchesToDisplay.push_back(patch.GrayImage());
+			}
+
+			auto before = utils::Stack(patchesToDisplay, 1);
+
 			std::sort(patchesToTest.begin(), patchesToTest.end(), [&](const CImagePatch& patch1, const CImagePatch& patch2) -> bool {
 				return patch1.GetBlurValue() > patch2.GetBlurValue();
 			});
 
-			std::vector<CImage> patchesToDisplay(patchesToTest.size());
+			patchesToDisplay.clear();
 			for (auto& patch: patchesToTest) {
 				patchesToDisplay.push_back(patch.GrayImage());
 			}
+
+			auto after = utils::Stack(patchesToDisplay, 1);
+
+			patchesToDisplay.clear();
+			patchesToDisplay.push_back(before);
+			patchesToDisplay.push_back(after);
 			utils::Stack(patchesToDisplay, 1).Save(MethodNameForMethod(method) + " {" + std::to_string(patchSideSize) + ", " + std::to_string(patchSideSize) + "}");
 
-			std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
-				"Method " << MethodNameForMethod(method) << " "
-				"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
+
+			if (method == TBlurMeasureMethodFFT) {
+				std::cout << (float)errors / (float)(errors + correct) * 100;
+			}
+
+			//std::cout << "Patch size: " << patchSize << "x" << patchSize << std::endl <<
+			//	"Method " << MethodNameForMethod(method) << " "
+			//	"Errors: " << (float)errors / (float)(errors + correct) * 100 << "%" << std::endl;
+
+			for (auto& patch : patchesToTest) {
+				patch.Reset();
+			}
 		}
+
+		std::cout << std::endl;
 
 		delete filter;
 		delete binarizer;

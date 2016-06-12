@@ -66,6 +66,14 @@ public:
 	uint64 PHash();
 	uint64 AvgHash();
 
+	void Reset()
+	{
+		_blurValue = -1;
+		_standartDeviation = -1;
+		_pHashComputed = false;
+		_avgHashComputed = false;
+	}
+
 	// accessors
 	const CImage& GrayImage() const { return _grayImage; }
 	const CImage& BinImage() const { return _binImage; }

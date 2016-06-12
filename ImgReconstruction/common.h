@@ -55,9 +55,9 @@ typedef enum : int
 {
 	TBlurMeasureMethodDerivative,
 	TBlurMeasureMethodDynamicRange,
-	TBlurMeasureMethodFFT,
-	TBlurMeasureMethodFD,
 	TBlurMeasureMethodStandartDeviation,
+	TBlurMeasureMethodFD,
+	TBlurMeasureMethodFFT,
 
 	TBlurMeasureMethodNone
 } TBlurMeasureMethod;

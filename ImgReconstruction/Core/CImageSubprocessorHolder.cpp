@@ -19,6 +19,7 @@
 #include <CStdDeviationBlurMeasurer.hpp>
 #include <CDynamicRangeBlurMeasurer.hpp>
 #include <CDerivativeBlurMeasurer.hpp>
+#include <CFDBlurMeasurer.hpp>
 
 #include <CDynRangeBrightnessEqualizer.hpp>
 
@@ -50,7 +51,7 @@ CBinarizer* Binarizer(TBinarizationMethod method, const cv::Size& patchSize, flo
 			binarizer = new CNiBlackBinarizer(patchSize, k);
 			break;
 		default:
-			assert(false);
+			assert(false, "Bin");
 			break;
 	}
 	return binarizer;
@@ -73,7 +74,7 @@ IImageComparator* Comparator(TImageCompareMetric metric, IBrightnessEqualizer* e
 			comparator = new CBinImageComparator(equalizer, eps);
 			break;
 		default:
-			assert(false);
+			assert(false, "Metric");
 			break;
 	}
 	return comparator;
@@ -90,7 +91,7 @@ IPatchClassifier* Classifier(TPatchClassifyingMethod method)
 			classifier = new CAvgHashPatchClassifier();
 			break;
 		default:
-			assert(false);
+			assert(false, "Classifier");
 			break;
 	}
 	return classifier;
@@ -110,8 +111,11 @@ IBlurMeasurer* Measurer(TBlurMeasureMethod method, int extentPixels = 0, float c
 		case TBlurMeasureMethodDerivative:
 			measurer = new CDerivativeBlurMeasurer(extentPixels, cutPercentage, calcMethod);
 			break;
+		case TBlurMeasureMethodFD:
+			measurer = new CFDBlurMeasurer();
+			break;
 		default:
-			assert(false);
+			assert(false, "Blur");
 			break;
 	}
 	return measurer;
@@ -128,7 +132,7 @@ IInterpolationKernel* InterpKernel(TInterpKernelType kernelType, int a, float b,
 			kernel = new CLanczosKernel(a);
 			break;
 		default:
-			assert(false);
+			assert(false, "Inter");
 			break;
 	}
 
