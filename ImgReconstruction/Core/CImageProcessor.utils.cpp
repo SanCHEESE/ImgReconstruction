@@ -9,6 +9,9 @@
 #include <CImageProcessor.h>
 #include <CTimeLogger.h>
 
+#include <annoylib.h>
+#include <kissrandom.h>
+
 CImage CreateHistImage(const std::map<int, std::deque<CImagePatch>>& data)
 {
 	std::map<uint64, std::deque<CImagePatch>> temp;
@@ -103,6 +106,82 @@ CImage CreateHistImage(const std::map<uint64, std::deque<CImagePatch>>& data)
 	}
 
 	return histogramImg;
+}
+
+void* CImageProcessor::GetAnnoyIndexInterfaceForCurrentMetric(size_t size) const
+{
+	TImageCompareMetric metric = _subprocHolder->GetConfig().cmpMetric;
+	AnnoyIndexInterface<int, float>* p = 0;
+	switch (metric) {
+		case TImageCompareMetricL1:
+			p = new AnnoyIndex<int, float, L1, Kiss64Random>(size);
+			break;
+		case TImageCompareMetricL2:
+			p = new AnnoyIndex<int, float, L2, Kiss64Random>(size);
+			break;
+		case TImageCompareMetricL3:
+			p = new AnnoyIndex<int, float, L3, Kiss64Random>(size);
+			break;
+		default:
+			break;
+	}
+	return (void *)p;
+}
+
+std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::deque<CImagePatch>& aClass)
+{
+	IImageComparator* comparator = _subprocHolder->ImageComparator();
+
+	std::map<int, std::deque<CImagePatch>> clusters;
+	std::vector<bool> clusterized(aClass.size(), false);
+
+	AnnoyIndexInterface<int, float>* t = (AnnoyIndexInterface<int, float>*)GetAnnoyIndexInterfaceForCurrentMetric(aClass.size());
+	for (int i = 0; i < aClass.size(); i++) {
+		vector<float> array;
+		CImage img;
+		aClass[i].GrayImage().convertTo(img, CV_32FC1);
+
+		// cast dyn range to 0..255
+		double min, max;
+		cv::minMaxLoc(img, &min, &max);
+		img = (img - min) * 255 / (max - min);
+
+		if (img.isContinuous()) {
+			array.assign(img.datastart, img.dataend);
+		} else {
+			for (int i = 0; i < img.rows; ++i) {
+				array.insert(array.end(), img.ptr<float>(i), img.ptr<float>(i) + img.cols);
+			}
+		}
+		t->add_item(i, array.data());
+	}
+
+	t->build(aClass.size()/100);
+
+	for (int i = 0; i < aClass.size(); i++) {
+		std::vector<int> indices;
+		std::vector<float> distances;
+		t->get_nns_by_item(i, aClass.size() - 1, -1, &indices, &distances);
+		
+		std::deque<CImagePatch> cluster;
+		for (int j = 0; j < distances.size(); j++) {
+			int idx = indices[j];
+			if (comparator->GetEps() > distances[j]) {
+				clusterized[idx] = true;
+				cluster.push_back(aClass[idx]);
+			}
+		}
+		clusterized[i] = true;
+
+		cluster.push_back(aClass[i]);
+
+		clusters[i] = cluster;
+	}
+
+	t->unload();
+	delete t;
+
+	return clusters;
 }
 
 std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::unordered_set<CImagePatch, CImagePatch::hasher>& aClass)

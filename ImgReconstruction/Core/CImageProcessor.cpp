@@ -79,11 +79,6 @@ CImage CImageProcessor::RestoreImage()
 		patches[i].NormalizeBlurValue(min, max);
 	}
 
-	//IBinarizer *binarizer = new CNICKBinarizer({8, 8}, -0.2);
-	//for (auto& patch: patches) {
-	//	patch.SetBinImage(binarizer->Binarize(patch.GrayImage()));
-	//}
-
 	// classification by PHash/AvgHash
 	std::map<uint64, std::unordered_set<CImagePatch, CImagePatch::hasher>> classes = _subprocHolder->PatchClassifier()->Classify(patches);
 

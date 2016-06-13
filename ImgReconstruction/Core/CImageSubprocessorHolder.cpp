@@ -241,6 +241,7 @@ void CImageSubprocessorHolder::Configure(const std::string &path)
 	_config.blurThresh = blurJson[ThreshJsonKey].as<float>();
 	_config.accOrigWeight = json[AccJsonKey].as<float>();
 	_config.runCount = json[RunJsonKey].as<int>();
+	_config.cmpMetric = (TImageCompareMetric)comparatorJson[MetricJsonKey].as<int>();
 }
 
 CImageSubprocessorHolder::~CImageSubprocessorHolder()

@@ -36,6 +36,7 @@ public:
 			if (sum > _eps) break;
 		}
 
+
 		return sum < _eps;
 	}
 

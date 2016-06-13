@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "CImageSubprocessorHolder.h"
-#include "CImagePatch.h"
+#include <CImageSubprocessorHolder.h>
+#include <CImagePatch.h>
 
 CImage CreateHistImage(const std::map<uint64, std::deque<CImagePatch>>& data);
 CImage CreateHistImage(const std::map<int, std::deque<CImagePatch>>& data);
@@ -36,7 +36,10 @@ private:
 	void GenerateHelperImages(const CImage& img);
 
 	// utils
+	std::map<int, std::deque<CImagePatch>> Clusterize(std::deque<CImagePatch>& aClass);
 	std::map<int, std::deque<CImagePatch>> Clusterize(std::unordered_set<CImagePatch, CImagePatch::hasher>& aClass);
+
+	void* GetAnnoyIndexInterfaceForCurrentMetric(size_t size) const;
 
 	// misc
 	std::string _outImagePath;

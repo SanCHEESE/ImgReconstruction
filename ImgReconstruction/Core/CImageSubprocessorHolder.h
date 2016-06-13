@@ -35,6 +35,7 @@ struct CConfig
 {
 	float blurThresh;
 	float accOrigWeight;
+	TImageCompareMetric cmpMetric;
 	int runCount;
 };
 
