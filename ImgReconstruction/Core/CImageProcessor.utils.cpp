@@ -179,12 +179,12 @@ std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::unordere
 		clusters[aClassIdx] = similarPatches;
 		aClassIdx++;
 
-		_patchesProcessed += toRemove.size() + 1;
-		std::ofstream out;
-		out.open(_progressFile);
-		out << "Progress: " << std::setprecision(3) << (float)_patchesProcessed / _totalPatches * 100 << "% " << _patchesProcessed << " of " << _totalPatches << "\n";
-		out << "Last iter clusterized = " << toRemove.size() + 1 <<  " eps = " << comparator->GetEps() << "\n";
-		out.close();
+		//_patchesProcessed += toRemove.size() + 1;
+		//std::ofstream out;
+		//out.open(_progressFile);
+		//out << "Progress: " << std::setprecision(3) << (float)_patchesProcessed / _totalPatches * 100 << "% " << _patchesProcessed << " of " << _totalPatches << "\n";
+		//out << "Last iter clusterized = " << toRemove.size() + 1 <<  " eps = " << comparator->GetEps() << "\n";
+		//out.close();
 	}
 	return clusters;
 }
