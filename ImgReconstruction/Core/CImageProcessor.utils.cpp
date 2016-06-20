@@ -132,31 +132,33 @@ std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::deque<CI
 {
 	IImageComparator* comparator = _subprocHolder->ImageComparator();
 
+	int patchSize = aClass[0].GetSize().area();
+
 	std::map<int, std::deque<CImagePatch>> clusters;
 	std::vector<bool> clusterized(aClass.size(), false);
 
-	AnnoyIndexInterface<int, float>* t = (AnnoyIndexInterface<int, float>*)GetAnnoyIndexInterfaceForCurrentMetric(aClass.size());
+	std::vector<float*> imgs;
+	imgs.reserve(aClass.size());
+
+	AnnoyIndexInterface<int, float>* t = (AnnoyIndexInterface<int, float>*)GetAnnoyIndexInterfaceForCurrentMetric(patchSize);
 	for (int i = 0; i < aClass.size(); i++) {
-		vector<float> array;
 		CImage img;
 		aClass[i].GrayImage().convertTo(img, CV_32FC1);
-
 		// cast dyn range to 0..255
 		double min, max;
 		cv::minMaxLoc(img, &min, &max);
 		img = (img - min) * 255 / (max - min);
 
-		if (img.isContinuous()) {
-			array.assign(img.datastart, img.dataend);
-		} else {
-			for (int i = 0; i < img.rows; ++i) {
-				array.insert(array.end(), img.ptr<float>(i), img.ptr<float>(i) + img.cols);
-			}
-		}
-		t->add_item(i, array.data());
+		int size = img.cols * img.rows;
+		float *imgArray = new float[size];
+		std::memcpy(imgArray, img.data, size * sizeof(float));
+
+		t->add_item(i, imgArray);
+
+		imgs.push_back(imgArray);
 	}
 
-	t->build(aClass.size()/100);
+	t->build(10);
 
 	for (int i = 0; i < aClass.size(); i++) {
 		std::vector<int> indices;
@@ -180,6 +182,10 @@ std::map<int, std::deque<CImagePatch>> CImageProcessor::Clusterize(std::deque<CI
 
 	t->unload();
 	delete t;
+
+	for (int i = 0; i < imgs.size(); i++) {
+		delete imgs[i];
+	}
 
 	return clusters;
 }

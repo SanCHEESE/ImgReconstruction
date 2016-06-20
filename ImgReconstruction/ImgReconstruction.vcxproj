@@ -53,7 +53,7 @@
     <ExecutablePath>C:\opencv\build\x64\vc12\bin\Release;$(ExecutablePath)</ExecutablePath>
     <LibraryPath>C:\opencv\build\x64\vc12\lib\Release;$(LibraryPath)</LibraryPath>
     <IncludePath>C:\opencv\build\include;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core\Structures;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Helpers;C:\Users\Alexander\Documents\Visual Studio 2015\Projects\ImgReconstruction\ImgReconstruction\Core;$(IncludePath)</IncludePath>
-    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

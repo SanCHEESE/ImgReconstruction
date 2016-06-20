@@ -14,16 +14,16 @@
 class CAvgHashPatchClassifier : public IPatchClassifier
 {
 public:
-	virtual std::map<uint64, std::unordered_set<CImagePatch, CImagePatch::hasher>> Classify(std::vector<CImagePatch>& patches) const
+	virtual std::map<uint64, std::deque<CImagePatch>> Classify(std::vector<CImagePatch>& patches) const
 	{
-		std::map<uint64, std::unordered_set<CImagePatch, CImagePatch::hasher>> classes;
+		std::map<uint64, std::deque<CImagePatch>> classes;
 
 		for (CImagePatch& patch : patches) {
 			auto aClass = classes.find(patch.AvgHash());
 			if (aClass == classes.end()) {
-				classes[patch.AvgHash()] = std::unordered_set<CImagePatch, CImagePatch::hasher>({patch});
+				classes[patch.AvgHash()] = std::deque<CImagePatch>({patch});
 			} else {
-				(*aClass).second.insert(patch);
+				(*aClass).second.push_back(patch);
 			}
 		}
 
